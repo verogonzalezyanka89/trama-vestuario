@@ -1449,8 +1449,12 @@ async function generarPrompt() {
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: systemPrompt, messages: [{ role: 'user', content: userMessage }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, system: systemPrompt, messages: [{ role: 'user', content: userMessage }] })
     });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || response.status);
+    }
     const data = await response.json();
     const texto = data.content.map(i => i.text || '').join('');
     document.getElementById('prompt-resultado').innerHTML = `<button class="copy-btn" onclick="copiarPrompt()">Copiar</button>${texto}`;
@@ -1459,7 +1463,7 @@ async function generarPrompt() {
     renderPromptsGuardados();
     notif('Prompt generado ✓');
   } catch (err) {
-    document.getElementById('prompt-resultado').innerHTML = `<span style="color:#c00">Error al conectar con la IA.</span>`;
+    document.getElementById('prompt-resultado').innerHTML = `<span style="color:#c00">Error: ${err.message}</span>`;
   } finally {
     document.getElementById('ai-loading').classList.remove('visible');
   }
