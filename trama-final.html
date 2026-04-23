@@ -1066,7 +1066,14 @@ function updateProgress(input, id) {
 function agregarPersonaje() {
   const p = proyectoActual();
   if (!p) return;
-  p.personajes.push({ id: Date.now(), nombre: 'Nuevo personaje', rol: '', descripcion: '', silueta: '', colores: '', materiales: '', tocado: '', referencias: '', ideasBase: '', bocetos: [] });
+  p.personajes.push({
+    id: Date.now(),
+    nombre: 'Nuevo personaje',
+    edad: '', sexo: '', etnia: '', estrato: '', contextura: '',
+    silueta: '', materiales: '', accesorios: '',
+    inspiraciones: '', ideasBase: '',
+    paleta: []
+  });
   renderPersonajes();
   guardarEnNavegador();
 }
@@ -1077,50 +1084,74 @@ function renderPersonajes() {
   const cont = document.getElementById('lista-personajes');
   cont.innerHTML = '';
   p.personajes.forEach((per, i) => {
-    const bocetos = per.bocetos || [];
-    const bocetosHTML = bocetos.map((b, bi) => `
-      <div class="boceto-item" onclick="abrirLightbox('${per.id}',${bi})">
-        <img src="${b.data}" alt="${b.nota || ''}">
-        <button class="boceto-delete" onclick="event.stopPropagation();eliminarBoceto(${i},${bi})" title="Eliminar">✕</button>
-        ${b.nota ? `<div class="boceto-nota">${b.nota}</div>` : ''}
-      </div>`).join('');
-
     cont.innerHTML += `
     <div class="personaje-card" id="pc-${per.id}">
       <div class="personaje-header">
         <div class="personaje-nombre" contenteditable="true" onblur="updatePersonaje(${i},'nombre',this.innerText)">${per.nombre}</div>
         <div style="display:flex;gap:0.5rem;align-items:center">
-          <span class="personaje-tag">${per.rol || 'Sin rol'}</span>
           <button class="btn btn-outline btn-sm" onclick="eliminarPersonaje(${i})">✕</button>
         </div>
       </div>
-      <div class="grid-2">
-        <div>
-          <label>Rol en la obra</label>
-          <input type="text" value="${per.rol}" placeholder="ej. Hada de Primavera" onchange="updatePersonaje(${i},'rol',this.value)">
-          <label>Descripción del personaje</label>
-          <textarea placeholder="¿Quién es? ¿Qué simboliza?" onchange="updatePersonaje(${i},'descripcion',this.value)">${per.descripcion}</textarea>
-          <label>Silueta base</label>
-          <input type="text" value="${per.silueta}" placeholder="ej. Tutú romántico largo" onchange="updatePersonaje(${i},'silueta',this.value)">
+
+      <!-- BLOQUE 1: Identidad -->
+      <div style="margin-bottom:0.5rem;">
+        <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--grey-3);margin-bottom:0.75rem;">Identidad</div>
+        <div class="grid-3">
+          <div>
+            <label>Edad</label>
+            <input type="text" value="${per.edad||''}" placeholder="ej. 30 años" onchange="updatePersonaje(${i},'edad',this.value)">
+          </div>
+          <div>
+            <label>Sexo</label>
+            <input type="text" value="${per.sexo||''}" placeholder="ej. Femenino" onchange="updatePersonaje(${i},'sexo',this.value)">
+          </div>
+          <div>
+            <label>Contextura</label>
+            <input type="text" value="${per.contextura||''}" placeholder="ej. Delgada, robusta..." onchange="updatePersonaje(${i},'contextura',this.value)">
+          </div>
         </div>
-        <div>
-          <label>Materiales y texturas</label>
-          <textarea placeholder="ej. Tul en degradado, bordado floral en escote..." onchange="updatePersonaje(${i},'materiales',this.value)">${per.materiales}</textarea>
-          <label>Tocado / Accesorios</label>
-          <input type="text" value="${per.tocado}" placeholder="ej. Flores integradas al peinado" onchange="updatePersonaje(${i},'tocado',this.value)">
+        <div class="grid-2" style="margin-top:0.75rem;">
+          <div>
+            <label>Etnia</label>
+            <input type="text" value="${per.etnia||''}" placeholder="ej. Mestiza andina" onchange="updatePersonaje(${i},'etnia',this.value)">
+          </div>
+          <div>
+            <label>Estrato social</label>
+            <input type="text" value="${per.estrato||''}" placeholder="ej. Popular, aristocrático..." onchange="updatePersonaje(${i},'estrato',this.value)">
+          </div>
         </div>
       </div>
 
-      <div style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;">
+      <!-- BLOQUE 2: Vestuario -->
+      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem;">
+        <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--grey-3);margin-bottom:0.75rem;">Vestuario</div>
+        <div class="grid-2">
+          <div>
+            <label>Silueta base</label>
+            <input type="text" value="${per.silueta||''}" placeholder="ej. Tutú romántico largo" onchange="updatePersonaje(${i},'silueta',this.value)">
+            <label>Materiales</label>
+            <textarea placeholder="ej. Tul en degradado, bordado floral..." onchange="updatePersonaje(${i},'materiales',this.value)">${per.materiales||''}</textarea>
+          </div>
+          <div>
+            <label>Accesorios</label>
+            <textarea placeholder="ej. Tiara, guantes, alas traslúcidas..." onchange="updatePersonaje(${i},'accesorios',this.value)">${per.accesorios||''}</textarea>
+            <label>Inspiraciones <span style="font-weight:300;font-size:0.58rem;color:#888;text-transform:none;letter-spacing:0.04em;font-style:italic">— se incluyen en el prompt</span></label>
+            <textarea placeholder="ej. anda procesional, girasoles secos..." onchange="updatePersonaje(${i},'inspiraciones',this.value)">${per.inspiraciones||''}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOQUE 3: Paleta -->
+      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-          <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey-2);">Paleta del personaje</div>
+          <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--grey-3);">Paleta de colores</div>
           <div class="flex-row" style="gap:0.5rem;">
             <input type="color" id="color-pick-${per.id}" value="#888888" style="width:32px;height:28px;border:1px solid var(--border);padding:1px;background:transparent;cursor:pointer;border-radius:1px;">
-            <input type="text" id="color-name-${per.id}" placeholder="Nombre del color" style="width:150px;font-size:0.78rem;padding:0.35rem 0.6rem;">
+            <input type="text" id="color-name-${per.id}" placeholder="Nombre / referencia Pantone" style="width:180px;font-size:0.78rem;padding:0.35rem 0.6rem;">
             <button class="btn btn-outline btn-sm" onclick="agregarColorPersonaje(${i},'${per.id}')">+ Color</button>
           </div>
         </div>
-        <div id="paleta-per-${per.id}" class="palette-row" style="min-height:36px;">
+        <div id="paleta-per-${per.id}" class="palette-row" style="min-height:40px;">
           ${(per.paleta||[]).map((c,ci)=>`
             <div class="color-chip">
               <div style="position:relative">
@@ -1132,16 +1163,12 @@ function renderPersonajes() {
         </div>
       </div>
 
-      <div class="grid-2" style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;">
-        <div>
-          <label style="display:flex;align-items:center;gap:0.4rem;margin-top:0;">Referencias del personaje <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— se incluyen en el prompt</span></label>
-          <textarea placeholder="ej. anda procesional, girasoles secos, cicatrices en los hombros..." onchange="updatePersonaje(${i},'referencias',this.value)">${per.referencias || ''}</textarea>
-        </div>
-        <div>
-          <label style="display:flex;align-items:center;gap:0.4rem;margin-top:0;">Ideas base <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— universo personal, no van al prompt</span></label>
-          <textarea placeholder="ej. fotografías de Semana Santa, textura de adobe mojado, sombras largas..." onchange="updatePersonaje(${i},'ideasBase',this.value)">${per.ideasBase || ''}</textarea>
-        </div>
+      <!-- BLOQUE 4: Ideas base -->
+      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem;">
+        <label style="margin-top:0;">Ideas base <span style="font-weight:300;font-size:0.58rem;color:#888;text-transform:none;letter-spacing:0.04em;font-style:italic">— universo personal, no van al prompt</span></label>
+        <textarea placeholder="ej. fotografías de Semana Santa, textura de adobe mojado..." onchange="updatePersonaje(${i},'ideasBase',this.value)">${per.ideasBase||''}</textarea>
       </div>
+
     </div>`;
   });
 }
