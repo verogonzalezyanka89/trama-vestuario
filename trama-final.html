@@ -1,1752 +1,546 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trama — Vestuario Escénico</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Trama — Sistema de Vestuario</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #ffffff;
+    --bg: #f5f2eb; 
     --surface: #ffffff;
-    --surface-2: #f5f5f5;
-    --surface-3: #ebebeb;
-    --white: #ffffff;
-    --grey-1: #111111;
-    --grey-2: #555555;
-    --grey-3: #999999;
-    --grey-4: #cccccc;
-    --accent: #000000;
-    --border: #e0e0e0;
-    --border-light: #cccccc;
-    --shadow: rgba(0,0,0,0.05);
+    --black: #000000;
+    --grey-1: #000000;
+    --border: #000000;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* RESET Y ELIMINACIÓN DE CURSIVAS */
+  * { box-sizing: border-box; margin: 0; padding: 0; font-style: normal !important; }
 
   body {
     font-family: 'Jost', sans-serif;
     background: var(--bg);
     color: var(--grey-1);
     min-height: 100vh;
-    font-weight: 300;
   }
 
-  /* HEADER */
+  /* --- CABECERA ART DÉCO --- */
   header {
-    background: #ffffff;
-    color: var(--grey-1);
-    padding: 2rem 2.5rem;
+    background: var(--bg);
+    padding: 2.5rem;
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    border-bottom: 2px solid #000000;
-  }
-
-  header h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.2rem;
-    font-weight: 300;
-    letter-spacing: 0.08em;
-    line-height: 1.1;
-    color: #000000;
-  }
-
-  header h1 span {
-    display: block;
-    font-size: 0.68rem;
-    font-family: 'Jost', sans-serif;
-    letter-spacing: 0.35em;
-    color: var(--grey-2);
-    text-transform: uppercase;
-    margin-bottom: 0.3rem;
-  }
-
-  .header-actions {
-    display: flex;
-    gap: 0.75rem;
     align-items: center;
+    justify-content: space-between;
+    border-bottom: 5px double var(--black);
   }
 
-  /* TABS */
-  nav.tabs {
-    background: #ffffff;
+  .brand-block {
     display: flex;
-    gap: 0;
-    padding: 0 2.5rem;
-    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
-  nav.tabs button {
-    background: none;
-    border: none;
-    color: var(--grey-3);
-    font-family: 'Jost', sans-serif;
-    font-size: 0.68rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    padding: 0.9rem 1.2rem;
-    cursor: pointer;
-    border-bottom: 1px solid transparent;
-    transition: all 0.2s;
+  .logo-symbol {
+    width: 50px; height: 50px;
+    border: 2px solid var(--black);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px; position: relative;
+  }
+  .logo-symbol::after {
+    content: ''; position: absolute; inset: 4px;
+    border: 1px solid var(--black); border-radius: 50%;
+  }
+  .logo-symbol span {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900; font-size: 1.8rem; margin-top: 3px;
   }
 
-  nav.tabs button:hover { color: var(--grey-1); }
-  nav.tabs button.active {
-    color: #000000;
-    border-bottom-color: #000000;
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem; font-weight: 900;
+    letter-spacing: 0.2em; line-height: 0.9;
+    margin-bottom: 0.5rem; text-transform: uppercase;
   }
 
-  /* MAIN */
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 2rem 2.5rem;
+  .brand-tagline {
+    font-size: 0.8rem; letter-spacing: 0.5em;
+    font-weight: 600; text-transform: uppercase;
   }
 
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* SECTION TITLE */
-  .section-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.6rem;
-    font-weight: 300;
-    color: #000000;
-    margin-bottom: 0.3rem;
+  /* --- NAVEGACIÓN --- */
+  nav.tabs {
+    display: flex; justify-content: center;
+    background: var(--black);
+    position: sticky; top: 0; z-index: 100;
   }
 
-  .section-subtitle {
-    font-size: 0.68rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--grey-2);
-    margin-bottom: 1.5rem;
+  .tab-btn {
+    background: none; border: none; color: #fff;
+    padding: 1.2rem 2.5rem; font-family: 'Jost', sans-serif;
+    font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.25em; font-size: 0.75rem;
+    cursor: pointer; transition: background 0.3s;
   }
+  .tab-btn:hover { background: #333; }
+  .tab-btn.active { background: var(--bg); color: var(--black); font-weight: 700; }
 
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
-    box-shadow: 0 2px 8px var(--shadow);
+  /* --- CONTENEDORES --- */
+  main { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+  .view-section { display: none; }
+  .view-section.active { display: block; }
+
+  .section-header { margin-bottom: 3rem; border-left: 10px solid var(--black); padding-left: 1.5rem; }
+  .section-header h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; text-transform: uppercase; }
+  .section-header p { font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; }
+
+  /* --- TARJETAS GEOMÉTRICAS --- */
+  .deco-card {
+    background: var(--surface); border: 3px solid var(--black);
+    padding: 2.5rem; position: relative; margin-bottom: 2rem;
+  }
+  .deco-card::before {
+    content: ''; position: absolute; inset: 6px;
+    border: 1px solid var(--black); pointer-events: none;
   }
 
   .card-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #000000;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-family: 'Playfair Display', serif; font-size: 1.4rem;
+    font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; border-bottom: 2px solid #000;
+    padding-bottom: 0.5rem; margin-bottom: 1.5rem;
   }
 
-  /* FORM ELEMENTS */
+  /* --- FORMULARIO --- */
+  .input-group { margin-bottom: 1.5rem; }
   label {
-    display: block;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--grey-2);
-    margin-bottom: 0.4rem;
-    margin-top: 1rem;
+    display: block; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;
   }
-
-  label:first-child { margin-top: 0; }
-
-  input[type="text"], textarea, select {
-    width: 100%;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 1px;
-    padding: 0.65rem 0.85rem;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 300;
-    color: var(--grey-1);
-    outline: none;
-    transition: border-color 0.2s;
+  input, textarea, select {
+    width: 100%; padding: 0.8rem 1rem; border: 2px solid var(--black);
+    background: var(--bg); font-family: 'Jost', sans-serif;
+    font-weight: 500; text-transform: uppercase; outline: none;
   }
+  input:focus, textarea:focus { background: #fff; }
 
-  input[type="text"]:focus, textarea:focus, select:focus {
-    border-color: #000000;
-  }
-
-  select option { background: var(--surface); color: var(--grey-1); }
-  textarea { resize: vertical; min-height: 80px; }
-
-  /* BUTTONS */
+  /* --- BOTONES --- */
   .btn {
-    font-family: 'Jost', sans-serif;
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    border: none;
-    padding: 0.65rem 1.4rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-radius: 1px;
+    background: var(--black); color: #fff; border: 2px solid var(--black);
+    padding: 1rem 2rem; font-family: 'Jost', sans-serif;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
+    font-size: 0.8rem; cursor: pointer; transition: all 0.3s;
+  }
+  .btn:hover { background: transparent; color: var(--black); }
+  .btn-outline { background: transparent; color: var(--black); border: 1px solid var(--black); }
+
+  /* --- GRID --- */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+
+  /* --- PALETA DE COLORES --- */
+  .color-palette { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+  .color-swatch-container { display: flex; align-items: center; gap: 4px; }
+  .color-swatch { 
+    width: 42px; height: 42px; border: 2px solid #000; position: relative; cursor: pointer;
+  }
+  .color-swatch input[type="color"] {
+    position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;
+  }
+  .btn-remove-color {
+    background: none; border: none; color: red; font-weight: bold; cursor: pointer; font-size: 14px;
   }
 
-  .btn-primary {
-    background: #000000;
-    color: #ffffff;
+  /* --- MOODBOARD --- */
+  .mood-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .mood-item {
+    aspect-ratio: 1; border: 3px solid #000; position: relative;
+    background: #fff; overflow: hidden;
   }
-  .btn-primary:hover { background: #333333; }
-
-  .btn-gold {
-    background: #000000;
-    color: #ffffff;
-    border: 1px solid #000000;
-  }
-  .btn-gold:hover { background: #333333; border-color: #333333; }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--grey-2);
-    border: 1px solid var(--border-light);
-  }
-  .btn-outline:hover { border-color: #000000; color: #000000; }
-
-  .btn-sm {
-    padding: 0.4rem 0.9rem;
-    font-size: 0.62rem;
+  .mood-item img { width: 100%; height: 100%; object-fit: cover; }
+  .mood-item .remove {
+    position: absolute; top: 5px; right: 5px; background: #000;
+    color: #fff; border: none; padding: 5px 8px; cursor: pointer;
   }
 
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-
-  @media (max-width: 700px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    main { padding: 1.5rem 1rem; }
-    header { padding: 1.5rem 1rem; flex-direction: column; gap: 1rem; align-items: flex-start; }
-    nav.tabs { padding: 0 1rem; overflow-x: auto; }
+  /* --- PROMPT OUTPUT --- */
+  .prompt-box {
+    background: var(--black); color: #fff; padding: 2rem;
+    font-size: 0.9rem; line-height: 1.6; position: relative;
+    min-height: 150px; white-space: pre-wrap;
   }
 
-  /* COLOR PALETTE */
-  .palette-row {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 0.75rem;
+  #toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    background: var(--black); color: #fff; padding: 1rem 3rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em;
+    font-size: 0.7rem; display: none; z-index: 1000;
   }
 
-  .color-chip {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    position: relative;
-  }
-
-  .color-swatch {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: transform 0.15s;
-    position: relative;
-  }
-  .color-swatch:hover { transform: scale(1.05); }
-
-  .color-delete {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 16px;
-    height: 16px;
-    background: #ffffff;
-    border: 1px solid var(--border-light);
-    border-radius: 50%;
-    color: var(--grey-2);
-    font-size: 9px;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-  }
-  .color-chip:hover .color-delete { display: flex; }
-  .color-delete:hover { background: #000000; color: #ffffff; }
-
-  .color-label {
-    font-size: 0.58rem;
-    letter-spacing: 0.08em;
-    color: var(--grey-2);
-    text-align: center;
-    max-width: 56px;
-    line-height: 1.3;
-  }
-
-  /* PERSONAJES */
-  .personaje-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 2px solid #000000;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
-    border-radius: 0 2px 2px 0;
-  }
-
-  .personaje-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-  }
-
-  .personaje-nombre {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.3rem;
-    font-weight: 400;
-    color: #000000;
-  }
-
-  .personaje-tag {
-    font-size: 0.58rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    background: var(--surface-2);
-    color: var(--grey-2);
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-  }
-
-  /* PROMPT AREA */
-  .prompt-output {
-    background: var(--surface-2);
-    color: var(--grey-1);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1.25rem 1.5rem;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.82rem;
-    line-height: 1.7;
-    font-weight: 300;
-    white-space: pre-wrap;
-    min-height: 100px;
-    position: relative;
-  }
-
-  .prompt-output .copy-btn {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    background: var(--surface-2);
-    color: var(--grey-2);
-    border: 1px solid var(--border);
-    padding: 0.3rem 0.7rem;
-    font-size: 0.58rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 1px;
-    font-family: 'Jost', sans-serif;
-  }
-  .prompt-output .copy-btn:hover { background: #000000; color: #ffffff; border-color: #000000; }
-
-  /* AI LOADING */
-  .ai-loading {
-    display: none;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--grey-2);
-    font-size: 0.8rem;
-    padding: 1rem 0;
-  }
-
-  .ai-loading.visible { display: flex; }
-
-  .dot-pulse {
-    display: flex;
-    gap: 4px;
-  }
-  .dot-pulse span {
-    width: 5px; height: 5px;
-    background: #000000;
-    border-radius: 50%;
-    animation: pulse 1.2s ease-in-out infinite;
-  }
-  .dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
-  .dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes pulse {
-    0%, 80%, 100% { opacity: 0.15; transform: scale(0.8); }
-    40% { opacity: 1; transform: scale(1); }
-  }
-
-  /* DIVIDER */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 1.5rem 0;
-  }
-
-  /* TAG */
-  .tag {
-    display: inline-block;
-    font-size: 0.58rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    background: var(--surface-2);
-    color: var(--grey-2);
-    border: 1px solid var(--border);
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    margin: 0.2rem;
-  }
-
-  /* EXPORT */
-  .export-area {
-    background: var(--surface-2);
-    color: var(--grey-2);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1.5rem;
-    font-size: 0.75rem;
-    line-height: 1.6;
-    font-family: 'Jost', sans-serif;
-    word-break: break-all;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none;
-  }
-
-  /* MOODBOARD */
-  .moodboard-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-
-  .moodboard-item {
-    background: var(--surface-2);
-    aspect-ratio: 4/3;
-    border-radius: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    color: var(--ink-light);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    border: 1px dashed var(--border);
-    transition: all 0.2s;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .moodboard-item:hover { border-color: var(--grey-3); }
-  .moodboard-item img { width: 100%; height: 100%; object-fit: cover; }
-
-  .moodboard-note {
-    font-size: 0.7rem;
-    color: var(--grey-2);
-    margin-top: 0.4rem;
-    font-style: italic;
-  }
-
-  /* PROGRESS BAR */
-  .progress-bar {
-    background: var(--surface-3);
-    height: 1px;
-    border-radius: 1px;
-    margin-top: 0.5rem;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--grey-2);
-    border-radius: 1px;
-    transition: width 0.4s ease;
-  }
-
-  /* NOTIFICATION */
-  .notification {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: #000000;
-    color: #ffffff;
-    padding: 0.75rem 1.5rem;
-    border: 1px solid #000000;
-    font-size: 0.78rem;
-    border-radius: 1px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s;
-    z-index: 100;
-  }
-  .notification.show { opacity: 1; transform: translateY(0); }
-
-  /* EXPORT MODAL */
-  .export-modal-inner {
-    background: var(--surface);
-    padding: 2rem;
-    border-radius: 2px;
-    max-width: 500px;
-    width: 90%;
-    border-top: 1px solid var(--grey-3);
-  }
-
-  input[type="range"] {
-    accent-color: var(--grey-2);
-  }
-
-  .priority-note {
-    font-size: 0.74rem;
-    line-height: 1.6;
-    color: var(--grey-2);
-    margin: -0.9rem 0 1rem;
-    max-width: 58ch;
-  }
-
-  .priority-badge {
-    display: inline-block;
-    font-size: 0.55rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-    padding: 0.15rem 0.45rem;
-    border-radius: 999px;
-    color: var(--grey-2);
-    margin-left: 0.5rem;
-    font-family: 'Jost', sans-serif;
-  }
-
-  .flex-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-  .mt-1 { margin-top: 1rem; }
-  .mt-05 { margin-top: 0.5rem; }
-
-  /* IMÁGENES POR PERSONAJE */
-  .bocetos-section {
-    margin-top: 1.25rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1.25rem;
-  }
-
-  .bocetos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-  }
-
-  .boceto-item {
-    position: relative;
-    aspect-ratio: 3/4;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: box-shadow 0.2s;
-  }
-
-  .boceto-item:hover { box-shadow: 0 2px 10px var(--shadow); }
-
-  .boceto-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .boceto-delete {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: rgba(0,0,0,0.65);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    font-size: 10px;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-  }
-
-  .boceto-item:hover .boceto-delete { display: flex; }
-
-  .boceto-nota {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.55);
-    color: #fff;
-    font-size: 0.6rem;
-    padding: 0.25rem 0.4rem;
-    line-height: 1.3;
-    letter-spacing: 0.04em;
-  }
-
-  .boceto-upload {
-    aspect-ratio: 3/4;
-    background: var(--surface-2);
-    border: 1px dashed var(--border-light);
-    border-radius: 2px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    gap: 0.4rem;
-    color: var(--grey-3);
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-align: center;
-    padding: 0.5rem;
-  }
-
-  .boceto-upload:hover {
-    border-color: #000;
-    color: #000;
-    background: #f9f9f9;
-  }
-
-  .boceto-upload input { display: none; }
-
-  /* LIGHTBOX */
-  .lightbox {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.88);
-    z-index: 300;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-  }
-
-  .lightbox.open { display: flex; }
-
-  .lightbox img {
-    max-width: 90vw;
-    max-height: 88vh;
-    object-fit: contain;
-    border-radius: 2px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-  }
-
-  .lightbox-close {
-    position: absolute;
-    top: 1.25rem;
-    right: 1.5rem;
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-  }
-
-  .lightbox-close:hover { opacity: 1; }
-
-  .lightbox-nota {
-    position: absolute;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    font-size: 0.78rem;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-    max-width: 80vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  @media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<!-- PANTALLA: LISTA DE PROYECTOS -->
-<div id="screen-home">
   <header>
-    <h1>
-      <span>Vestuario Escénico</span>
-      Trama
-    </h1>
-    <div class="header-actions">
-      <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">Importar</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importarProyecto(event)">
+    <div style="flex: 1"><button class="btn-outline btn" style="padding: 0.5rem;" onclick="location.reload()">PROYECTOS</button></div>
+    <div class="brand-block">
+      <div class="logo-symbol"><span>T</span></div>
+      <h1 class="brand-name">TRAMA</h1>
+      <span class="brand-tagline">VESTUARIO ESCÉNICO</span>
     </div>
-  </header>
-
-  <main style="max-width:900px;margin:0 auto;padding:3rem 2.5rem;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;border-bottom:1px solid var(--border);padding-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-      <div>
-        <p class="section-title">Mis Proyectos</p>
-        <p class="section-subtitle">Selecciona una producción para trabajar</p>
-      </div>
-      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-        <button class="btn btn-outline" onclick="exportarTodo()">⬇ Exportar copia</button>
-        <button class="btn btn-primary" onclick="nuevoProyecto()">+ Nuevo proyecto</button>
-      </div>
-    </div>
-    <div id="lista-proyectos"></div>
-    <p style="font-size:0.7rem;color:var(--grey-3);margin-top:2rem;text-align:center;letter-spacing:0.08em;">
-      Para usar en otro dispositivo: exporta una copia → guarda el archivo .json → impórtalo desde el otro dispositivo
-    </p>
-  </main>
-</div>
-
-<!-- PANTALLA: PROYECTO ACTIVO -->
-<div id="screen-proyecto" style="display:none">
-  <header>
-    <h1>
-      <span id="header-proyecto-nombre" style="cursor:pointer;display:flex;align-items:center;gap:0.4rem;">
-        <span onclick="volverHome()" style="font-size:0.65rem;letter-spacing:0.1em;opacity:0.5;cursor:pointer">← Proyectos</span>
-      </span>
-      <span id="header-obra-nombre">Trama</span>
-    </h1>
-    <div class="header-actions">
-      <button class="btn btn-outline" onclick="exportarProyecto()">Exportar</button>
-      <button class="btn btn-primary" onclick="guardarTodo()">Guardar</button>
-    </div>
+    <div style="flex: 1; text-align: right;"><button class="btn" onclick="saveAll()">GUARDAR TODO</button></div>
   </header>
 
   <nav class="tabs">
-    <button class="active" onclick="showTab('proyecto', this)">Proyecto</button>
-    <button onclick="showTab('personajes', this)">Personajes</button>
-    <button onclick="showTab('moodboard', this)">Moodboard</button>
-    <button onclick="showTab('prompts', this)">Generador de Prompts</button>
+    <button class="tab-btn active" onclick="switchTab('general', this)">GENERAL</button>
+    <button class="tab-btn" onclick="switchTab('moodboard', this)">MOODBOARD</button>
+    <button class="tab-btn" onclick="switchTab('personajes', this)">PERSONAJES</button>
+    <button class="tab-btn" onclick="switchTab('ia', this)">BOCETO</button>
   </nav>
 
   <main>
-
-    <!-- TAB: PROYECTO -->
-    <div id="tab-proyecto" class="tab-content active">
-      <p class="section-title">Datos del Proyecto</p>
-      <p class="section-subtitle">Información general de la obra</p>
-      <p class="priority-note">Empieza por lo básico para mantener el proyecto ordenado desde el inicio.</p>
+    <!-- SECCIÓN GENERAL -->
+    <section id="sec-general" class="view-section active">
+      <div class="section-header">
+        <h2>FICHA TÉCNICA</h2>
+        <p>IDENTIFICACIÓN DE LA PRODUCCIÓN</p>
+      </div>
       <div class="grid-2">
-        <div class="card">
-          <div class="card-title">📋 Ficha de la Obra</div>
-          <label>Nombre de la obra</label>
-          <input type="text" id="p-obra" placeholder="ej. Cenicienta">
-          <label>Compositor / Autor</label>
-          <input type="text" id="p-compositor" placeholder="ej. Sergei Prokofiev">
-          <label>Compañía o producción</label>
-          <input type="text" id="p-compania" placeholder="ej. Ballet Nacional">
-          <label>Temporada / Año</label>
-          <input type="text" id="p-temporada" placeholder="ej. 2025">
-          <label>Género / Estilo</label>
-          <input type="text" id="p-genero" placeholder="ej. Ballet clásico romántico">
+        <div class="deco-card">
+          <div class="card-title">OBRA</div>
+          <div class="input-group"><label>TÍTULO</label><input type="text" id="g-obra" value="CENICIENTA"></div>
+          <div class="input-group"><label>AUTOR / COMPOSITOR</label><input type="text" id="g-autor" value="PROKOFIEV"></div>
+          <div class="input-group"><label>COMPAÑÍA</label><input type="text" id="g-cia" value=""></div>
         </div>
-        <div class="card">
-          <div class="card-title">🎨 Tu Identidad como Vestuarista</div>
-          <label>Tu estilo personal</label>
-          <input type="text" id="p-estilo" placeholder="ej. Clásico con toques contemporáneos">
-          <label>Materiales y técnicas que defines como tuyos</label>
-          <textarea id="p-materiales" placeholder="ej. Tul en degradado, bordados simbólicos..."></textarea>
-          <label>Notas conceptuales de esta producción</label>
-          <textarea id="p-notas" placeholder="Escribe aquí tus primeras ideas, intuiciones, preguntas..."></textarea>
+        <div class="deco-card">
+          <div class="card-title">CRONOGRAMA</div>
+          <div class="input-group"><label>TEMPORADA</label><input type="text" id="g-temp" value="2026"></div>
+          <div class="input-group"><label>DIRECTOR ESCÉNICO</label><input type="text" id="g-dir" value=""></div>
         </div>
       </div>
-      <div class="card mt-1">
-        <div class="card-title">📊 Estado del Proyecto</div>
-        <div class="grid-3">
-          <div>
-            <label>Investigación</label>
-            <input type="range" min="0" max="100" value="0" oninput="updateProgress(this,'prog-inv')" style="width:100%">
-            <div class="progress-bar"><div class="progress-fill" id="prog-inv" style="width:0%"></div></div>
-          </div>
-          <div>
-            <label>Personajes definidos</label>
-            <input type="range" min="0" max="100" value="0" oninput="updateProgress(this,'prog-per')" style="width:100%">
-            <div class="progress-bar"><div class="progress-fill" id="prog-per" style="width:0%"></div></div>
-          </div>
-          <div>
-            <label>Bocetos finales</label>
-            <input type="range" min="0" max="100" value="0" oninput="updateProgress(this,'prog-boc')" style="width:100%">
-            <div class="progress-bar"><div class="progress-fill" id="prog-boc" style="width:0%"></div></div>
-          </div>
-        </div>
+    </section>
+
+    <!-- SECCIÓN MOODBOARD -->
+    <section id="sec-moodboard" class="view-section">
+      <div class="section-header">
+        <h2>MOODBOARD Y CONCEPTO</h2>
+        <p>RECOLECCIÓN CREATIVA E INVESTIGACIÓN</p>
       </div>
-      <div class="mt-1 flex-row">
-        <button class="btn btn-primary" onclick="guardarProyecto()">Guardar cambios</button>
-        <button class="btn btn-outline" style="color:#c00" onclick="eliminarProyectoActual()">Eliminar proyecto</button>
-      </div>
-    </div>
-
-    <!-- TAB: PERSONAJES -->
-    <div id="tab-personajes" class="tab-content">
-      <p class="section-title">Personajes</p>
-      <p class="section-subtitle">Ficha de vestuario por personaje</p>
-      <p class="priority-note">Orden recomendado: identidad, silueta, materiales, color, accesorios e inspiraciones.</p>
-      <div id="lista-personajes"></div>
-      <button class="btn btn-primary mt-1" onclick="agregarPersonaje()">+ Agregar personaje</button>
-    </div>
-
-    <!-- TAB: PALETA -->
-    <!-- TAB: MOODBOARD -->
-    <div id="tab-moodboard" class="tab-content">
-      <p class="section-title">Moodboard</p>
-      <p class="section-subtitle">Referencias visuales e inspiración</p>
-      <p class="priority-note">Apoyo visual para el proceso creativo. No reemplaza la ficha del personaje.</p>
-      <div class="card">
-        <div class="card-title">🖼️ Referencias del proyecto</div>
-        <div id="moodboard-items">
-          <div id="moodboard-grid" class="moodboard-grid"></div>
-        </div>
-        <hr class="divider">
-        <label>Agregar referencia visual (URL de imagen)</label>
-        <div class="flex-row mt-05">
-          <input type="text" id="mb-url" placeholder="https://..." style="flex:2">
-          <input type="text" id="mb-nota" placeholder="Nota sobre esta imagen" style="flex:2">
-          <button class="btn btn-outline btn-sm" onclick="agregarMoodboard()">Agregar</button>
-        </div>
-        <hr class="divider">
-        <label>Palabras clave de inspiración</label>
-        <div class="flex-row mt-05">
-          <input type="text" id="mb-tag" placeholder="ej. etéreo, barroco, botánico..." style="flex:1" onkeydown="if(event.key==='Enter')agregarTag()">
-          <button class="btn btn-outline btn-sm" onclick="agregarTag()">+ Tag</button>
-        </div>
-        <div id="tags-container" class="mt-05"></div>
-      </div>
-    </div>
-
-    <!-- TAB: PROMPTS -->
-    <div id="tab-prompts" class="tab-content">
-      <p class="section-title">Generador de Prompts</p>
-      <p class="section-subtitle">Traduce tu diseño en instrucciones para IA de imagen</p>
-      <p class="priority-note">El prompt toma solo los datos del personaje seleccionado y omite lo que no esté definido.</p>
-
-      <div class="card" style="margin-bottom:1.5rem;border-left:2px solid #000;">
-        <div class="card-title" style="margin-bottom:0.75rem;">🔑 Clave API de Anthropic</div>
-        <p style="font-size:0.78rem;color:var(--grey-2);margin-bottom:1rem;line-height:1.6;">Necesitas una clave API para generar prompts. Se guarda solo en tu navegador y nunca se comparte. Puedes obtenerla en <a href="https://console.anthropic.com" target="_blank" style="color:#000;text-decoration:underline;">console.anthropic.com</a></p>
-        <div class="flex-row">
-          <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-family:monospace;font-size:0.8rem;" oninput="toggleApiKeyBtn()">
-          <button class="btn btn-primary btn-sm" id="api-key-save-btn" onclick="guardarApiKey()" disabled>Guardar</button>
-          <span id="api-key-status" style="font-size:0.72rem;color:var(--grey-2);letter-spacing:0.05em;"></span>
-        </div>
-      </div>
-
+      
       <div class="grid-2">
-        <div class="card">
-          <div class="card-title">⚙️ Configuración del prompt <span class="priority-badge">solo datos del personaje</span></div>
-          <label>Personaje</label>
-          <select id="prompt-personaje"><option value="">— Selecciona un personaje —</option></select>
-          <label>Tipo de ilustración</label>
-          <select id="prompt-tipo">
-            <option value="fashion illustration">Figurín de moda (fashion illustration)</option>
-            <option value="costume design sketch">Boceto de vestuario escénico</option>
-            <option value="full body character design">Diseño de personaje cuerpo completo</option>
-            <option value="watercolor fashion plate">Lámina de moda en acuarela</option>
-          </select>
-          <label>Estilo del boceto</label>
-          <select id="prompt-estilo-boceto">
-            <option value="classical">Clásico</option>
-            <option value="dramatic">Dramático</option>
-            <option value="contemporary">Contemporáneo</option>
-          </select>
-          <label>Técnica del boceto</label>
-          <select id="prompt-tecnica">
-            <option value="watercolor">Acuarela</option>
-            <option value="pastel pencil">Lápiz pastel</option>
-            <option value="marker">Marcador</option>
-          </select>
-          <label>Estilo artístico</label>
-          <select id="prompt-estilo">
-            <option value="classical elegant refined">Clásico y refinado</option>
-            <option value="romantic painterly">Romántico pictórico</option>
-            <option value="editorial high fashion">Editorial de moda</option>
-            <option value="art nouveau ornamental">Art Nouveau ornamental</option>
-            <option value="contemporary minimalist">Contemporáneo minimalista</option>
-          </select>
-          <label>Detalles adicionales (opcional)</label>
-          <textarea id="prompt-detalles" placeholder="ej. tutú romántico, alas traslúcidas redondeadas, degradado sutil..."></textarea>
-          <label>Idioma del prompt</label>
-          <select id="prompt-idioma">
-            <option value="en">Inglés (recomendado para Midjourney)</option>
-            <option value="es">Español (para Gemini)</option>
-          </select>
-          <div class="mt-1">
-            <button class="btn btn-primary" onclick="generarPrompt()">✦ Generar prompt con IA</button>
-          </div>
-          <div class="ai-loading" id="ai-loading">
-            <div class="dot-pulse"><span></span><span></span><span></span></div>
-            <span>Generando prompt especializado...</span>
-          </div>
+        <div class="deco-card">
+          <div class="card-title">CONTEXTO CREATIVO</div>
+          <div class="input-group"><label>ÉPOCA DE LA OBRA</label><input type="text" id="m-epoca" placeholder="EJ. 1920s, BARROCO, FUTURISTA..."></div>
+          <div class="input-group"><label>IDEAS BASE / CONCEPTO</label><textarea id="m-ideas" rows="4" placeholder="DESCRIBA EL NÚCLEO CREATIVO..."></textarea></div>
+          <div class="input-group"><label>ESTILO VISUAL (ARTÍSTICO)</label><input type="text" id="m-estilo" placeholder="EJ. ART DÉCO, EXPRESIONISMO..."></div>
         </div>
-        <div class="card">
-          <div class="card-title">✦ Prompt generado</div>
-          <p style="font-size:0.78rem;color:var(--grey-2);margin-bottom:1rem;">Copia este texto y pégalo en Midjourney, Gemini u otra IA de imagen</p>
-          <div class="prompt-output" id="prompt-resultado">
-            <span style="color:#aaa;font-style:italic">El prompt aparecerá aquí...</span>
-          </div>
-          <hr class="divider">
-          <div class="card-title" style="margin-top:0.5rem">📚 Prompts guardados</div>
-          <div id="prompts-guardados" style="max-height:200px;overflow-y:auto;">
-            <p style="font-size:0.78rem;color:var(--grey-2)">Los prompts generados aparecerán aquí</p>
-          </div>
+        <div class="deco-card">
+          <div class="card-title">AÑADIR REFERENCIA VISUAL</div>
+          <div class="input-group"><label>URL DE IMAGEN</label><input type="text" id="m-url"></div>
+          <div class="input-group"><label>COMENTARIO DE REFERENCIA</label><input type="text" id="m-nota"></div>
+          <button class="btn" onclick="addMood()" style="width:100%">CARGAR A GALERÍA</button>
         </div>
       </div>
-    </div>
 
+      <div id="mood-grid" class="mood-grid"></div>
+    </section>
+
+    <!-- SECCIÓN PERSONAJES -->
+    <section id="sec-personajes" class="view-section">
+      <div class="section-header">
+        <h2>DEFINICIÓN DE PERSONAJES</h2>
+        <p>ARQUETIPOS Y REQUERIMIENTOS TÉCNICOS</p>
+      </div>
+      <div id="personajes-cont"></div>
+      <button class="btn" onclick="addPersonaje()">AÑADIR PERSONAJE AL REPARTO</button>
+    </section>
+
+    <!-- SECCIÓN BOCETO -->
+    <section id="sec-ia" class="view-section">
+      <div class="section-header">
+        <h2>BOCETO</h2>
+        <p>PROCESAMIENTO DE GENERACIÓN DE DISEÑOS</p>
+      </div>
+      <div class="grid-2">
+        <div class="deco-card">
+          <div class="card-title">CONFIGURACIÓN DEL PROMPT</div>
+          
+          <div class="input-group">
+            <label>SELECCIONAR PERSONAJE</label>
+            <select id="ia-per-select" onchange="updateZoomTargets()"></select>
+          </div>
+
+          <div class="grid-2">
+            <div class="input-group">
+              <label>TIPO DE BOCETO</label>
+              <select id="ia-tipo-boceto">
+                <option value="Full body costume design sketch">CUERPO COMPLETO</option>
+                <option value="Accessory technical study">ACCESORIO</option>
+                <option value="Headpiece focus">TOCADO / ROSTRO</option>
+                <option value="Footwear focus">ZAPATOS</option>
+                <option value="Jewelry focus">JOYERÍA</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>TÉCNICA ARTÍSTICA</label>
+              <select id="ia-tecnica">
+                <option value="watercolor and ink on textured paper">ACUARELA Y TINTA</option>
+                <option value="charcoal and chalk on parchment">CARBONCILLO Y TIZA</option>
+                <option value="clean vector fashion illustration">VECTORIAL LIMPIO</option>
+                <option value="hyper-realistic fabric render, cinematic lighting">RENDER REALISTA</option>
+                <option value="pencil gestural lines, architectural style">LÍNEA GESTUAL</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- SECCIÓN DE ZOOM REFINADA -->
+          <div class="deco-card" style="margin-bottom: 1.5rem; padding: 1.5rem; background: #fafafa;">
+            <div class="input-group" style="display:flex; align-items:center; gap: 10px;">
+                <label style="margin-bottom:0">¿ACTIVAR ZOOM?</label>
+                <select id="ia-zoom-enable" style="width:auto; padding: 0.4rem 1rem;" onchange="toggleZoomFields()">
+                    <option value="no">NO</option>
+                    <option value="si">SÍ</option>
+                </select>
+            </div>
+
+            <div id="zoom-details" style="display:none; margin-top: 1rem; border-top: 1px solid #000; padding-top: 1rem;">
+                <label>ELEMENTO A ENFOCAR (DATOS DEL PERSONAJE)</label>
+                <select id="ia-zoom-target">
+                    <!-- Se llena dinámicamente -->
+                </select>
+                <p style="font-size: 0.6rem; margin-top: 5px; letter-spacing: 0.1em;">SELECCIONE EL ACCESORIO ESPECÍFICO QUE DEFINIÓ EN LA FICHA DEL PERSONAJE.</p>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>NOTAS ADICIONALES PARA EL BOCETO</label>
+            <textarea id="ia-extra" rows="3" placeholder="EJ. ENFOCARSE EN EL BRILLO..."></textarea>
+          </div>
+          <button class="btn" style="width:100%" onclick="runIA()">GENERAR PROMPT MAESTRO</button>
+        </div>
+        <div class="deco-card">
+          <div class="card-title">PROMPT RESULTANTE</div>
+          <div class="prompt-box" id="ia-result">EL RESULTADO APARECERÁ AQUÍ...</div>
+          <button class="btn-outline btn" style="width:100%; margin-top:1rem;" onclick="copyPrompt()">COPIAR AL PORTAPAPELES</button>
+        </div>
+      </div>
+    </section>
   </main>
-</div>
 
-<!-- NOTIFICACIÓN -->
-<div class="notification" id="notif"></div>
+  <div id="toast">MENSAJE DEL SISTEMA</div>
 
-<!-- EXPORT MODAL -->
-<div id="export-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:1rem;">
-  <div style="background:var(--surface);padding:2rem;border-radius:2px;max-width:500px;width:100%;border:1px solid var(--border);">
-    <p class="section-title">Guardar copia</p>
-    <p style="font-size:0.82rem;color:var(--grey-2);margin:0.5rem 0 1rem">Descarga el archivo .json y guárdalo. Para continuar en otro dispositivo, ábrelo ahí e impórtalo.</p>
-    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:1rem;font-size:0.75rem;color:var(--grey-2);line-height:1.8;">
-      <strong style="color:#000;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;">Cómo usarlo en otro dispositivo:</strong><br>
-      1. Pulsa <strong>Descargar</strong> — se guarda un archivo .json<br>
-      2. Pásalo al otro dispositivo (email, WhatsApp, nube)<br>
-      3. Abre este HTML en el otro dispositivo<br>
-      4. Pulsa <strong>Importar</strong> y selecciona el archivo
-    </div>
-    <div id="export-area" style="display:none"></div>
-    <div class="flex-row mt-1" style="flex-wrap:wrap;">
-      <button class="btn btn-primary" onclick="descargarExport()">⬇ Descargar .json</button>
-      <button class="btn btn-outline" onclick="cerrarExport()">Cerrar</button>
-    </div>
-  </div>
-</div>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="cerrarLightbox(event)">
-  <button class="lightbox-close" onclick="cerrarLightbox()">✕</button>
-  <img id="lightbox-img" src="" alt="">
-  <div class="lightbox-nota" id="lightbox-nota"></div>
-</div>
-
-<script>
-// =====================
-// STATE — múltiples proyectos
-// =====================
-let appState = {
-  proyectos: [],
-  proyectoActualId: null
-};
-
-function proyectoActual() {
-  return appState.proyectos.find(p => p.id === appState.proyectoActualId);
-}
-
-// =====================
-// NAVEGACIÓN
-// =====================
-function mostrarHome() {
-  document.getElementById('screen-home').style.display = 'block';
-  document.getElementById('screen-proyecto').style.display = 'none';
-  renderListaProyectos();
-}
-
-function abrirProyecto(id) {
-  appState.proyectoActualId = id;
-  const p = proyectoActual();
-  document.getElementById('screen-home').style.display = 'none';
-  document.getElementById('screen-proyecto').style.display = 'block';
-  document.getElementById('header-obra-nombre').textContent = p.datos.obra || 'Sin título';
-  cargarProyecto();
-  renderPersonajes();
-  renderMoodboard();
-  renderTags();
-  renderPromptsGuardados();
-  showTab('proyecto', document.querySelector('nav.tabs button'));
-}
-
-function volverHome() {
-  guardarTodo();
-  mostrarHome();
-}
-
-// =====================
-// LISTA DE PROYECTOS
-// =====================
-function renderListaProyectos() {
-  const cont = document.getElementById('lista-proyectos');
-  if (!appState.proyectos.length) {
-    cont.innerHTML = `
-      <div style="text-align:center;padding:4rem 2rem;border:1px dashed var(--border);border-radius:2px;">
-        <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--grey-3);margin-bottom:0.5rem">No hay proyectos todavía</p>
-        <p style="font-size:0.8rem;color:var(--grey-3);margin-bottom:1.5rem">Crea tu primera producción o importa un archivo existente</p>
-        <button class="btn btn-primary" onclick="nuevoProyecto()">+ Nuevo proyecto</button>
-      </div>`;
-    return;
-  }
-  cont.innerHTML = appState.proyectos.map(p => {
-    const nPersonajes = p.personajes ? p.personajes.length : 0;
-    const año = p.datos.temporada || '';
-    const genero = p.datos.genero || '';
-    return `
-    <div onclick="abrirProyecto('${p.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border:1px solid var(--border);border-left:2px solid #000;margin-bottom:0.75rem;cursor:pointer;background:var(--surface);transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 2px 12px var(--shadow)'" onmouseout="this.style.boxShadow='none'">
-      <div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:#000">${p.datos.obra || 'Sin título'}</div>
-        <div style="font-size:0.7rem;color:var(--grey-2);margin-top:0.2rem;letter-spacing:0.05em">${[genero, año].filter(Boolean).join(' · ')}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:1.5rem;">
-        <div style="text-align:right">
-          <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--grey-3)">Personajes</div>
-          <div style="font-size:1.1rem;font-family:'Cormorant Garamond',serif">${nPersonajes}</div>
-        </div>
-        <div style="font-size:1.2rem;color:var(--grey-3)">→</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function nuevoProyecto() {
-  const id = 'p_' + Date.now();
-  const nuevo = {
-    id,
-    datos: { obra: 'Nuevo proyecto', compositor: '', compania: '', temporada: new Date().getFullYear().toString(), genero: '', estilo: 'Clásico con toques contemporáneos', materiales: '', notas: '' },
-    personajes: [],
-    paleta: { colores: [], notas: '', notasLuz: '' },
-    moodboard: { items: [], tags: [] },
-    prompts: []
-  };
-  appState.proyectos.push(nuevo);
-  guardarEnNavegador();
-  abrirProyecto(id);
-}
-
-function eliminarProyectoActual() {
-  if (!confirm('¿Eliminar este proyecto? Esta acción no se puede deshacer.')) return;
-  appState.proyectos = appState.proyectos.filter(p => p.id !== appState.proyectoActualId);
-  appState.proyectoActualId = null;
-  guardarEnNavegador();
-  mostrarHome();
-  notif('Proyecto eliminado');
-}
-
-// =====================
-// TABS
-// =====================
-function showTab(name, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-  if (name === 'prompts') { actualizarSelectPersonajes(); cargarApiKey(); }
-}
-
-// =====================
-// PROYECTO
-// =====================
-function guardarProyecto() {
-  const p = proyectoActual();
-  if (!p) return;
-  p.datos = {
-    obra: v('p-obra'), compositor: v('p-compositor'),
-    compania: v('p-compania'), temporada: v('p-temporada'),
-    genero: v('p-genero'), estilo: v('p-estilo'),
-    materiales: v('p-materiales'), notas: v('p-notas')
-  };
-  document.getElementById('header-obra-nombre').textContent = p.datos.obra || 'Sin título';
-  guardarEnNavegador();
-  notif('Proyecto guardado ✓');
-}
-
-function cargarProyecto() {
-  const p = proyectoActual();
-  if (!p) return;
-  const d = p.datos;
-  setV('p-obra', d.obra); setV('p-compositor', d.compositor);
-  setV('p-compania', d.compania); setV('p-temporada', d.temporada);
-  setV('p-genero', d.genero); setV('p-estilo', d.estilo);
-  setV('p-materiales', d.materiales); setV('p-notas', d.notas);
-}
-
-function guardarTodo() {
-  guardarProyecto();
-  guardarEnNavegador();
-  notif('Guardado ✓');
-}
-
-function updateProgress(input, id) {
-  document.getElementById(id).style.width = input.value + '%';
-}
-
-// =====================
-// PERSONAJES
-// =====================
-function agregarPersonaje() {
-  const p = proyectoActual();
-  if (!p) return;
-  p.personajes.push({
-    id: Date.now(),
-    nombre: 'Nuevo personaje',
-    edad: '', sexo: '', etnia: '', estrato: '', contextura: '',
-    silueta: '', materiales: '', accesorios: '',
-    inspiraciones: '', ideasBase: '',
-    paleta: []
-  });
-  renderPersonajes();
-  guardarEnNavegador();
-}
-
-function renderPersonajes() {
-  const p = proyectoActual();
-  if (!p) return;
-  const cont = document.getElementById('lista-personajes');
-  cont.innerHTML = '';
-  p.personajes.forEach((per, i) => {
-    cont.innerHTML += `
-    <div class="personaje-card" id="pc-${per.id}">
-      <div class="personaje-header">
-        <div class="personaje-nombre" contenteditable="true" onblur="updatePersonaje(${i},'nombre',this.innerText)">${per.nombre}</div>
-        <div style="display:flex;gap:0.5rem;align-items:center">
-          <button class="btn btn-outline btn-sm" onclick="eliminarPersonaje(${i})">✕</button>
-        </div>
-      </div>
-
-      <!-- BLOQUE 1: Identidad -->
-      <div style="margin-bottom:0.5rem;">
-        <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--grey-3);margin-bottom:0.75rem;">Identidad</div>
-        <div class="grid-3">
-          <div>
-            <label>Edad</label>
-            <input type="text" value="${per.edad||''}" placeholder="ej. 30 años" onchange="updatePersonaje(${i},'edad',this.value)">
-          </div>
-          <div>
-            <label>Sexo</label>
-            <input type="text" value="${per.sexo||''}" placeholder="ej. Femenino" onchange="updatePersonaje(${i},'sexo',this.value)">
-          </div>
-          <div>
-            <label>Contextura</label>
-            <input type="text" value="${per.contextura||''}" placeholder="ej. Delgada, robusta..." onchange="updatePersonaje(${i},'contextura',this.value)">
-          </div>
-        </div>
-        <div class="grid-2" style="margin-top:0.75rem;">
-          <div>
-            <label>Etnia</label>
-            <input type="text" value="${per.etnia||''}" placeholder="ej. Mestiza andina" onchange="updatePersonaje(${i},'etnia',this.value)">
-          </div>
-          <div>
-            <label>Estrato social</label>
-            <input type="text" value="${per.estrato||''}" placeholder="ej. Popular, aristocrático..." onchange="updatePersonaje(${i},'estrato',this.value)">
-          </div>
-        </div>
-      </div>
-
-      <!-- BLOQUE 2: Vestuario -->
-      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem;">
-        <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--grey-3);margin-bottom:0.75rem;">Vestuario</div>
-        <div class="grid-2">
-          <div>
-            <label>Silueta base</label>
-            <input type="text" value="${per.silueta||''}" placeholder="ej. Tutú romántico largo" onchange="updatePersonaje(${i},'silueta',this.value)">
-            <label>Materiales</label>
-            <textarea placeholder="ej. Tul en degradado, bordado floral..." onchange="updatePersonaje(${i},'materiales',this.value)">${per.materiales||''}</textarea>
-          </div>
-          <div>
-            <label>Accesorios</label>
-            <textarea placeholder="ej. Tiara, guantes, alas traslúcidas..." onchange="updatePersonaje(${i},'accesorios',this.value)">${per.accesorios||''}</textarea>
-            <label>Inspiraciones <span style="font-weight:300;font-size:0.58rem;color:#888;text-transform:none;letter-spacing:0.04em;font-style:italic">— se incluyen en el prompt</span></label>
-            <textarea placeholder="ej. anda procesional, girasoles secos..." onchange="updatePersonaje(${i},'inspiraciones',this.value)">${per.inspiraciones||''}</textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- BLOQUE 3: Paleta -->
-      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-          <div style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--grey-3);">Paleta de colores</div>
-          <div class="flex-row" style="gap:0.5rem;">
-            <input type="color" id="color-pick-${per.id}" value="#888888" style="width:32px;height:28px;border:1px solid var(--border);padding:1px;background:transparent;cursor:pointer;border-radius:1px;">
-            <input type="text" id="color-name-${per.id}" placeholder="Nombre / referencia Pantone" style="width:180px;font-size:0.78rem;padding:0.35rem 0.6rem;">
-            <button class="btn btn-outline btn-sm" onclick="agregarColorPersonaje(${i},'${per.id}')">+ Color</button>
-          </div>
-        </div>
-        <div id="paleta-per-${per.id}" class="palette-row" style="min-height:40px;">
-          ${(per.paleta||[]).map((c,ci)=>`
-            <div class="color-chip">
-              <div style="position:relative">
-                <div class="color-swatch" style="background:${c.hex}" title="${c.nombre}"></div>
-                <button class="color-delete" onclick="eliminarColorPersonaje(${i},${ci},'${per.id}')" title="Eliminar">✕</button>
-              </div>
-              <div class="color-label">${c.nombre}</div>
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <!-- BLOQUE 4: Ideas base -->
-      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem;">
-        <label style="margin-top:0;">Ideas base <span style="font-weight:300;font-size:0.58rem;color:#888;text-transform:none;letter-spacing:0.04em;font-style:italic">— universo personal, no van al prompt</span></label>
-        <textarea placeholder="ej. fotografías de Semana Santa, textura de adobe mojado..." onchange="updatePersonaje(${i},'ideasBase',this.value)">${per.ideasBase||''}</textarea>
-      </div>
-
-    </div>`;
-  });
-}
-
-function updatePersonaje(i, campo, valor) {
-  const p = proyectoActual();
-  if (p) { p.personajes[i][campo] = valor; guardarEnNavegador(); }
-}
-
-function agregarColorPersonaje(i, perId) {
-  const p = proyectoActual();
-  if (!p) return;
-  const hex = document.getElementById("color-pick-" + perId).value;
-  const nombre = document.getElementById("color-name-" + perId).value.trim() || hex;
-  if (!p.personajes[i].paleta) p.personajes[i].paleta = [];
-  p.personajes[i].paleta.push({ hex, nombre });
-  document.getElementById("color-name-" + perId).value = "";
-  guardarEnNavegador();
-  renderPersonajes();
-}
-
-function eliminarColorPersonaje(i, ci, perId) {
-  const p = proyectoActual();
-  if (!p) return;
-  p.personajes[i].paleta.splice(ci, 1);
-  guardarEnNavegador();
-  renderPersonajes();
-}
-
-function eliminarPersonaje(i) {
-  const p = proyectoActual();
-  if (!p) return;
-  if (confirm('¿Eliminar este personaje?')) {
-    p.personajes.splice(i, 1);
-    renderPersonajes();
-    guardarEnNavegador();
-  }
-}
-
-// =====================
-// BOCETOS / IMÁGENES
-// =====================
-function subirBocetos(personajeIndex, input) {
-  const p = proyectoActual();
-  if (!p) return;
-  const per = p.personajes[personajeIndex];
-  if (!per.bocetos) per.bocetos = [];
-
-  const files = Array.from(input.files);
-  let procesados = 0;
-
-  files.forEach(file => {
-    // Advertir si la imagen es muy grande (> 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      notif('Imagen grande — puede tardar en guardarse');
-    }
-    const reader = new FileReader();
-    reader.onload = e => {
-      per.bocetos.push({ data: e.target.result, nota: '', nombre: file.name });
-      procesados++;
-      if (procesados === files.length) {
-        guardarEnNavegador();
-        renderPersonajes();
-        notif(`${files.length > 1 ? files.length + ' imágenes' : 'Imagen'} guardada ✓`);
-      }
+  <script>
+    let state = {
+      obra: { titulo: 'Cenicienta', autor: 'Prokofiev', cia: '', temp: '2026', dir: '' },
+      concept: { epoca: '', ideas: '', estilo: '' },
+      personajes: [],
+      mood: []
     };
-    reader.readAsDataURL(file);
-  });
 
-  // Limpiar input para permitir volver a subir el mismo archivo
-  input.value = '';
-}
-
-function eliminarBoceto(personajeIndex, boletoIndex) {
-  const p = proyectoActual();
-  if (!p) return;
-  const per = p.personajes[personajeIndex];
-  if (!per.bocetos) return;
-  per.bocetos.splice(boletoIndex, 1);
-  guardarEnNavegador();
-  renderPersonajes();
-  notif('Imagen eliminada');
-}
-
-// =====================
-// LIGHTBOX
-// =====================
-function abrirLightbox(personajeId, boletoIndex) {
-  const p = proyectoActual();
-  if (!p) return;
-  const per = p.personajes.find(x => x.id == personajeId);
-  if (!per || !per.bocetos || !per.bocetos[boletoIndex]) return;
-  const b = per.bocetos[boletoIndex];
-  document.getElementById('lightbox-img').src = b.data;
-  const notaEl = document.getElementById('lightbox-nota');
-  notaEl.textContent = b.nota || b.nombre || '';
-  notaEl.style.display = (b.nota || b.nombre) ? 'block' : 'none';
-  document.getElementById('lightbox').classList.add('open');
-}
-
-function cerrarLightbox(e) {
-  if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
-    document.getElementById('lightbox').classList.remove('open');
-  }
-}
-
-// =====================
-// PALETA
-// =====================
-function agregarColor() {
-  const p = proyectoActual();
-  if (!p) return;
-  const color = document.getElementById('nuevo-color').value;
-  const nombre = v('nuevo-color-nombre') || color;
-  p.paleta.colores.push({ hex: color, nombre });
-  setV('nuevo-color-nombre', '');
-  renderPaleta();
-  guardarEnNavegador();
-}
-
-function renderPaleta() {
-  const p = proyectoActual();
-  if (!p) return;
-  const cont = document.getElementById('paleta-chips');
-  cont.innerHTML = '';
-  p.paleta.colores.forEach((c, i) => {
-    cont.innerHTML += `
-    <div class="color-chip">
-      <div style="position:relative">
-        <div class="color-swatch" style="background:${c.hex}" title="${c.nombre}"></div>
-        <button class="color-delete" onclick="eliminarColor(${i})" title="Eliminar">✕</button>
-      </div>
-      <div class="color-label">${c.nombre}</div>
-    </div>`;
-  });
-}
-
-function eliminarColor(i) {
-  const p = proyectoActual();
-  if (!p) return;
-  p.paleta.colores.splice(i, 1);
-  renderPaleta();
-  guardarEnNavegador();
-}
-
-function guardarPaleta() {
-  guardarEnNavegador();
-}
-
-function cargarPaleta() {
-  // paleta general eliminada, función mantenida por compatibilidad
-}
-
-// =====================
-// MOODBOARD
-// =====================
-function agregarMoodboard() {
-  const p = proyectoActual();
-  if (!p) return;
-  const url = v('mb-url'), nota = v('mb-nota');
-  if (!url) return;
-  p.moodboard.items.push({ url, nota });
-  setV('mb-url', ''); setV('mb-nota', '');
-  renderMoodboard();
-  guardarEnNavegador();
-}
-
-function renderMoodboard() {
-  const p = proyectoActual();
-  if (!p) return;
-  const grid = document.getElementById('moodboard-grid');
-  grid.innerHTML = '';
-  p.moodboard.items.forEach((item, i) => {
-    grid.innerHTML += `
-    <div>
-      <div class="moodboard-item">
-        <img src="${item.url}" onerror="this.parentElement.innerHTML='<span>Sin imagen</span>'" alt="${item.nota}">
-        <button onclick="eliminarMoodboard(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.5);color:white;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:10px">✕</button>
-      </div>
-      <div class="moodboard-note">${item.nota}</div>
-    </div>`;
-  });
-}
-
-function eliminarMoodboard(i) {
-  const p = proyectoActual();
-  if (!p) return;
-  p.moodboard.items.splice(i, 1);
-  renderMoodboard();
-  guardarEnNavegador();
-}
-
-function agregarTag() {
-  const p = proyectoActual();
-  if (!p) return;
-  const tag = v('mb-tag').trim();
-  if (!tag) return;
-  p.moodboard.tags.push(tag);
-  setV('mb-tag', '');
-  renderTags();
-  guardarEnNavegador();
-}
-
-function renderTags() {
-  const p = proyectoActual();
-  if (!p) return;
-  const cont = document.getElementById('tags-container');
-  cont.innerHTML = p.moodboard.tags.map((t, i) =>
-    `<span class="tag" onclick="eliminarTag(${i})" style="cursor:pointer" title="Eliminar">${t} ✕</span>`
-  ).join('');
-}
-
-function eliminarTag(i) {
-  const p = proyectoActual();
-  if (!p) return;
-  p.moodboard.tags.splice(i, 1);
-  renderTags();
-  guardarEnNavegador();
-}
-
-// =====================
-// API KEY
-// =====================
-const API_KEY_STORAGE = 'trama_api_key';
-
-function guardarApiKey() {
-  const key = document.getElementById('api-key-input').value.trim();
-  if (!key) return;
-  localStorage.setItem(API_KEY_STORAGE, key);
-  document.getElementById('api-key-status').textContent = '✓ Guardada';
-  document.getElementById('api-key-status').style.color = '#2a7a2a';
-  notif('Clave API guardada ✓');
-}
-
-function cargarApiKey() {
-  const key = localStorage.getItem(API_KEY_STORAGE) || '';
-  const input = document.getElementById('api-key-input');
-  if (input && key) {
-    input.value = key;
-    document.getElementById('api-key-status').textContent = '✓ Guardada';
-    document.getElementById('api-key-status').style.color = '#2a7a2a';
-  }
-}
-
-function toggleApiKeyBtn() {
-  const val = document.getElementById('api-key-input').value.trim();
-  document.getElementById('api-key-save-btn').disabled = !val;
-  if (val) {
-    document.getElementById('api-key-status').textContent = '';
-  }
-}
-
-function getApiKey() {
-  const fromField = document.getElementById('api-key-input')?.value.trim();
-  const fromStorage = localStorage.getItem(API_KEY_STORAGE) || '';
-  return fromField || fromStorage;
-}
-
-// =====================
-// PROMPTS CON IA
-// =====================
-function actualizarSelectPersonajes() {
-  const p = proyectoActual();
-  if (!p) return;
-  const sel = document.getElementById('prompt-personaje');
-  const current = sel.value;
-  sel.innerHTML = '<option value="">— Selecciona un personaje —</option>';
-  p.personajes.forEach(per => {
-    sel.innerHTML += `<option value="${per.id}">${per.nombre}${per.rol ? ' — ' + per.rol : ''}</option>`;
-  });
-  sel.value = current;
-}
-
-async function generarPrompt() {
-  const p = proyectoActual();
-  if (!p) return;
-  const pid = document.getElementById('prompt-personaje').value;
-  const tipo = document.getElementById('prompt-tipo').value;
-  const estiloBoceto = document.getElementById('prompt-estilo-boceto').value;
-  const tecnica = document.getElementById('prompt-tecnica').value;
-  const estilo = document.getElementById('prompt-estilo').value;
-  const detalles = v('prompt-detalles');
-  const idioma = document.getElementById('prompt-idioma').value;
-
-  if (!pid) { notif('Selecciona un personaje primero'); return; }
-  const apiKey = getApiKey();
-  if (!apiKey) { notif('Ingresa tu clave API primero'); document.getElementById('api-key-input').focus(); return; }
-  const per = p.personajes.find(x => x.id == pid);
-  if (!per) return;
-
-  const paletaPersonaje = (per.paleta || []).length
-    ? `Paleta de colores: ${per.paleta.map(c => c.nombre + ' (' + c.hex + ')').join(', ')}`
-    : '';
-
-  const personajeInfo = [
-    `Personaje: ${per.nombre}`,
-    per.edad ? `Edad: ${per.edad}` : '',
-    per.sexo ? `Sexo: ${per.sexo}` : '',
-    per.etnia ? `Etnia: ${per.etnia}` : '',
-    per.estrato ? `Estrato social: ${per.estrato}` : '',
-    per.contextura ? `Contextura: ${per.contextura}` : '',
-    per.silueta ? `Silueta base: ${per.silueta}` : '',
-    per.materiales ? `Materiales: ${per.materiales}` : '',
-    per.accesorios ? `Accesorios: ${per.accesorios}` : '',
-    paletaPersonaje,
-    per.inspiraciones ? `Inspiraciones visuales: ${per.inspiraciones}` : '',
-  ].filter(Boolean).join('\n');
-
-  const systemPrompt = idioma === 'en'
-    ? `You are an expert prompt engineer specialized in theatrical costume design for AI image generators. Generate a highly specific image prompt for a costume illustration. Focus exclusively on: garment construction, fabric textures, color palette, theatrical silhouette, accessories and headpiece. Illustration style: ${estiloBoceto}, technique: ${tecnica}. Write ONLY the prompt, no explanations. Optimized for Midjourney syntax.`
-    : `Eres experto en prompts para diseño de vestuario teatral para IAs de imagen. Genera un prompt específico para una ilustración de vestuario escénico. Enfócate exclusivamente en: construcción del vestuario, texturas de tela, paleta de color, silueta teatral, accesorios y tocado. Estilo de ilustración: ${estiloBoceto}, técnica: ${tecnica}. Escribe SOLO el prompt, sin explicaciones.`;
-
-  const userMessage = idioma === 'en'
-    ? `Create a costume illustration prompt:\nIllustration type: ${tipo}\nArtistic style: ${estilo}\n\n${personajeInfo}\n${detalles ? 'Extra details: ' + detalles : ''}`
-    : `Crea un prompt de ilustración de vestuario:\nTipo: ${tipo}\nEstilo artístico: ${estilo}\n\n${personajeInfo}\n${detalles ? 'Detalles extra: ' + detalles : ''}`;
-
-  document.getElementById('ai-loading').classList.add('visible');
-  document.getElementById('prompt-resultado').innerHTML = '<span style="color:#aaa;font-style:italic">Generando...</span>';
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': getApiKey(), 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, system: systemPrompt, messages: [{ role: 'user', content: userMessage }] })
-    });
-    const data = await response.json();
-    if (!response.ok || data.error) {
-      const msg = data.error?.message || `Error ${response.status}`;
-      document.getElementById('prompt-resultado').innerHTML = `<span style="color:#c00">Error API: ${msg}</span>`;
-      return;
+    function switchTab(id, btn) {
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('sec-' + id).classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if(id === 'ia') {
+        updateIASelect();
+        updateZoomTargets();
+      }
     }
-    const texto = data.content.map(i => i.text || '').join('');
-    document.getElementById('prompt-resultado').innerHTML = `<button class="copy-btn" onclick="copiarPrompt()">Copiar</button>${texto}`;
-    const per = pid ? p.personajes.find(x => x.id == pid) : null;
-    p.prompts.unshift({ id: Date.now(), personaje: per ? per.nombre : 'Sin personaje', texto, fecha: new Date().toLocaleDateString('es-ES') });
-    renderPromptsGuardados();
-    notif('Prompt generado ✓');
-  } catch (err) {
-    document.getElementById('prompt-resultado').innerHTML = `<span style="color:#c00">Error: ${err.message || err}</span>`;
-    console.error('Error API:', err);
-  } finally {
-    document.getElementById('ai-loading').classList.remove('visible');
-  }
-}
 
-function renderPromptsGuardados() {
-  const p = proyectoActual();
-  const cont = document.getElementById('prompts-guardados');
-  if (!p || !p.prompts.length) {
-    cont.innerHTML = '<p style="font-size:0.78rem;color:var(--grey-2)">Los prompts generados aparecerán aquí</p>';
-    return;
-  }
-  cont.innerHTML = p.prompts.slice(0, 8).map((pr, i) => `
-    <div style="border-bottom:1px solid var(--border);padding:0.6rem 0;cursor:pointer" onclick="mostrarPrompt(${i})">
-      <div style="font-size:0.75rem;font-weight:500;color:#000">${pr.personaje}</div>
-      <div style="font-size:0.7rem;color:var(--grey-2)">${pr.fecha} · ${pr.texto.substring(0, 60)}...</div>
-    </div>`).join('');
-}
+    /* --- GESTIÓN PERSONAJES --- */
+    function addPersonaje() {
+      const p = {
+        id: Date.now(),
+        nombre: 'NUEVO PERSONAJE',
+        edad: '', sexo: '', etnia: '', estrato: '', contextura: '',
+        silueta: '', materiales: '', accesorios: '', ideas: '',
+        paleta: ['#000000']
+      };
+      state.personajes.push(p);
+      renderPersonajes();
+    }
 
-function mostrarPrompt(i) {
-  const p = proyectoActual();
-  if (!p) return;
-  document.getElementById('prompt-resultado').innerHTML = `<button class="copy-btn" onclick="copiarPrompt()">Copiar</button>${p.prompts[i].texto}`;
-}
+    function renderPersonajes() {
+      const cont = document.getElementById('personajes-cont');
+      cont.innerHTML = state.personajes.map((p, i) => `
+        <div class="deco-card">
+          <div class="card-title" contenteditable="true" onblur="updatePer(${i}, 'nombre', this.innerText)">${p.nombre}</div>
+          
+          <div class="grid-3">
+            <div class="input-group"><label>EDAD</label><input type="text" value="${p.edad}" onchange="updatePer(${i}, 'edad', this.value)"></div>
+            <div class="input-group"><label>SEXO</label><input type="text" value="${p.sexo}" onchange="updatePer(${i}, 'sexo', this.value)"></div>
+            <div class="input-group"><label>ETNIA</label><input type="text" value="${p.etnia}" onchange="updatePer(${i}, 'etnia', this.value)"></div>
+            <div class="input-group"><label>ESTRATO SOCIAL</label><input type="text" value="${p.estrato}" onchange="updatePer(${i}, 'estrato', this.value)"></div>
+            <div class="input-group"><label>CONTEXTURA</label><input type="text" value="${p.contextura}" onchange="updatePer(${i}, 'contextura', this.value)"></div>
+            <div class="input-group"><label>SILUETA BASE</label><input type="text" value="${p.silueta}" onchange="updatePer(${i}, 'silueta', this.value)"></div>
+          </div>
 
-function copiarPrompt() {
-  const texto = document.getElementById('prompt-resultado').innerText.replace('Copiar', '').trim();
-  navigator.clipboard.writeText(texto).then(() => notif('Prompt copiado ✓'));
-}
+          <div class="input-group">
+            <label>PALETA CROMÁTICA</label>
+            <div class="color-palette">
+              ${p.paleta.map((c, ci) => `
+                <div class="color-swatch-container">
+                  <div class="color-swatch" style="background:${c}">
+                    <input type="color" value="${c}" onchange="updateColor(${i}, ${ci}, this.value)">
+                  </div>
+                  <button class="btn-remove-color" onclick="removeColor(${i}, ${ci})">×</button>
+                </div>
+              `).join('')}
+              <button class="btn-outline btn" style="width:42px; height:42px; border-radius:50%;" onclick="addColor(${i})">+</button>
+            </div>
+          </div>
 
-// =====================
-// EXPORT / IMPORT
-// =====================
-function exportarTodo() {
-  guardarEnNavegador();
-  const json = JSON.stringify(appState, null, 2);
-  document.getElementById('export-area').textContent = json;
-  document.getElementById('export-modal').style.display = 'flex';
-}
+          <div class="grid-2">
+            <div class="input-group"><label>MATERIALES Y TEXTURAS</label><textarea onchange="updatePer(${i}, 'materiales', this.value)">${p.materiales}</textarea></div>
+            <div class="input-group"><label>ACCESORIOS ESPECIALES (JOYAS, TOCADOS, ZAPATOS)</label><textarea onchange="updatePer(${i}, 'accesorios', this.value)">${p.accesorios}</textarea></div>
+          </div>
+          
+          <div class="input-group"><label>NOTAS DRAMATÚRGICAS</label><textarea onchange="updatePer(${i}, 'ideas', this.value)">${p.ideas}</textarea></div>
+          
+          <button class="btn-outline btn" onclick="deletePer(${i})" style="color:red; border-color:red; font-size: 0.6rem;">ELIMINAR PERSONAJE</button>
+        </div>
+      `).join('');
+    }
 
-function exportarProyecto() {
-  guardarTodo();
-  const json = JSON.stringify(appState, null, 2);
-  document.getElementById('export-area').textContent = json;
-  document.getElementById('export-modal').style.display = 'flex';
-}
+    function updatePer(i, campo, val) { state.personajes[i][campo] = val; }
+    function deletePer(i) { state.personajes.splice(i, 1); renderPersonajes(); }
+    function updateColor(pIdx, cIdx, val) { state.personajes[pIdx].paleta[cIdx] = val; renderPersonajes(); }
+    function addColor(pIdx) { state.personajes[pIdx].paleta.push('#ffffff'); renderPersonajes(); }
+    function removeColor(pIdx, cIdx) { if(state.personajes[pIdx].paleta.length > 1) { state.personajes[pIdx].paleta.splice(cIdx, 1); renderPersonajes(); } }
 
-function cerrarExport() { document.getElementById('export-modal').style.display = 'none'; }
+    /* --- GESTIÓN MOODBOARD --- */
+    function addMood() {
+      const url = document.getElementById('m-url').value;
+      const nota = document.getElementById('m-nota').value;
+      if(!url) return;
+      state.mood.push({ url, nota });
+      document.getElementById('m-url').value = '';
+      document.getElementById('m-nota').value = '';
+      renderMood();
+    }
 
-function copiarExport() {
-  navigator.clipboard.writeText(document.getElementById('export-area').textContent).then(() => notif('JSON copiado ✓'));
-}
+    function renderMood() {
+      const grid = document.getElementById('mood-grid');
+      grid.innerHTML = state.mood.map((m, i) => `
+        <div class="mood-item">
+          <img src="${m.url}">
+          <button class="remove" onclick="removeMood(${i})">X</button>
+          <div style="position:absolute; bottom:0; background:rgba(0,0,0,0.8); color:#fff; width:100%; padding:5px; font-size:10px;">${m.nota}</div>
+        </div>
+      `).join('');
+    }
+    function removeMood(i) { state.mood.splice(i, 1); renderMood(); }
 
-function descargarExport() {
-  const txt = document.getElementById('export-area').textContent;
-  const blob = new Blob([txt], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `trama-proyectos.json`;
-  a.click();
-  notif('Archivo descargado ✓');
-}
+    /* --- LÓGICA DE BOCETO Y ZOOM --- */
+    function updateIASelect() {
+      const sel = document.getElementById('ia-per-select');
+      sel.innerHTML = state.personajes.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+    }
 
-function importarProyecto(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      // Compatibilidad con formato antiguo (proyecto único)
-      if (data.proyecto && !data.proyectos) {
-        const id = 'p_' + Date.now();
-        appState.proyectos.push({ id, datos: data.proyecto, personajes: data.personajes || [], paleta: data.paleta || { colores:[], notas:'', notasLuz:'' }, moodboard: data.moodboard || { items:[], tags:[] }, prompts: data.prompts || [] });
+    function toggleZoomFields() {
+        const val = document.getElementById('ia-zoom-enable').value;
+        document.getElementById('zoom-details').style.display = (val === 'si') ? 'block' : 'none';
+        updateZoomTargets();
+    }
+
+    function updateZoomTargets() {
+        const perId = document.getElementById('ia-per-select').value;
+        const targetSel = document.getElementById('ia-zoom-target');
+        const per = state.personajes.find(p => p.id == perId);
+        
+        if (!per) return;
+
+        // Limpiamos y añadimos opciones basadas en los accesorios guardados
+        // Intentamos separar por comas si el usuario escribió varios
+        const accs = per.accesorios.split(/[,.;]/).map(s => s.trim()).filter(s => s.length > 0);
+        
+        if (accs.length === 0) {
+            targetSel.innerHTML = `<option value="ALL ACCESORIES">SIN ACCESORIOS ESPECÍFICOS GUARDADOS</option>`;
+        } else {
+            targetSel.innerHTML = accs.map(a => `<option value="${a}">${a.toUpperCase()}</option>`).join('');
+        }
+    }
+
+    function runIA() {
+      const perId = document.getElementById('ia-per-select').value;
+      const per = state.personajes.find(p => p.id == perId);
+      if(!per) return notificar('NO HAY PERSONAJE');
+
+      const tipoBoceto = document.getElementById('ia-tipo-boceto').value;
+      const tecnica = document.getElementById('ia-tecnica').value;
+      const extra = document.getElementById('ia-extra').value;
+      const zoomHabilitado = document.getElementById('ia-zoom-enable').value === 'si';
+      const zoomTarget = document.getElementById('ia-zoom-target').value;
+
+      let prompt = "";
+      
+      if(zoomHabilitado) {
+        prompt += `EXTREME CLOSE-UP ZOOM MACRO SHOT. Focusing exclusively on the detail of: ${zoomTarget}.\n`;
+        prompt += `THE OBJECT IS PART OF A COSTUME FOR ${per.nombre}.\n`;
       } else {
-        appState = data;
+        prompt += `${tipoBoceto} illustration.\n`;
       }
-      mostrarHome();
-      notif('Proyecto importado ✓');
-    } catch { notif('Error al importar el archivo'); }
-  };
-  reader.readAsText(file);
-}
 
-// =====================
-// UTILS
-// =====================
-function v(id) { return document.getElementById(id)?.value || ''; }
-function setV(id, val) { const el = document.getElementById(id); if (el) el.value = val || ''; }
-function notif(msg) {
-  const n = document.getElementById('notif');
-  n.textContent = msg;
-  n.classList.add('show');
-  setTimeout(() => n.classList.remove('show'), 2500);
-}
+      prompt += `STYLE: Theatrical costume design in ${tecnica}.\n\n`;
+      prompt += `CHARACTER CONTEXT: ${per.nombre} (${per.estrato} class, ${per.contextura} build).\n`;
+      prompt += `PALETTE: ${per.paleta.join(', ')}.\n`;
+      prompt += `SPECIFIC MATERIALS: ${per.materiales}.\n`;
+      
+      if(zoomHabilitado) {
+        prompt += `OBJECT DESCRIPTION: Focus on the intricate details of ${zoomTarget}. Highlight textures and craftmanship.\n`;
+      } else {
+        prompt += `OVERALL ACCESSORIES: ${per.accesorios}.\n`;
+      }
 
-// =====================
-// GUARDADO AUTOMÁTICO (localStorage)
-// =====================
-const STORAGE_KEY = 'trama_vestuario_v3';
+      prompt += `PRODUCTION: "${state.obra.titulo}" (${state.obra.autor}). Overall style: ${document.getElementById('m-estilo').value || 'Dramatic'}.\n`;
+      
+      if(extra) prompt += `DIRECTOR NOTES: ${extra}.\n`;
+      
+      prompt += `\nTechnical requirements: White background, sharp edges, professional costume rendering, architectural jewelry/accessory detail.`;
 
-function guardarEnNavegador() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-  } catch(e) {
-    console.warn('No se pudo guardar en el navegador:', e);
-  }
-}
-
-function cargarDesdeNavegador() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) {
-      appState = JSON.parse(data);
-      return true;
+      document.getElementById('ia-result').innerText = prompt;
+      notificar('PROMPT DE BOCETO GENERADO');
     }
-  } catch(e) {
-    console.warn('No se pudo leer el guardado:', e);
-  }
-  return false;
-}
 
-// =====================
-// INIT
-// =====================
-window.onload = () => {
-  // Intentar cargar desde el navegador primero
-  const hayDatosGuardados = cargarDesdeNavegador();
+    function copyPrompt() {
+      const text = document.getElementById('ia-result').innerText;
+      const el = document.createElement('textarea');
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      notificar('COPIADO');
+    }
 
-  if (!hayDatosGuardados) {
-    // Cargar datos reales del proyecto
-    appState.proyectos = [
-      {
-        "id": "p_cenicienta",
-        "datos": {
-          "obra": "Cenicienta",
-          "compositor": "Sergei Prokofiev",
-          "compania": "",
-          "temporada": "2026",
-          "genero": "Ballet clásico romántico",
-          "estilo": "Clásico con toques románticos",
-          "materiales": "Tul, lycra satinada, pedrería, flores de tela, alas traslúcidas",
-          "notas": "Magia, esperanza, ilusión, empatía"
-        },
-        "personajes": [
-          { "id": 1, "nombre": "Hada Madrina", "rol": "Figura mágica.", "descripcion": "Es bondadosa y mágica. Le devuelve la esperanza a Cenicienta. Es la encargada de convocar a todos los personajes mágicos de la obra.", "silueta": "Tutú romántico clásico bajo la rodilla", "colores": "Violeta profundo tornasolado, plata, aquamarina", "materiales": "Bodice de lycra satinada violeta con pedrería tornasol y aquamarina, falda de tul violeta y toques tornasolados. Bordados hilo plateado en los bordes de la falda", "tocado": "Tiara en violeta y plata, elegante estilo princesa", "notas": "Alas traslúcidas color violeta con ligero efecto tornasol. Forma angulosa en la punta", "bocetos": [] },
-          { "id": 2, "nombre": "Hada de Primavera", "rol": "Hada de estación", "descripcion": "La más etérea. REFERENCIA DE ÉXITO del sistema. Degradado sutil de lavanda a verde salvia.", "silueta": "Tutú romántico", "colores": "Lavanda suave, rosa pálido, verde salvia, blanco", "materiales": "Tul degradado lavanda a verde salvia a blanco. Bordados dorados y perlados. Pedrería lila y rosada.", "tocado": "Flores pequeñas integradas al peinado. Anémonas y glicinas. Sutil, no corona.", "notas": "FAVORITA. Degradado sutil es la clave. Alas redondeadas traslúcidas.", "bocetos": [] },
-          { "id": 3, "nombre": "Hada de Verano", "rol": "Hada de estación", "descripcion": "La más exuberante. Abundancia y plenitud. Necesita más coral en la parte superior.", "silueta": "Tutú romántico", "colores": "Coral intenso en bodice, degradado a naranja, dorado en falda", "materiales": "Tul coral a dorado. Bodice lycra coral con bordados dorados. Pedrería ámbar.", "tocado": "Flores de verano integradas al peinado. Tonos cálidos.", "notas": "AJUSTE: más coral arriba, degradado notorio hacia dorado abajo.", "bocetos": [] },
-          { "id": 4, "nombre": "Hada de Otoño", "rol": "Hada de estación", "descripcion": "La más dramática. Transformación y melancolía. Conexión con el viaje de Cenicienta.", "silueta": "Tutú romántico", "colores": "Ámbar dorado en bodice, terracota y borgoña en falda", "materiales": "Tul ámbar a terracota a borgoña. Bordados hojas de roble. Pedrería granate y cobre.", "tocado": "Ramas finas, hojas y bayas integradas al peinado. Sutil.", "notas": "AJUSTE: más terracota y borgoña en la falda.", "bocetos": [] },
-          { "id": 5, "nombre": "Hada de Invierno", "rol": "Hada de estación", "descripcion": "Imponente y austera. El invierno como fuerza y vacío. Inspiración: Torres del Paine. NO copos de nieve.", "silueta": "Tutú romántico", "colores": "Celeste profundo azul pizarra, gris azulado. Cero tonos cálidos.", "materiales": "Tul azul pizarra a celeste frío a blanco frío. Bordados hilo plateado frío. Pedrería zafiro y plata.", "tocado": "Sobrio y austero. Formas del viento y la roca, no copos de nieve. Pedrería azul y plata.", "notas": "Evitar: cristales literales, copos, corona tipo Cascanueces. Buscar: austeridad patagónica.", "bocetos": [] }
-        ],
-        "paleta": {
-          "colores": [
-            {"hex":"#7c52a0","nombre":"Violeta hada madrina"},{"hex":"#d4b8d8","nombre":"Lavanda primavera"},
-            {"hex":"#d4a030","nombre":"Dorado verano"},{"hex":"#c87820","nombre":"Ámbar otoño"},
-            {"hex":"#8a2018","nombre":"Borgoña otoño"},{"hex":"#3a6898","nombre":"Azul pizarra invierno"},
-            {"hex":"#c0d8f0","nombre":"Celeste frío invierno"},{"hex":"#f5f5f5","nombre":"Blanco tul base"},
-            {"hex":"#ff5e5e","nombre":"Coral verano"},{"hex":"#9bd15e","nombre":"Verde primavera"},
-            {"hex":"#617d1f","nombre":"Verde otoño"},{"hex":"#d9e2ff","nombre":"Perlado hada madrina"},
-            {"hex":"#ffe342","nombre":"Amarillo verano"},{"hex":"#f2d129","nombre":"Amarillo otoño"},
-            {"hex":"#e376cf","nombre":"Rosa primavera"},{"hex":"#d2e660","nombre":"Verde verano"},
-            {"hex":"#00b081","nombre":"Verde invierno"}
-          ],
-          "notas": "Sistema unificado: 5 figuras comparten tutú romántico. El color es el único lenguaje de diferenciación.\n\n",
-          "notasLuz": "La iluminación va cambiando a medida de que se presenta cada hada. Intercalando entre iluminación cálida y fría"
-        },
-        "moodboard": {
-          "items": [],
-          "tags": ["etéreo","romántico","degradado sutil","tutú romántico","Torres del Paine","alas traslúcidas","sistema de color","familia visual","pedrería","tocado integrado"]
-        },
-        "prompts": []
-      },
-      {
-        "id": "p_1776783963049",
-        "datos": {
-          "obra": "Carmen",
-          "compositor": "Georges Bizet",
-          "compania": "",
-          "temporada": "2025",
-          "genero": "Ópera clásica dramática",
-          "estilo": "Clásico con toques dramáticos",
-          "materiales": "",
-          "notas": "Pasión, rebeldía, celos, independencia"
-        },
-        "personajes": [],
-        "paleta": {"colores":[],"notas":"","notasLuz":""},
-        "moodboard": {"items":[],"tags":[]},
-        "prompts": []
+    function notificar(m) {
+      const t = document.getElementById('toast');
+      t.innerText = m; t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    function saveAll() {
+      state.obra.titulo = document.getElementById('g-obra').value;
+      state.concept.epoca = document.getElementById('m-epoca').value;
+      state.concept.estilo = document.getElementById('m-estilo').value;
+      localStorage.setItem('trama_v5_data', JSON.stringify(state));
+      notificar('GUARDADO');
+    }
+
+    window.onload = () => {
+      const saved = localStorage.getItem('trama_v5_data');
+      if(saved) {
+        state = JSON.parse(saved);
+        document.getElementById('g-obra').value = state.obra.titulo;
+        document.getElementById('m-epoca').value = state.concept.epoca;
+        document.getElementById('m-estilo').value = state.concept.estilo;
       }
-    ];
-    appState.proyectoActualId = "p_cenicienta";
-    guardarEnNavegador();
-  } else {
-    // Migración: asegurar que personajes existentes tengan el campo bocetos
-    appState.proyectos.forEach(p => {
-      p.personajes.forEach(per => {
-        if (!per.bocetos) per.bocetos = [];
-        if (per.referencias === undefined) per.referencias = per.notas || '';
-        if (per.ideasBase === undefined) per.ideasBase = '';
-        if (!per.paleta) per.paleta = [];
-      });
-    });
-    guardarEnNavegador();
-  }
-
-  // Cargar API key al iniciar
-  const savedKey = localStorage.getItem('trama_api_key');
-  if (savedKey) {
-    const inp = document.getElementById('api-key-input');
-    if (inp) { inp.value = savedKey; }
-    const st = document.getElementById('api-key-status');
-    if (st) { st.textContent = '✓ Guardada'; st.style.color = '#2a7a2a'; }
-  }
-  mostrarHome();
-};
-</script>
+      renderPersonajes();
+      renderMood();
+    };
+  </script>
 </body>
 </html>
