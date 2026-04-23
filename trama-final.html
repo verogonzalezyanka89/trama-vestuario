@@ -705,7 +705,6 @@
   <nav class="tabs">
     <button class="active" onclick="showTab('proyecto', this)">Proyecto</button>
     <button onclick="showTab('personajes', this)">Personajes</button>
-    <button onclick="showTab('paleta', this)">Paleta</button>
     <button onclick="showTab('moodboard', this)">Moodboard</button>
     <button onclick="showTab('prompts', this)">Generador de Prompts</button>
   </nav>
@@ -775,34 +774,6 @@
     </div>
 
     <!-- TAB: PALETA -->
-    <div id="tab-paleta" class="tab-content">
-      <p class="section-title">Paleta de Color</p>
-      <p class="section-subtitle">El color como lenguaje visual</p>
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title">🎨 Paleta General de la Producción</div>
-          <p style="font-size:0.82rem;color:var(--grey-2);margin-bottom:1rem;">Define los colores que unificarán todo el vestuario</p>
-          <div id="paleta-chips" class="palette-row"></div>
-          <hr class="divider">
-          <div class="flex-row">
-            <input type="color" id="nuevo-color" value="#888888" style="width:48px;height:38px;border:1px solid var(--border);padding:2px;background:transparent;cursor:pointer;border-radius:1px;">
-            <input type="text" id="nuevo-color-nombre" placeholder="Nombre del color" style="flex:1">
-            <button class="btn btn-outline btn-sm" onclick="agregarColor()">Agregar</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">📝 Notas de Color</div>
-          <label>Concepto cromático de la producción</label>
-          <textarea id="notas-color" style="min-height:120px" placeholder="ej. Las hadas comparten silueta pero cada una tiene su paleta..."></textarea>
-          <label>Restricciones o condiciones de iluminación escénica</label>
-          <textarea id="notas-luz" placeholder="ej. El acto II tiene iluminación azul fría..."></textarea>
-        </div>
-      </div>
-      <div class="mt-1">
-        <button class="btn btn-primary" onclick="guardarPaleta()">Guardar paleta</button>
-      </div>
-    </div>
-
     <!-- TAB: MOODBOARD -->
     <div id="tab-moodboard" class="tab-content">
       <p class="section-title">Moodboard</p>
@@ -833,6 +804,17 @@
     <div id="tab-prompts" class="tab-content">
       <p class="section-title">Generador de Prompts</p>
       <p class="section-subtitle">Traduce tu diseño en instrucciones para IA de imagen</p>
+
+      <div class="card" style="margin-bottom:1.5rem;border-left:2px solid #000;">
+        <div class="card-title" style="margin-bottom:0.75rem;">🔑 Clave API de Anthropic</div>
+        <p style="font-size:0.78rem;color:var(--grey-2);margin-bottom:1rem;line-height:1.6;">Necesitas una clave API para generar prompts. Se guarda solo en tu navegador y nunca se comparte. Puedes obtenerla en <a href="https://console.anthropic.com" target="_blank" style="color:#000;text-decoration:underline;">console.anthropic.com</a></p>
+        <div class="flex-row">
+          <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-family:monospace;font-size:0.8rem;" oninput="toggleApiKeyBtn()">
+          <button class="btn btn-primary btn-sm" id="api-key-save-btn" onclick="guardarApiKey()" disabled>Guardar</button>
+          <span id="api-key-status" style="font-size:0.72rem;color:var(--grey-2);letter-spacing:0.05em;"></span>
+        </div>
+      </div>
+
       <div class="grid-2">
         <div class="card">
           <div class="card-title">⚙️ Configuración del prompt</div>
@@ -1037,7 +1019,7 @@ function showTab(name, btn) {
   document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'prompts') actualizarSelectPersonajes();
+  if (name === 'prompts') { actualizarSelectPersonajes(); cargarApiKey(); }
 }
 
 // =====================
@@ -1390,6 +1372,42 @@ function eliminarTag(i) {
 }
 
 // =====================
+// API KEY
+// =====================
+const API_KEY_STORAGE = 'trama_api_key';
+
+function guardarApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) return;
+  localStorage.setItem(API_KEY_STORAGE, key);
+  document.getElementById('api-key-status').textContent = '✓ Guardada';
+  document.getElementById('api-key-status').style.color = '#2a7a2a';
+  notif('Clave API guardada ✓');
+}
+
+function cargarApiKey() {
+  const key = localStorage.getItem(API_KEY_STORAGE) || '';
+  const input = document.getElementById('api-key-input');
+  if (input && key) {
+    input.value = key;
+    document.getElementById('api-key-status').textContent = '✓ Guardada';
+    document.getElementById('api-key-status').style.color = '#2a7a2a';
+  }
+}
+
+function toggleApiKeyBtn() {
+  const val = document.getElementById('api-key-input').value.trim();
+  document.getElementById('api-key-save-btn').disabled = !val;
+  if (val) {
+    document.getElementById('api-key-status').textContent = '';
+  }
+}
+
+function getApiKey() {
+  return localStorage.getItem(API_KEY_STORAGE) || document.getElementById('api-key-input')?.value.trim() || '';
+}
+
+// =====================
 // PROMPTS CON IA
 // =====================
 function actualizarSelectPersonajes() {
@@ -1416,6 +1434,8 @@ async function generarPrompt() {
   const idioma = document.getElementById('prompt-idioma').value;
 
   if (!pid) { notif('Selecciona un personaje primero'); return; }
+  const apiKey = getApiKey();
+  if (!apiKey) { notif('Ingresa tu clave API primero'); document.getElementById('api-key-input').focus(); return; }
   const per = p.personajes.find(x => x.id == pid);
   if (!per) return;
 
@@ -1448,7 +1468,7 @@ async function generarPrompt() {
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': getApiKey(), 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: systemPrompt, messages: [{ role: 'user', content: userMessage }] })
     });
     const data = await response.json();
