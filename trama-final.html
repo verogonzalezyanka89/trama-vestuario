@@ -1050,7 +1050,6 @@ function cargarProyecto() {
 
 function guardarTodo() {
   guardarProyecto();
-  guardarPaleta();
   guardarEnNavegador();
   notif('Guardado ✓');
 }
@@ -1314,20 +1313,11 @@ function eliminarColor(i) {
 }
 
 function guardarPaleta() {
-  const p = proyectoActual();
-  if (!p) return;
-  p.paleta.notas = v('notas-color');
-  p.paleta.notasLuz = v('notas-luz');
   guardarEnNavegador();
-  notif('Paleta guardada ✓');
 }
 
 function cargarPaleta() {
-  const p = proyectoActual();
-  if (!p) return;
-  setV('notas-color', p.paleta.notas);
-  setV('notas-luz', p.paleta.notasLuz);
-  renderPaleta();
+  // paleta general eliminada, función mantenida por compatibilidad
 }
 
 // =====================
@@ -1430,7 +1420,9 @@ function toggleApiKeyBtn() {
 }
 
 function getApiKey() {
-  return localStorage.getItem(API_KEY_STORAGE) || document.getElementById('api-key-input')?.value.trim() || '';
+  const fromField = document.getElementById('api-key-input')?.value.trim();
+  const fromStorage = localStorage.getItem(API_KEY_STORAGE) || '';
+  return fromField || fromStorage;
 }
 
 // =====================
@@ -1720,6 +1712,14 @@ window.onload = () => {
     guardarEnNavegador();
   }
 
+  // Cargar API key al iniciar
+  const savedKey = localStorage.getItem('trama_api_key');
+  if (savedKey) {
+    const inp = document.getElementById('api-key-input');
+    if (inp) { inp.value = savedKey; }
+    const st = document.getElementById('api-key-status');
+    if (st) { st.textContent = '✓ Guardada'; st.style.color = '#2a7a2a'; }
+  }
   mostrarHome();
 };
 </script>
