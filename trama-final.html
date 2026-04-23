@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -367,7 +367,10 @@
       const cont = document.getElementById('personajes-cont');
       cont.innerHTML = state.personajes.map((p, i) => `
         <div class="deco-card">
-          <div class="card-title" contenteditable="true" onblur="updatePer(${i}, 'nombre', this.innerText)">${p.nombre}</div>
+          <div class="input-group" style="margin-bottom: 2rem;">
+            <label>NOMBRE DEL PERSONAJE</label>
+            <input type="text" value="${p.nombre}" oninput="updatePer(${i}, 'nombre', this.value)" style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; border: 3px solid var(--black); text-transform: uppercase; padding: 1rem;">
+          </div>
           
           <div class="grid-3">
             <div class="input-group"><label>EDAD</label><input type="text" value="${p.edad}" onchange="updatePer(${i}, 'edad', this.value)"></div>
