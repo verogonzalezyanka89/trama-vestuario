@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -833,17 +833,6 @@
     <div id="tab-prompts" class="tab-content">
       <p class="section-title">Generador de Prompts</p>
       <p class="section-subtitle">Traduce tu diseño en instrucciones para IA de imagen</p>
-
-      <!-- API KEY -->
-      <div class="card" style="border-left:2px solid #000;margin-bottom:1.5rem;">
-        <div class="card-title" style="margin-bottom:0.5rem">🔑 Clave de acceso (API Key)</div>
-        <p style="font-size:0.78rem;color:var(--grey-2);margin-bottom:1rem;">Necesaria para generar prompts. Obténla gratis en <strong>console.anthropic.com</strong> → API Keys. Se guarda en tu navegador.</p>
-        <div class="flex-row">
-          <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-family:monospace;font-size:0.8rem;" oninput="guardarApiKey()">
-          <button class="btn btn-outline btn-sm" onclick="toggleApiKey()">Mostrar</button>
-        </div>
-        <p id="api-key-status" style="font-size:0.7rem;margin-top:0.5rem;color:var(--grey-3)">Sin clave guardada</p>
-      </div>
       <div class="grid-2">
         <div class="card">
           <div class="card-title">⚙️ Configuración del prompt</div>
@@ -1036,10 +1025,7 @@ function showTab(name, btn) {
   document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'prompts') {
-    actualizarSelectPersonajes();
-    cargarApiKey();
-  }
+  if (name === 'prompts') actualizarSelectPersonajes();
 }
 
 // =====================
@@ -1086,7 +1072,7 @@ function updateProgress(input, id) {
 function agregarPersonaje() {
   const p = proyectoActual();
   if (!p) return;
-  p.personajes.push({ id: Date.now(), nombre: 'Nuevo personaje', rol: '', descripcion: '', silueta: '', colores: '', materiales: '', tocado: '', notas: '', bocetos: [] });
+  p.personajes.push({ id: Date.now(), nombre: 'Nuevo personaje', rol: '', descripcion: '', silueta: '', colores: '', materiales: '', tocado: '', referencias: '', ideasBase: '', bocetos: [] });
   renderPersonajes();
   guardarEnNavegador();
 }
@@ -1132,8 +1118,16 @@ function renderPersonajes() {
           <input type="text" value="${per.tocado}" placeholder="ej. Flores integradas al peinado" onchange="updatePersonaje(${i},'tocado',this.value)">
         </div>
       </div>
-      <label>Notas adicionales</label>
-      <textarea placeholder="Ideas, referencias, preguntas..." onchange="updatePersonaje(${i},'notas',this.value)">${per.notas}</textarea>
+      <div class="grid-2" style="margin-top:0.25rem">
+        <div>
+          <label style="display:flex;align-items:center;gap:0.4rem;">Referencias del personaje <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— se incluyen en el prompt</span></label>
+          <textarea placeholder="ej. anda procesional, girasoles secos, cicatrices en los hombros..." onchange="updatePersonaje(${i},'referencias',this.value)">${per.referencias || ''}</textarea>
+        </div>
+        <div>
+          <label style="display:flex;align-items:center;gap:0.4rem;">Ideas base <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— universo personal, no van al prompt</span></label>
+          <textarea placeholder="ej. fotografías de Semana Santa, textura de adobe mojado, sombras largas..." onchange="updatePersonaje(${i},'ideasBase',this.value)">${per.ideasBase || ''}</textarea>
+        </div>
+      </div>
 
       <div class="bocetos-section">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem">
@@ -1359,38 +1353,6 @@ function eliminarTag(i) {
 }
 
 // =====================
-// API KEY
-// =====================
-function guardarApiKey() {
-  const key = document.getElementById('api-key-input').value.trim();
-  if (key) {
-    localStorage.setItem('trama_api_key', key);
-    document.getElementById('api-key-status').textContent = '✓ Clave guardada en este navegador';
-    document.getElementById('api-key-status').style.color = '#2a7a2a';
-  } else {
-    localStorage.removeItem('trama_api_key');
-    document.getElementById('api-key-status').textContent = 'Sin clave guardada';
-    document.getElementById('api-key-status').style.color = 'var(--grey-3)';
-  }
-}
-
-function toggleApiKey() {
-  const input = document.getElementById('api-key-input');
-  const btn = input.nextElementSibling;
-  input.type = input.type === 'password' ? 'text' : 'password';
-  btn.textContent = input.type === 'password' ? 'Mostrar' : 'Ocultar';
-}
-
-function cargarApiKey() {
-  const key = localStorage.getItem('trama_api_key');
-  if (key) {
-    document.getElementById('api-key-input').value = key;
-    document.getElementById('api-key-status').textContent = '✓ Clave guardada en este navegador';
-    document.getElementById('api-key-status').style.color = '#2a7a2a';
-  }
-}
-
-// =====================
 // PROMPTS CON IA
 // =====================
 function actualizarSelectPersonajes() {
@@ -1417,7 +1379,7 @@ async function generarPrompt() {
   let personajeInfo = '';
   if (pid) {
     const per = p.personajes.find(x => x.id == pid);
-    if (per) personajeInfo = `Personaje: ${per.nombre}\nRol: ${per.rol}\nDescripción: ${per.descripcion}\nSilueta: ${per.silueta}\nColores: ${per.colores}\nMateriales: ${per.materiales}\nTocado/Accesorios: ${per.tocado}\nNotas: ${per.notas}`;
+    if (per) personajeInfo = `Personaje: ${per.nombre}\nRol: ${per.rol}\nDescripción: ${per.descripcion}\nSilueta: ${per.silueta}\nColores: ${per.colores}\nMateriales: ${per.materiales}\nTocado/Accesorios: ${per.tocado}\nReferencias del personaje: ${per.referencias || ''}`;
   }
 
   const proyectoInfo = `Obra: ${p.datos.obra || ''}\nEstilo del vestuarista: ${p.datos.estilo || 'Clásico con toques contemporáneos'}\nMateriales característicos: ${p.datos.materiales || ''}`;
@@ -1433,28 +1395,12 @@ async function generarPrompt() {
   document.getElementById('ai-loading').classList.add('visible');
   document.getElementById('prompt-resultado').innerHTML = '<span style="color:#aaa;font-style:italic">Generando...</span>';
 
-  const apiKey = localStorage.getItem('trama_api_key') || document.getElementById('api-key-input')?.value?.trim();
-  if (!apiKey) {
-    document.getElementById('prompt-resultado').innerHTML = `<span style="color:#c00">⚠ Ingresa tu API Key en el campo de arriba para generar prompts.</span>`;
-    document.getElementById('ai-loading').classList.remove('visible');
-    return;
-  }
-
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, system: systemPrompt, messages: [{ role: 'user', content: userMessage }] })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: systemPrompt, messages: [{ role: 'user', content: userMessage }] })
     });
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error?.message || response.status);
-    }
     const data = await response.json();
     const texto = data.content.map(i => i.text || '').join('');
     document.getElementById('prompt-resultado').innerHTML = `<button class="copy-btn" onclick="copiarPrompt()">Copiar</button>${texto}`;
@@ -1463,7 +1409,7 @@ async function generarPrompt() {
     renderPromptsGuardados();
     notif('Prompt generado ✓');
   } catch (err) {
-    document.getElementById('prompt-resultado').innerHTML = `<span style="color:#c00">Error: ${err.message}</span>`;
+    document.getElementById('prompt-resultado').innerHTML = `<span style="color:#c00">Error al conectar con la IA.</span>`;
   } finally {
     document.getElementById('ai-loading').classList.remove('visible');
   }
@@ -1661,6 +1607,8 @@ window.onload = () => {
     appState.proyectos.forEach(p => {
       p.personajes.forEach(per => {
         if (!per.bocetos) per.bocetos = [];
+        if (per.referencias === undefined) per.referencias = per.notas || '';
+        if (per.ideasBase === undefined) per.ideasBase = '';
       });
     });
     guardarEnNavegador();
