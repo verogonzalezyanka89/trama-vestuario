@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -845,6 +845,18 @@
             <option value="full body character design">Diseño de personaje cuerpo completo</option>
             <option value="watercolor fashion plate">Lámina de moda en acuarela</option>
           </select>
+          <label>Estilo del boceto</label>
+          <select id="prompt-estilo-boceto">
+            <option value="classical">Clásico</option>
+            <option value="dramatic">Dramático</option>
+            <option value="contemporary">Contemporáneo</option>
+          </select>
+          <label>Técnica del boceto</label>
+          <select id="prompt-tecnica">
+            <option value="watercolor">Acuarela</option>
+            <option value="pastel pencil">Lápiz pastel</option>
+            <option value="marker">Marcador</option>
+          </select>
           <label>Estilo artístico</label>
           <select id="prompt-estilo">
             <option value="classical elegant refined">Clásico y refinado</option>
@@ -1106,41 +1118,46 @@ function renderPersonajes() {
           <input type="text" value="${per.rol}" placeholder="ej. Hada de Primavera" onchange="updatePersonaje(${i},'rol',this.value)">
           <label>Descripción del personaje</label>
           <textarea placeholder="¿Quién es? ¿Qué simboliza?" onchange="updatePersonaje(${i},'descripcion',this.value)">${per.descripcion}</textarea>
-          <label>Colores principales</label>
-          <input type="text" value="${per.colores}" placeholder="ej. Rosa pálido, lavanda, blanco" onchange="updatePersonaje(${i},'colores',this.value)">
-        </div>
-        <div>
           <label>Silueta base</label>
           <input type="text" value="${per.silueta}" placeholder="ej. Tutú romántico largo" onchange="updatePersonaje(${i},'silueta',this.value)">
+        </div>
+        <div>
           <label>Materiales y texturas</label>
           <textarea placeholder="ej. Tul en degradado, bordado floral en escote..." onchange="updatePersonaje(${i},'materiales',this.value)">${per.materiales}</textarea>
           <label>Tocado / Accesorios</label>
           <input type="text" value="${per.tocado}" placeholder="ej. Flores integradas al peinado" onchange="updatePersonaje(${i},'tocado',this.value)">
         </div>
       </div>
-      <div class="grid-2" style="margin-top:0.25rem">
-        <div>
-          <label style="display:flex;align-items:center;gap:0.4rem;">Referencias del personaje <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— se incluyen en el prompt</span></label>
-          <textarea placeholder="ej. anda procesional, girasoles secos, cicatrices en los hombros..." onchange="updatePersonaje(${i},'referencias',this.value)">${per.referencias || ''}</textarea>
+
+      <div style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+          <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey-2);">Paleta del personaje</div>
+          <div class="flex-row" style="gap:0.5rem;">
+            <input type="color" id="color-pick-${per.id}" value="#888888" style="width:32px;height:28px;border:1px solid var(--border);padding:1px;background:transparent;cursor:pointer;border-radius:1px;">
+            <input type="text" id="color-name-${per.id}" placeholder="Nombre del color" style="width:150px;font-size:0.78rem;padding:0.35rem 0.6rem;">
+            <button class="btn btn-outline btn-sm" onclick="agregarColorPersonaje(${i},'${per.id}')">+ Color</button>
+          </div>
         </div>
-        <div>
-          <label style="display:flex;align-items:center;gap:0.4rem;">Ideas base <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— universo personal, no van al prompt</span></label>
-          <textarea placeholder="ej. fotografías de Semana Santa, textura de adobe mojado, sombras largas..." onchange="updatePersonaje(${i},'ideasBase',this.value)">${per.ideasBase || ''}</textarea>
+        <div id="paleta-per-${per.id}" class="palette-row" style="min-height:36px;">
+          ${(per.paleta||[]).map((c,ci)=>`
+            <div class="color-chip">
+              <div style="position:relative">
+                <div class="color-swatch" style="background:${c.hex}" title="${c.nombre}"></div>
+                <button class="color-delete" onclick="eliminarColorPersonaje(${i},${ci},'${per.id}')" title="Eliminar">✕</button>
+              </div>
+              <div class="color-label">${c.nombre}</div>
+            </div>`).join('')}
         </div>
       </div>
 
-      <div class="bocetos-section">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem">
-          <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey-2)">Bocetos e imágenes de referencia</div>
-          <div style="font-size:0.62rem;color:var(--grey-3);letter-spacing:0.06em">${bocetos.length ? bocetos.length + ' imagen' + (bocetos.length > 1 ? 'es' : '') : 'Sin imágenes'}</div>
+      <div class="grid-2" style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;">
+        <div>
+          <label style="display:flex;align-items:center;gap:0.4rem;margin-top:0;">Referencias del personaje <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— se incluyen en el prompt</span></label>
+          <textarea placeholder="ej. anda procesional, girasoles secos, cicatrices en los hombros..." onchange="updatePersonaje(${i},'referencias',this.value)">${per.referencias || ''}</textarea>
         </div>
-        <div class="bocetos-grid" id="bocetos-grid-${per.id}">
-          ${bocetosHTML}
-          <label class="boceto-upload" title="Agregar imagen">
-            <span style="font-size:1.4rem;opacity:0.4">+</span>
-            <span>Subir imagen</span>
-            <input type="file" accept="image/*" multiple onchange="subirBocetos(${i}, this)">
-          </label>
+        <div>
+          <label style="display:flex;align-items:center;gap:0.4rem;margin-top:0;">Ideas base <span style="font-weight:400;font-size:0.58rem;color:#888;letter-spacing:0.06em;text-transform:none;font-style:italic">— universo personal, no van al prompt</span></label>
+          <textarea placeholder="ej. fotografías de Semana Santa, textura de adobe mojado, sombras largas..." onchange="updatePersonaje(${i},'ideasBase',this.value)">${per.ideasBase || ''}</textarea>
         </div>
       </div>
     </div>`;
@@ -1150,6 +1167,26 @@ function renderPersonajes() {
 function updatePersonaje(i, campo, valor) {
   const p = proyectoActual();
   if (p) { p.personajes[i][campo] = valor; guardarEnNavegador(); }
+}
+
+function agregarColorPersonaje(i, perId) {
+  const p = proyectoActual();
+  if (!p) return;
+  const hex = document.getElementById("color-pick-" + perId).value;
+  const nombre = document.getElementById("color-name-" + perId).value.trim() || hex;
+  if (!p.personajes[i].paleta) p.personajes[i].paleta = [];
+  p.personajes[i].paleta.push({ hex, nombre });
+  document.getElementById("color-name-" + perId).value = "";
+  guardarEnNavegador();
+  renderPersonajes();
+}
+
+function eliminarColorPersonaje(i, ci, perId) {
+  const p = proyectoActual();
+  if (!p) return;
+  p.personajes[i].paleta.splice(ci, 1);
+  guardarEnNavegador();
+  renderPersonajes();
 }
 
 function eliminarPersonaje(i) {
@@ -1372,25 +1409,38 @@ async function generarPrompt() {
   if (!p) return;
   const pid = document.getElementById('prompt-personaje').value;
   const tipo = document.getElementById('prompt-tipo').value;
+  const estiloBoceto = document.getElementById('prompt-estilo-boceto').value;
+  const tecnica = document.getElementById('prompt-tecnica').value;
   const estilo = document.getElementById('prompt-estilo').value;
   const detalles = v('prompt-detalles');
   const idioma = document.getElementById('prompt-idioma').value;
 
-  let personajeInfo = '';
-  if (pid) {
-    const per = p.personajes.find(x => x.id == pid);
-    if (per) personajeInfo = `Personaje: ${per.nombre}\nRol: ${per.rol}\nDescripción: ${per.descripcion}\nSilueta: ${per.silueta}\nColores: ${per.colores}\nMateriales: ${per.materiales}\nTocado/Accesorios: ${per.tocado}\nReferencias del personaje: ${per.referencias || ''}`;
-  }
+  if (!pid) { notif('Selecciona un personaje primero'); return; }
+  const per = p.personajes.find(x => x.id == pid);
+  if (!per) return;
 
-  const proyectoInfo = `Obra: ${p.datos.obra || ''}\nEstilo del vestuarista: ${p.datos.estilo || 'Clásico con toques contemporáneos'}\nMateriales característicos: ${p.datos.materiales || ''}`;
-  const paletaInfo = p.paleta.colores.length ? `Paleta de producción: ${p.paleta.colores.map(c => c.nombre).join(', ')}` : '';
-  const tagsInfo = p.moodboard.tags.length ? `Palabras clave: ${p.moodboard.tags.join(', ')}` : '';
+  const paletaPersonaje = (per.paleta || []).length
+    ? `Paleta de colores: ${per.paleta.map(c => c.nombre + ' (' + c.hex + ')').join(', ')}`
+    : '';
+
+  const personajeInfo = [
+    `Personaje: ${per.nombre}`,
+    per.rol ? `Rol: ${per.rol}` : '',
+    per.descripcion ? `Descripción: ${per.descripcion}` : '',
+    per.silueta ? `Silueta: ${per.silueta}` : '',
+    per.materiales ? `Materiales y texturas: ${per.materiales}` : '',
+    per.tocado ? `Tocado y accesorios: ${per.tocado}` : '',
+    paletaPersonaje,
+    per.referencias ? `Referencias visuales: ${per.referencias}` : '',
+  ].filter(Boolean).join('\n');
 
   const systemPrompt = idioma === 'en'
-    ? `You are an expert prompt engineer specialized in theatrical costume design and fashion illustration for AI image generators. Generate highly specific, detailed image prompts. Focus on: garment construction, fabric textures, color gradients, theatrical silhouettes, accessories, headpieces, artistic style. Write ONLY the prompt, no explanations. Optimized for Midjourney syntax.`
-    : `Eres experto en prompts para diseño de vestuario teatral e ilustración de moda para IAs de imagen. Genera prompts muy específicos para ilustraciones de vestuario escénico. Escribe SOLO el prompt, sin explicaciones.`;
+    ? `You are an expert prompt engineer specialized in theatrical costume design for AI image generators. Generate a highly specific image prompt for a costume illustration. Focus exclusively on: garment construction, fabric textures, color palette, theatrical silhouette, accessories and headpiece. Illustration style: ${estiloBoceto}, technique: ${tecnica}. Write ONLY the prompt, no explanations. Optimized for Midjourney syntax.`
+    : `Eres experto en prompts para diseño de vestuario teatral para IAs de imagen. Genera un prompt específico para una ilustración de vestuario escénico. Enfócate exclusivamente en: construcción del vestuario, texturas de tela, paleta de color, silueta teatral, accesorios y tocado. Estilo de ilustración: ${estiloBoceto}, técnica: ${tecnica}. Escribe SOLO el prompt, sin explicaciones.`;
 
-  const userMessage = `Generate a detailed image prompt:\nType: ${tipo}\nStyle: ${estilo}\n${personajeInfo}\n${proyectoInfo}\n${paletaInfo}\n${tagsInfo}\n${detalles ? 'Additional: ' + detalles : ''}`;
+  const userMessage = idioma === 'en'
+    ? `Create a costume illustration prompt:\nIllustration type: ${tipo}\nArtistic style: ${estilo}\n\n${personajeInfo}\n${detalles ? 'Extra details: ' + detalles : ''}`
+    : `Crea un prompt de ilustración de vestuario:\nTipo: ${tipo}\nEstilo artístico: ${estilo}\n\n${personajeInfo}\n${detalles ? 'Detalles extra: ' + detalles : ''}`;
 
   document.getElementById('ai-loading').classList.add('visible');
   document.getElementById('prompt-resultado').innerHTML = '<span style="color:#aaa;font-style:italic">Generando...</span>';
@@ -1509,7 +1559,7 @@ function notif(msg) {
 // =====================
 // GUARDADO AUTOMÁTICO (localStorage)
 // =====================
-const STORAGE_KEY = 'trama_vestuario_v1';
+const STORAGE_KEY = 'trama_vestuario_v3';
 
 function guardarEnNavegador() {
   try {
@@ -1609,6 +1659,7 @@ window.onload = () => {
         if (!per.bocetos) per.bocetos = [];
         if (per.referencias === undefined) per.referencias = per.notas || '';
         if (per.ideasBase === undefined) per.ideasBase = '';
+        if (!per.paleta) per.paleta = [];
       });
     });
     guardarEnNavegador();
