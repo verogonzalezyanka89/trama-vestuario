@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -175,19 +176,222 @@
   .oc-desc { font-size: 0.5rem; color: #999; margin-top: 2px; display: block; line-height: 1.3; }
 
   @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+  /* ═══════════════════════════════════
+     PANTALLA DE PORTADA
+  ═══════════════════════════════════ */
+  #screen-cover {
+    position: fixed; inset: 0; z-index: 900;
+    background: #0a0a0a;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.6s ease;
+  }
+  #screen-cover.hidden { opacity: 0; pointer-events: none; }
+
+  .cover-ornament {
+    width: 1px; background: #d4af37;
+    animation: ornament-grow 1.2s ease forwards;
+    margin-bottom: 3rem;
+  }
+  @keyframes ornament-grow { from { height: 0; } to { height: 80px; } }
+
+  .cover-logo-ring {
+    width: 90px; height: 90px;
+    border: 2px solid #d4af37;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+    animation: fade-in 1s ease 0.4s both;
+  }
+  .cover-logo-ring span {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 900; color: #d4af37;
+  }
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem; font-weight: 900; color: #fff;
+    letter-spacing: 0.35em; text-transform: uppercase;
+    animation: fade-in 1s ease 0.6s both;
+    margin-bottom: 0.4rem;
+  }
+  .cover-sub {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.3em;
+    text-transform: uppercase; color: #666;
+    animation: fade-in 1s ease 0.8s both;
+    margin-bottom: 3.5rem;
+  }
+  .cover-btn {
+    background: transparent; border: 1px solid #d4af37;
+    color: #d4af37; padding: 1rem 3rem;
+    font-family: 'Jost', sans-serif; font-weight: 700;
+    font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s ease;
+    animation: fade-in 1s ease 1s both;
+  }
+  .cover-btn:hover { background: #d4af37; color: #000; }
+
+  @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ═══════════════════════════════════
+     PANTALLA SELECTOR DE PRODUCCIÓN
+  ═══════════════════════════════════ */
+  #screen-selector {
+    position: fixed; inset: 0; z-index: 800;
+    background: var(--bg);
+    display: none; flex-direction: column;
+    overflow-y: auto;
+  }
+  #screen-selector.visible { display: flex; }
+
+  .selector-header {
+    background: #000; padding: 1.8rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 3px solid #d4af37; flex-shrink: 0;
+  }
+  .selector-header-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 900; color: #fff;
+    letter-spacing: 0.25em; text-transform: uppercase;
+  }
+  .selector-header-sub {
+    font-size: 0.55rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #d4af37; margin-top: 2px;
+  }
+
+  .selector-body {
+    flex: 1; max-width: 900px; width: 100%;
+    margin: 0 auto; padding: 3rem 2rem;
+  }
+  .selector-eyebrow {
+    font-size: 0.6rem; font-weight: 800; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #aaa; margin-bottom: 1.5rem;
+    border-left: 4px solid #d4af37; padding-left: 0.8rem;
+  }
+
+  .prod-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem; margin-bottom: 2rem;
+  }
+  .prod-card {
+    background: #fff; border: 2px solid #000;
+    padding: 1.5rem; cursor: pointer; position: relative;
+    transition: all 0.2s ease; box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
+  }
+  .prod-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 rgba(0,0,0,0.12); }
+  .prod-card::before { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(0,0,0,0.08); pointer-events: none; }
+  .prod-card-num {
+    font-size: 0.5rem; font-weight: 800; letter-spacing: 0.15em;
+    color: #bbb; text-transform: uppercase; margin-bottom: 0.6rem;
+  }
+  .prod-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 900; text-transform: uppercase;
+    line-height: 1.2; margin-bottom: 0.3rem;
+  }
+  .prod-card-autor {
+    font-size: 0.65rem; color: #888; margin-bottom: 1rem;
+  }
+  .prod-card-meta {
+    display: flex; gap: 0.8rem; flex-wrap: wrap;
+  }
+  .prod-tag {
+    font-size: 0.5rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; background: #f5f2eb;
+    border: 1px solid #ddd; padding: 2px 7px; color: #666;
+  }
+  .prod-card-delete {
+    position: absolute; top: 8px; right: 8px;
+    background: none; border: none; color: #ccc;
+    font-size: 0.9rem; cursor: pointer; line-height: 1;
+    transition: color 0.2s;
+  }
+  .prod-card-delete:hover { color: #cc0000; }
+
+  /* Nueva producción */
+  .prod-card-new {
+    border: 2px dashed #ccc; background: transparent;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 140px; gap: 0.5rem;
+    color: #aaa; transition: all 0.2s ease;
+  }
+  .prod-card-new:hover { border-color: #000; color: #000; box-shadow: none; transform: none; }
+  .prod-card-new .new-icon { font-size: 1.8rem; line-height: 1; }
+  .prod-card-new .new-label {
+    font-size: 0.6rem; font-weight: 800;
+    letter-spacing: 0.15em; text-transform: uppercase;
+  }
+
+  /* Modal nueva producción */
+  #modal-nueva {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 1500;
+    align-items: center; justify-content: center;
+  }
+  #modal-nueva.active { display: flex; }
+  .modal-inner {
+    background: var(--bg); border: 2px solid #000;
+    padding: 2.5rem; width: 420px; max-width: 90%;
+    position: relative;
+  }
+  .modal-inner::before { content:''; position:absolute; inset:5px; border:1px solid rgba(0,0,0,0.1); pointer-events:none; }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 900; text-transform: uppercase;
+    margin-bottom: 1.5rem; border-bottom: 2px solid #000; padding-bottom: 0.5rem;
+  }
 </style>
 </head>
 <body>
 
-  <header>
-    <div style="display:flex; gap: 8px;">
+  <!-- ═══════════════ PORTADA ═══════════════ -->
+  <div id="screen-cover">
+    <div class="cover-ornament"></div>
+    <div class="cover-logo-ring"><span>T</span></div>
+    <h1 class="cover-title">TRAMA</h1>
+    <p class="cover-sub">Sistema de Vestuario Escénico</p>
+    <button class="cover-btn" onclick="showSelector()">ENTRAR</button>
+  </div>
+
+  <!-- ═══════════════ SELECTOR DE PRODUCCIÓN ═══════════════ -->
+  <div id="screen-selector">
+    <div class="selector-header">
+      <div>
+        <div class="selector-header-brand">TRAMA</div>
+        <div class="selector-header-sub">Sistema de Vestuario Escénico</div>
+      </div>
+    </div>
+    <div class="selector-body">
+      <div class="selector-eyebrow">Selecciona una producción para continuar</div>
+      <div class="prod-grid" id="prod-grid"></div>
+    </div>
+  </div>
+
+  <!-- Modal: nueva producción -->
+  <div id="modal-nueva">
+    <div class="modal-inner">
+      <div class="modal-title">Nueva Producción</div>
+      <div class="input-group"><label>Título de la obra</label><input type="text" id="nueva-titulo" placeholder="Ej: La Casa de Bernarda Alba"></div>
+      <div class="input-group"><label>Autor / Director</label><input type="text" id="nueva-autor" placeholder="Ej: Federico García Lorca"></div>
+      <div style="display:flex; gap:0.8rem; margin-top:1.5rem;">
+        <button class="btn" style="flex:1" onclick="crearProduccion()">CREAR</button>
+        <button class="btn btn-outline" style="flex:1" onclick="cerrarModal()">CANCELAR</button>
+      </div>
+    </div>
+  </div>
+
+  <header id="app-header" style="display:none;">
+    <div style="display:flex; gap: 8px; align-items:center;">
+      <button class="btn btn-outline btn-small" onclick="volverSelector()" title="Cambiar producción">← OBRAS</button>
       <button class="btn btn-outline btn-small" onclick="exportData()">JSON ↓</button>
       <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()">JSON ↑</button>
       <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
     </div>
     <div class="brand-block">
       <div class="logo-symbol">T</div>
-      <h1 class="brand-name">TRAMA</h1>
+      <h1 class="brand-name" id="app-obra-title">TRAMA</h1>
     </div>
     <div style="display:flex; gap: 8px; align-items: center;">
       <button class="btn btn-gold btn-small" onclick="exportFullPDF()" title="Exportar dossier completo en PDF">PDF ↓</button>
@@ -195,14 +399,14 @@
     </div>
   </header>
 
-  <nav class="tabs">
+  <nav class="tabs" id="app-nav" style="display:none;">
     <button class="tab-btn active" onclick="switchTab('general', this)">GENERAL</button>
     <button class="tab-btn" onclick="switchTab('moodboard', this)">MOODBOARD</button>
     <button class="tab-btn" onclick="switchTab('personajes', this)">PERSONAJES</button>
     <button class="tab-btn" onclick="switchTab('ia', this)">BOCETO IA</button>
   </nav>
 
-  <main>
+  <main id="app-main" style="display:none;">
     <!-- SECCIÓN GENERAL -->
     <section id="sec-general" class="view-section active">
       <div class="section-header"><h2>PRODUCCIÓN</h2></div>
@@ -314,25 +518,25 @@
             <label>TIPO DE VISTA</label>
             <div class="option-cards" id="ia-vista-cards">
               <div class="option-card selected" data-group="vista"
-                data-value="Full body front view costume design, character standing upright facing forward"
+                data-value="Full body front view costume illustration, character facing forward, maximum detail on every garment layer, fabric texture, construction and silhouette clearly visible, single figure centered on white background"
                 onclick="selectCard(this)">
                 <span class="oc-icon">🧍</span>
                 <span class="oc-label">Frente</span>
-                <span class="oc-desc">Cuerpo completo de frente</span>
+                <span class="oc-desc">Cuerpo completo, máximo detalle</span>
               </div>
               <div class="option-card" data-group="vista"
-                data-value="Full body front view costume design with visible handwritten technical annotations and fabric swatches beside the figure, fashion illustration with notes"
+                data-value="Full body front view costume illustration with technical callout annotations: handwritten labels pointing to specific fabrics, textures and materials used in each part of the costume, fashion design technical sheet style, detailed linework, annotations integrated into the composition"
                 onclick="selectCard(this)">
-                <span class="oc-icon">📝</span>
-                <span class="oc-label">Con texto</span>
-                <span class="oc-desc">Cuerpo completo con notas</span>
+                <span class="oc-icon">📋</span>
+                <span class="oc-label">Con detalles</span>
+                <span class="oc-desc">Figura + etiquetas de materiales</span>
               </div>
               <div class="option-card" data-group="vista"
-                data-value="Full body costume design showing both front and back views side by side, two figures on the same composition"
+                data-value="Two-figure costume design composition on a single white background: left figure showing full front view, right figure showing full back view of the same costume, both figures at the same scale, clear and complete design reference showing all construction details from both sides"
                 onclick="selectCard(this)">
                 <span class="oc-icon">↔</span>
                 <span class="oc-label">Frente y espalda</span>
-                <span class="oc-desc">Vista doble en composición</span>
+                <span class="oc-desc">Vista doble, diseño completo</span>
               </div>
             </div>
           </div>
@@ -343,80 +547,208 @@
             <div class="option-cards" id="ia-zoom-cards"></div>
           </div>
 
-          <!-- Row 2: estilo del boceto -->
+          <!-- POSE -->
           <div class="input-group">
-            <label>ESTILO DEL BOCETO</label>
-            <div class="option-cards" id="ia-estilo-cards">
-              <div class="option-card selected" data-group="estilo" data-value="Classic theatrical costume illustration, balanced and refined composition, elegant proportions" onclick="selectCard(this)">
-                <span class="oc-icon">🎭</span>
-                <span class="oc-label">Clásico</span>
-                <span class="oc-desc">Equilibrado y elegante</span>
+            <label>POSE DEL FIGURÍN</label>
+            <div class="option-cards" id="ia-pose-cards">
+              <div class="option-card selected" data-group="pose"
+                data-value="standing upright, weight evenly distributed, neutral pose"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🧍</span>
+                <span class="oc-label">Neutral</span>
+                <span class="oc-desc">De pie, centrado</span>
               </div>
-              <div class="option-card" data-group="estilo" data-value="Dramatic and expressive costume illustration, strong shadows and high contrast, intense mood" onclick="selectCard(this)">
-                <span class="oc-icon">🌑</span>
-                <span class="oc-label">Dramático</span>
-                <span class="oc-desc">Alto contraste y tensión</span>
+              <div class="option-card" data-group="pose"
+                data-value="contrapposto pose, weight on one hip, slight torso twist, one arm relaxed"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🕴</span>
+                <span class="oc-label">Contrapposto</span>
+                <span class="oc-desc">Cadera desplazada</span>
               </div>
-              <div class="option-card" data-group="estilo" data-value="Avant-garde experimental costume illustration, deconstructed silhouette, bold unexpected forms" onclick="selectCard(this)">
-                <span class="oc-icon">✦</span>
-                <span class="oc-label">Vanguardista</span>
-                <span class="oc-desc">Formas inesperadas</span>
+              <div class="option-card" data-group="pose"
+                data-value="arms raised above head, open expansive gesture, triumphant"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🙌</span>
+                <span class="oc-label">Brazos arriba</span>
+                <span class="oc-desc">Gesto abierto</span>
               </div>
-              <div class="option-card" data-group="estilo" data-value="Romantic and ethereal costume illustration, soft flowing lines, dreamlike atmosphere" onclick="selectCard(this)">
-                <span class="oc-icon">🌸</span>
-                <span class="oc-label">Romántico</span>
-                <span class="oc-desc">Etéreo y suave</span>
+              <div class="option-card" data-group="pose"
+                data-value="arms extended outward to the sides, wide open stance"
+                onclick="selectCard(this)">
+                <span class="oc-icon">✈</span>
+                <span class="oc-label">Brazos abiertos</span>
+                <span class="oc-desc">Cruz / apertura</span>
               </div>
-              <div class="option-card" data-group="estilo" data-value="Minimalist costume illustration, clean lines, sparse detail, strong silhouette on white background" onclick="selectCard(this)">
-                <span class="oc-icon">◻</span>
-                <span class="oc-label">Minimalista</span>
-                <span class="oc-desc">Silueta y síntesis</span>
+              <div class="option-card" data-group="pose"
+                data-value="mid-leap, body airborne, legs extended, dynamic jumping pose"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🦘</span>
+                <span class="oc-label">Salto</span>
+                <span class="oc-desc">En el aire</span>
+              </div>
+              <div class="option-card" data-group="pose"
+                data-value="ballet first arabesque pose, one leg extended behind, arms graceful"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🩰</span>
+                <span class="oc-label">Arabesque</span>
+                <span class="oc-desc">Ballet · pierna extendida</span>
+              </div>
+              <div class="option-card" data-group="pose"
+                data-value="ballet attitude pose, one knee bent and raised, arms in port de bras"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🩰</span>
+                <span class="oc-label">Attitude</span>
+                <span class="oc-desc">Ballet · rodilla alzada</span>
+              </div>
+              <div class="option-card" data-group="pose"
+                data-value="crouching low, body contracted, tense and coiled"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🫛</span>
+                <span class="oc-label">Agachado</span>
+                <span class="oc-desc">Contraído / tenso</span>
+              </div>
+              <div class="option-card" data-group="pose"
+                data-value="walking stride, mid-step, one foot forward, natural movement"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🚶</span>
+                <span class="oc-label">Caminando</span>
+                <span class="oc-desc">Paso natural</span>
               </div>
             </div>
           </div>
 
-          <!-- Row 3: técnica -->
+          <!-- ÁNIMO -->
           <div class="input-group">
-            <label>TÉCNICA DE REPRESENTACIÓN</label>
-            <div class="option-cards" id="ia-tecnica-cards">
-              <div class="option-card selected" data-group="tecnica" data-value="professional watercolor illustration technique, fluid washes, wet-on-wet blooms, fine ink linework" onclick="selectCard(this)">
+            <label>ÁNIMO Y EXPRESIÓN</label>
+            <div class="option-cards" id="ia-animo-cards">
+              <div class="option-card selected" data-group="animo"
+                data-value="serene and composed expression, inner calm, subtle presence"
+                onclick="selectCard(this)">
+                <span class="oc-icon">😌</span>
+                <span class="oc-label">Sereno</span>
+                <span class="oc-desc">Calma interior</span>
+              </div>
+              <div class="option-card" data-group="animo"
+                data-value="intense and dramatic expression, fierce gaze, powerful emotional presence"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🔥</span>
+                <span class="oc-label">Intenso</span>
+                <span class="oc-desc">Mirada feroz</span>
+              </div>
+              <div class="option-card" data-group="animo"
+                data-value="melancholic and introspective expression, downward gaze, quiet sorrow"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🌧</span>
+                <span class="oc-label">Melancólico</span>
+                <span class="oc-desc">Ensimismado</span>
+              </div>
+              <div class="option-card" data-group="animo"
+                data-value="joyful and radiant expression, open smile, light energy"
+                onclick="selectCard(this)">
+                <span class="oc-icon">☀️</span>
+                <span class="oc-label">Alegre</span>
+                <span class="oc-desc">Energía abierta</span>
+              </div>
+              <div class="option-card" data-group="animo"
+                data-value="mysterious and enigmatic expression, slight knowing smile, concealed intent"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🌙</span>
+                <span class="oc-label">Misterioso</span>
+                <span class="oc-desc">Enigmático</span>
+              </div>
+              <div class="option-card" data-group="animo"
+                data-value="defiant and confrontational expression, raised chin, strong direct gaze"
+                onclick="selectCard(this)">
+                <span class="oc-icon">⚡</span>
+                <span class="oc-label">Desafiante</span>
+                <span class="oc-desc">Mirada directa</span>
+              </div>
+              <div class="option-card" data-group="animo"
+                data-value="fearful and vulnerable expression, tense body, wide eyes, fragile"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🫀</span>
+                <span class="oc-label">Vulnerable</span>
+                <span class="oc-desc">Tenso / frágil</span>
+              </div>
+              <div class="option-card" data-group="animo"
+                data-value="ecstatic and transcendent expression, eyes closed or upward, transported"
+                onclick="selectCard(this)">
+                <span class="oc-icon">✨</span>
+                <span class="oc-label">Extático</span>
+                <span class="oc-desc">Arrobado / elevado</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TÉCNICA VISUAL (fusión estilo + técnica) -->
+          <div class="input-group">
+            <label>TÉCNICA VISUAL</label>
+            <div class="option-cards" style="flex-wrap: wrap;" id="ia-tecnica-cards">
+              <div class="option-card selected" data-group="tecnica"
+                data-value="illustrated in professional watercolor technique: transparent fluid washes layered wet-on-wet, soft blooms of pigment, fine india ink linework defining edges, zenith lighting casting subtle warm shadows, clean white paper ground showing through highlights"
+                onclick="selectCard(this)">
                 <span class="oc-icon">💧</span>
-                <span class="oc-label">Acuarela</span>
-                <span class="oc-desc">Aguadas y transparencias</span>
+                <span class="oc-label">Acuarela clásica</span>
+                <span class="oc-desc">Aguadas fluidas · luz cenital</span>
               </div>
-              <div class="option-card" data-group="tecnica" data-value="soft pastel illustration technique, chalky texture, blended tones, visible grain on paper" onclick="selectCard(this)">
+              <div class="option-card" data-group="tecnica"
+                data-value="illustrated in expressive watercolor technique: heavily saturated pigment, deep pools of dark color, bold wet ink bleeds into wet wash, dramatic chiaroscuro with strong shadow masses, high contrast between light and dark areas, visible paper texture"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🌊</span>
+                <span class="oc-label">Acuarela dramática</span>
+                <span class="oc-desc">Pigmento intenso · claroscuro</span>
+              </div>
+              <div class="option-card" data-group="tecnica"
+                data-value="illustrated in pen and ink technique: precise quill linework, dense cross-hatching and parallel hatching for shadow and volume, no color, sepia or black ink on cream textured paper, fine stippling for mid-tones, sharp expressive contour lines"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🪶</span>
+                <span class="oc-label">Tinta y línea</span>
+                <span class="oc-desc">Plumilla · tramado · sin color</span>
+              </div>
+              <div class="option-card" data-group="tecnica"
+                data-value="illustrated in dry pastel technique on textured paper: chalky soft pigment blended with finger, visible grain of the paper, warm lateral light raking across the figure, rich velvety shadows, muted color palette with dusty mid-tones, no sharp outlines"
+                onclick="selectCard(this)">
                 <span class="oc-icon">🌫</span>
-                <span class="oc-label">Pastel</span>
-                <span class="oc-desc">Textura grano suave</span>
+                <span class="oc-label">Pastel teatral</span>
+                <span class="oc-desc">Pastel seco · luz lateral</span>
               </div>
-              <div class="option-card" data-group="tecnica" data-value="acrylic paint illustration technique, bold opaque strokes, rich saturated color, visible brushwork" onclick="selectCard(this)">
-                <span class="oc-icon">🖌</span>
-                <span class="oc-label">Acrílico</span>
-                <span class="oc-desc">Pinceladas opacas</span>
+              <div class="option-card" data-group="tecnica"
+                data-value="illustrated in gouache technique: fully opaque matte paint strokes, flat color areas with deliberate brushwork visible, rich saturated palette, strong graphic silhouette, no transparency, areas of solid color next to precise painted detail"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🟫</span>
+                <span class="oc-label">Gouache opaco</span>
+                <span class="oc-desc">Pinceladas cubiertas · gráfico</span>
               </div>
-              <div class="option-card" data-group="tecnica" data-value="fine detailed pencil and ink drawing technique, precise hatching, crisp linework, black and white with selective tone" onclick="selectCard(this)">
+              <div class="option-card" data-group="tecnica"
+                data-value="illustrated in graphite and grey wash technique: expressive pencil linework with varying pressure, broad grey ink wash applied over pencil for volume and shadow, nebulous atmospheric quality, soft smudged transitions, restrained palette of blacks greys and white"
+                onclick="selectCard(this)">
                 <span class="oc-icon">✏️</span>
-                <span class="oc-label">Tinta y lápiz</span>
-                <span class="oc-desc">Tramado y línea</span>
-              </div>
-              <div class="option-card" data-group="tecnica" data-value="mixed media collage illustration technique, layered textures, digital and hand-made elements combined" onclick="selectCard(this)">
-                <span class="oc-icon">⬡</span>
-                <span class="oc-label">Técnica mixta</span>
-                <span class="oc-desc">Collage y capas</span>
+                <span class="oc-label">Grafito y mancha</span>
+                <span class="oc-desc">Lápiz · lavado gris · atmósfera</span>
               </div>
             </div>
           </div>
 
           <button class="btn" style="width:100%; margin-bottom: 1rem;" onclick="generatePrompt()">CONSTRUIR PROMPT TÉCNICO</button>
-          <div class="prompt-box" id="ia-prompt">Construye el prompt para ver los detalles aquí...</div>
+          <div style="position:relative;">
+            <div class="prompt-box" id="ia-prompt">Construye el prompt para ver los detalles aquí...</div>
+            <button id="copy-prompt-btn" onclick="copyPrompt()"
+              style="position:absolute; top:8px; right:8px; background:#000; color:#fff; border:none;
+              font-size:0.5rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase;
+              padding:4px 10px; cursor:pointer; opacity:0.7; transition:opacity 0.2s;"
+              onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.7">
+              COPIAR
+            </button>
+          </div>
           <button class="btn btn-outline" style="width:100%" onclick="callGeminiIA()">GENERAR IMAGEN (GEMINI 4.0)</button>
         </div>
         
         <div class="deco-card">
           <div class="card-title">BOCETO RESULTANTE</div>
-          <div class="image-preview-container">
-            <img id="ia-img-result" src="" style="display:none">
-            <div id="ia-placeholder" style="color:#aaa; font-size: 0.7rem; letter-spacing: 0.1em;">SIN VISTA PREVIA</div>
+          <div class="image-preview-container" id="ia-preview-container">
+            <canvas id="ia-watercolor-bg" style="position:absolute; inset:0; width:100%; height:100%; opacity:0.18;"></canvas>
+            <img id="ia-img-result" src="" style="display:none; position:relative; z-index:2;">
+            <div id="ia-placeholder" style="color:#aaa; font-size: 0.7rem; letter-spacing: 0.1em; position:relative; z-index:2;">SIN VISTA PREVIA</div>
             <div class="loading-overlay" id="ia-loading">
               <div style="font-weight: 800; font-size: 0.8rem; letter-spacing: 0.2em;">RENDERIZANDO...</div>
             </div>
@@ -468,7 +800,7 @@
       const p = {
         id: crypto.randomUUID(),
         nombre: 'NUEVO PERSONAJE',
-        datos: { edad: '', sexo: '', etnia: '', contextura: '' },
+        datos: { edad: '', sexo: '', pielTono: '', cabello: '', peinado: '', contextura: '' },
         paleta: ['#1a1a1a', '#e8dcc8', '#8b7355'],
         prendas: { base: '', calzado: '', accesorios: '' },
         materiales: '',
@@ -491,10 +823,45 @@
           </div>
 
           <!-- PERFIL -->
-          <div class="grid-4">
+          <div class="grid-2" style="margin-bottom:0.2rem;">
             <div class="input-group"><label>EDAD</label><input type="text" value="${p.datos.edad}" onchange="updatePerData(${i}, 'edad', this.value)"></div>
             <div class="input-group"><label>SEXO</label><input type="text" value="${p.datos.sexo}" onchange="updatePerData(${i}, 'sexo', this.value)"></div>
-            <div class="input-group"><label>ETNIA</label><input type="text" value="${p.datos.etnia}" onchange="updatePerData(${i}, 'etnia', this.value)"></div>
+          </div>
+          <div class="grid-4">
+            <div class="input-group">
+              <label>TONO DE PIEL</label>
+              <select onchange="updatePerData(${i}, 'pielTono', this.value)">
+                <option value="">— sin especificar —</option>
+                <option ${p.datos.pielTono === 'very fair, pale skin' ? 'selected':''} value="very fair, pale skin">Muy claro / pálido</option>
+                <option ${p.datos.pielTono === 'fair, light skin' ? 'selected':''} value="fair, light skin">Claro</option>
+                <option ${p.datos.pielTono === 'light beige, warm skin' ? 'selected':''} value="light beige, warm skin">Beige claro / cálido</option>
+                <option ${p.datos.pielTono === 'medium olive skin' ? 'selected':''} value="medium olive skin">Oliva / mediterráneo</option>
+                <option ${p.datos.pielTono === 'medium brown skin' ? 'selected':''} value="medium brown skin">Marrón medio</option>
+                <option ${p.datos.pielTono === 'deep brown skin' ? 'selected':''} value="deep brown skin">Marrón oscuro</option>
+                <option ${p.datos.pielTono === 'deep dark skin' ? 'selected':''} value="deep dark skin">Muy oscuro / ébano</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>COLOR DE CABELLO</label>
+              <input type="text" placeholder="Ej: negro, rubio ceniza…"
+                value="${p.datos.cabello || ''}" onchange="updatePerData(${i}, 'cabello', this.value)">
+            </div>
+            <div class="input-group">
+              <label>PEINADO</label>
+              <select onchange="updatePerData(${i}, 'peinado', this.value)">
+                <option value="">— sin especificar —</option>
+                <option ${p.datos.peinado === 'hair loose and flowing' ? 'selected':''} value="hair loose and flowing">Suelto</option>
+                <option ${p.datos.peinado === 'hair in a high bun' ? 'selected':''} value="hair in a high bun">Moño alto</option>
+                <option ${p.datos.peinado === 'hair in a low bun' ? 'selected':''} value="hair in a low bun">Moño bajo</option>
+                <option ${p.datos.peinado === 'hair in a tight braid' ? 'selected':''} value="hair in a tight braid">Trenza</option>
+                <option ${p.datos.peinado === 'hair in multiple braids' ? 'selected':''} value="hair in multiple braids">Trenzas múltiples</option>
+                <option ${p.datos.peinado === 'hair pulled back in a ponytail' ? 'selected':''} value="hair pulled back in a ponytail">Cola de caballo</option>
+                <option ${p.datos.peinado === 'short cropped hair' ? 'selected':''} value="short cropped hair">Corto / rapado</option>
+                <option ${p.datos.peinado === 'voluminous curly hair' ? 'selected':''} value="hair voluminous and curly">Rizado voluminoso</option>
+                <option ${p.datos.peinado === 'hair with elaborate theatrical headpiece' ? 'selected':''} value="hair with elaborate theatrical headpiece">Tocado / ornamentado</option>
+                <option ${p.datos.peinado === 'shaved head' ? 'selected':''} value="shaved head">Cabeza rapada</option>
+              </select>
+            </div>
             <div class="input-group"><label>CONTEXTURA / ALTURA</label><input type="text" value="${p.datos.contextura}" onchange="updatePerData(${i}, 'contextura', this.value)"></div>
           </div>
 
@@ -547,6 +914,13 @@
               <label>ACCESORIOS</label>
               <textarea placeholder="Joyería, sombrero, bolso…" onchange="updatePrenda(${i}, 'accesorios', this.value)" style="min-height:80px;">${p.prendas.accesorios}</textarea>
             </div>
+          </div>
+
+          <!-- GUARDAR por personaje -->
+          <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+            <button class="btn btn-small" onclick="saveAll()" style="letter-spacing:0.15em;">
+              GUARDAR CAMBIOS
+            </button>
           </div>
         </div>
       `).join('');
@@ -628,8 +1002,9 @@
       const profileParts = [
         p.datos.edad ? `Edad: ${p.datos.edad}` : null,
         p.datos.sexo ? `Sexo: ${p.datos.sexo}` : null,
-        p.datos.etnia ? `Etnia: ${p.datos.etnia}` : null,
-        p.datos.contextura ? `Contextura/Altura: ${p.datos.contextura}` : null,
+        p.datos.contextura ? `Contextura: ${p.datos.contextura}` : null,
+        p.datos.pielTono ? `Piel: ${p.datos.pielTono}` : null,
+        p.datos.cabello ? `Cabello: ${p.datos.cabello}` : null,
       ].filter(Boolean);
       doc.text(profileParts.join('   |   ') || 'Sin datos registrados', margin, y);
       y += 10;
@@ -932,10 +1307,78 @@
     }
 
     // --- IA ---
+    function copyPrompt() {
+      const text = document.getElementById('ia-prompt').innerText;
+      if(text.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copy-prompt-btn');
+        btn.textContent = '✓ COPIADO';
+        setTimeout(() => btn.textContent = 'COPIAR', 2000);
+      }).catch(() => notificar("ERROR AL COPIAR"));
+    }
+
+    function paintWatercolorBg() {
+      const pid = document.getElementById('ia-per-select')?.value;
+      const p = state.personajes.find(x => x.id === pid);
+      const canvas = document.getElementById('ia-watercolor-bg');
+      if(!canvas) return;
+      const container = document.getElementById('ia-preview-container');
+      canvas.width = container.offsetWidth || 400;
+      canvas.height = container.offsetHeight || 400;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const palette = p ? p.paleta : ['#c8a97e'];
+      let baseColor = palette[0] || '#c8a97e';
+      for(const c of palette) {
+        const r = parseInt(c.slice(1,3),16);
+        const g = parseInt(c.slice(3,5),16);
+        const b = parseInt(c.slice(5,7),16);
+        const lum = (r*299 + g*587 + b*114) / 1000;
+        if(lum > 40 && lum < 200) { baseColor = c; break; }
+      }
+
+      const hexToRgb = h => ({
+        r: parseInt(h.slice(1,3),16),
+        g: parseInt(h.slice(3,5),16),
+        b: parseInt(h.slice(5,7),16)
+      });
+      const {r,g,b} = hexToRgb(baseColor);
+      const W = canvas.width, H = canvas.height;
+      const cx = W * 0.5, cy = H * 0.5;
+
+      for(let i = 0; i < 6; i++) {
+        const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.8;
+        const dist = (0.1 + Math.random() * 0.25) * Math.min(W, H);
+        const bx = cx + Math.cos(angle) * dist;
+        const by = cy + Math.sin(angle) * dist;
+        const radius = (0.2 + Math.random() * 0.3) * Math.min(W, H);
+        const alpha = 0.07 + Math.random() * 0.12;
+        const grad = ctx.createRadialGradient(bx, by, 0, bx, by, radius);
+        grad.addColorStop(0,   `rgba(${r},${g},${b},${alpha})`);
+        grad.addColorStop(0.6, `rgba(${r},${g},${b},${alpha * 0.4})`);
+        grad.addColorStop(1,   `rgba(${r},${g},${b},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.ellipse(bx, by,
+          radius * (0.7 + Math.random()*0.5),
+          radius * (0.7 + Math.random()*0.5),
+          Math.random() * Math.PI, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // Central soft bloom
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W,H) * 0.45);
+      cg.addColorStop(0, `rgba(${r},${g},${b},0.06)`);
+      cg.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      ctx.fillStyle = cg;
+      ctx.fillRect(0, 0, W, H);
+    }
+
     function updateIASelect() {
       const sel = document.getElementById('ia-per-select');
       sel.innerHTML = state.personajes.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
       updateZoomCards();
+      paintWatercolorBg();
     }
 
     function updateZoomCards() {
@@ -944,6 +1387,7 @@
       const zoomGroup = document.getElementById('ia-zoom-group');
       const zoomCards = document.getElementById('ia-zoom-cards');
       if(!p) { zoomGroup.style.display = 'none'; return; }
+      paintWatercolorBg();
 
       // Parse accessories: split by comma, newline, semicolon or slash
       const allItems = [
@@ -987,13 +1431,17 @@
     function updateSelectionSummary() {
       const summary = document.getElementById('ia-selection-summary');
       if(!summary) return;
-      const estilo = getSelectedCard('estilo');
       const tecnica = getSelectedCard('tecnica');
-      const badges = [
-        estilo.label ? `<span style="background:#000;color:#fff;font-size:0.55rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;">${estilo.label}</span>` : '',
-        tecnica.label ? `<span style="background:var(--accent);color:#000;font-size:0.55rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;">${tecnica.label}</span>` : '',
-      ];
-      summary.innerHTML = badges.join('');
+      const pose = getSelectedCard('pose');
+      const animo = getSelectedCard('animo');
+      const badge = (label, bg, color, border) => label
+        ? `<span style="background:${bg};color:${color};font-size:0.55rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;${border ? 'border:1px solid #ccc;' : ''}">${label}</span>`
+        : '';
+      summary.innerHTML = [
+        badge(tecnica.label, 'var(--accent)', '#000'),
+        badge(pose.label, '#000', '#fff'),
+        badge(animo.label, '#f5f2eb', '#000', true),
+      ].join('');
     }
 
     function generatePrompt() {
@@ -1002,25 +1450,48 @@
       if(!p) return;
       const vista = getSelectedCard('vista');
       if(!vista.value) return notificar("SELECCIONA UN TIPO DE VISTA");
+
+      // For "Con detalles" view, inject actual materials into the vista description
+      let vistaValue = vista.value;
+      if(vista.label === 'Con detalles' && p.materiales) {
+        vistaValue = vistaValue.replace(
+          'fabrics, textures and materials used in each part of the costume',
+          `fabrics and materials: ${p.materiales}`
+        );
+      }
       const paletteStr = p.paleta.join(', ');
-      const estilo = getSelectedCard('estilo');
       const tecnica = getSelectedCard('tecnica');
       const firma = state.firmaEstilo || FIRMA_DEFAULT;
 
-      const prompt = `${vista.value} for a character named "${p.nombre}". \
-Physical profile: ${p.datos.sexo || 'unspecified'}, ${p.datos.edad ? p.datos.edad + ' years old' : ''}, ${p.datos.etnia ? p.datos.etnia + ' origin' : ''}, ${p.datos.contextura ? p.datos.contextura + ' build' : ''}. \
+      const skinDesc = p.datos.pielTono ? `skin tone: ${p.datos.pielTono}` : '';
+      const hairDesc = [p.datos.cabello, p.datos.peinado].filter(Boolean).join(', ');
+      const physicalDesc = [
+        p.datos.sexo,
+        p.datos.edad ? `${p.datos.edad} years old` : '',
+        p.datos.contextura,
+        skinDesc,
+        hairDesc ? `hair: ${hairDesc}` : ''
+      ].filter(Boolean).join(', ');
+
+      const pose = getSelectedCard('pose');
+      const animo = getSelectedCard('animo');
+
+      const prompt = `${vistaValue} for a character named "${p.nombre}". \
+Physical appearance: ${physicalDesc || 'unspecified'}. \
+Pose: ${pose.value || 'standing upright, neutral pose'}. \
+Expression and mood: ${animo.value || 'neutral expression'}. \
 Style/Era: ${state.concept.epoca || 'contemporary'}. \
 Costume details: Garments: ${p.prendas.base || 'unspecified'}. Footwear: ${p.prendas.calzado || 'unspecified'}. Accessories: ${p.prendas.accesorios || 'none'}. \
 Fabrics and textures: ${p.materiales || 'unspecified'}. \
 Color palette: ${paletteStr}. \
-Illustration style: ${estilo.value}. \
-Rendering technique: ${tecnica.value}. \
+${tecnica.value}. \
 White background, no props or scenery. \
 Overall mood/concept: ${state.concept.ideas || 'theatrical'}. \
 MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
 
       document.getElementById('ia-prompt').innerText = prompt;
       updateSelectionSummary();
+      paintWatercolorBg();
     }
 
     async function callGeminiIA() {
@@ -1050,13 +1521,26 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
 
     // --- PERSISTENCIA ---
     function saveAll() {
+      if(!currentProjectId) return;
       state.obra.titulo = document.getElementById('g-obra').value;
       state.obra.autor = document.getElementById('g-autor').value;
       state.apiKey = document.getElementById('g-api-key').value;
       state.concept.epoca = document.getElementById('m-epoca').value;
       state.concept.ideas = document.getElementById('m-ideas').value;
       state.firmaEstilo = document.getElementById('g-firma').value || FIRMA_DEFAULT;
-      localStorage.setItem(appId, JSON.stringify(state));
+      localStorage.setItem(currentProjectId, JSON.stringify(state));
+      // Update index metadata
+      const index = getProjectsIndex();
+      const entry = index.find(p => p.id === currentProjectId);
+      if(entry) {
+        entry.titulo = state.obra.titulo;
+        entry.autor = state.obra.autor;
+        entry.personajes = state.personajes.length;
+        entry.epoca = state.concept.epoca;
+        saveProjectsIndex(index);
+      }
+      // Refresh header title
+      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'TRAMA';
       notificar("PROYECTO GUARDADO");
     }
 
@@ -1121,10 +1605,158 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
       `).join('');
     }
 
+    // ═══════════════════════════════════
+    // MULTI-PROYECTO
+    // ═══════════════════════════════════
+    const PROJECTS_INDEX_KEY = 'trama-projects-index';
+    let currentProjectId = null;
+
+    function getProjectsIndex() {
+      try { return JSON.parse(localStorage.getItem(PROJECTS_INDEX_KEY)) || []; }
+      catch { return []; }
+    }
+
+    function saveProjectsIndex(index) {
+      localStorage.setItem(PROJECTS_INDEX_KEY, JSON.stringify(index));
+    }
+
+    function showSelector() {
+      // Fade out cover
+      const cover = document.getElementById('screen-cover');
+      cover.classList.add('hidden');
+      setTimeout(() => cover.style.display = 'none', 650);
+      // Show selector
+      const sel = document.getElementById('screen-selector');
+      sel.classList.add('visible');
+      renderProductionGrid();
+    }
+
+    function renderProductionGrid() {
+      const index = getProjectsIndex();
+      const grid = document.getElementById('prod-grid');
+
+      const cards = index.map((proj, i) => `
+        <div class="prod-card" onclick="abrirProduccion('${proj.id}')">
+          <button class="prod-card-delete" onclick="event.stopPropagation(); eliminarProduccion('${proj.id}')" title="Eliminar">×</button>
+          <div class="prod-card-num">${String(i + 1).padStart(2, '0')}</div>
+          <div class="prod-card-title">${proj.titulo || 'Sin título'}</div>
+          <div class="prod-card-autor">${proj.autor || '—'}</div>
+          <div class="prod-card-meta">
+            <span class="prod-tag">${proj.personajes} personaje${proj.personajes !== 1 ? 's' : ''}</span>
+            ${proj.epoca ? `<span class="prod-tag">${proj.epoca}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      const newCard = `
+        <div class="prod-card prod-card-new" onclick="abrirModal()">
+          <span class="new-icon">＋</span>
+          <span class="new-label">Nueva producción</span>
+        </div>
+      `;
+
+      grid.innerHTML = cards + newCard;
+    }
+
+    function abrirModal() {
+      document.getElementById('nueva-titulo').value = '';
+      document.getElementById('nueva-autor').value = '';
+      document.getElementById('modal-nueva').classList.add('active');
+      setTimeout(() => document.getElementById('nueva-titulo').focus(), 100);
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-nueva').classList.remove('active');
+    }
+
+    function crearProduccion() {
+      const titulo = document.getElementById('nueva-titulo').value.trim();
+      if(!titulo) { notificar("INGRESA UN TÍTULO"); return; }
+      const autor = document.getElementById('nueva-autor').value.trim();
+      const id = 'trama-proj-' + Date.now();
+      // Init empty state for this project
+      const nuevoState = {
+        apiKey: state.apiKey || '', // inherit global api key
+        obra: { titulo, autor },
+        concept: { epoca: '', ideas: '' },
+        personajes: [],
+        mood: [],
+        firmaEstilo: state.firmaEstilo || FIRMA_DEFAULT
+      };
+      localStorage.setItem(id, JSON.stringify(nuevoState));
+      // Update index
+      const index = getProjectsIndex();
+      index.push({ id, titulo, autor, personajes: 0, epoca: '' });
+      saveProjectsIndex(index);
+      cerrarModal();
+      abrirProduccion(id);
+    }
+
+    function eliminarProduccion(id) {
+      if(!confirm('¿Eliminar esta producción? Esta acción no se puede deshacer.')) return;
+      localStorage.removeItem(id);
+      const index = getProjectsIndex().filter(p => p.id !== id);
+      saveProjectsIndex(index);
+      renderProductionGrid();
+    }
+
+    function abrirProduccion(id) {
+      currentProjectId = id;
+      const saved = localStorage.getItem(id);
+      if(saved) {
+        state = JSON.parse(saved);
+        // Ensure new fields exist on old projects
+        if(!state.firmaEstilo) state.firmaEstilo = FIRMA_DEFAULT;
+        if(!state.mood) state.mood = [];
+      }
+      // Hide selector, show app
+      document.getElementById('screen-selector').classList.remove('visible');
+      document.getElementById('app-header').style.display = 'flex';
+      document.getElementById('app-nav').style.display = 'flex';
+      document.getElementById('app-main').style.display = 'block';
+      // Update header title
+      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'TRAMA';
+      syncUI();
+      // Reset to general tab
+      switchTab('general', document.querySelector('.tab-btn'));
+    }
+
+    function volverSelector() {
+      saveAll();
+      // Hide app
+      document.getElementById('app-header').style.display = 'none';
+      document.getElementById('app-nav').style.display = 'none';
+      document.getElementById('app-main').style.display = 'none';
+      currentProjectId = null;
+      // Show selector refreshed
+      document.getElementById('screen-selector').classList.add('visible');
+      renderProductionGrid();
+    }
+
     window.onload = () => {
-      const saved = localStorage.getItem(appId);
-      if(saved) { state = JSON.parse(saved); syncUI(); }
-      else { document.getElementById('g-firma').value = FIRMA_DEFAULT; }
+      // Migrate legacy single project if exists
+      const legacy = localStorage.getItem('trama-pro-final');
+      if(legacy) {
+        try {
+          const legacyState = JSON.parse(legacy);
+          const titulo = legacyState.obra?.titulo || 'Proyecto importado';
+          const id = 'trama-proj-legacy';
+          if(!localStorage.getItem(id)) {
+            localStorage.setItem(id, legacy);
+            const index = getProjectsIndex();
+            if(!index.find(p => p.id === id)) {
+              index.push({
+                id, titulo,
+                autor: legacyState.obra?.autor || '',
+                personajes: legacyState.personajes?.length || 0,
+                epoca: legacyState.concept?.epoca || ''
+              });
+              saveProjectsIndex(index);
+            }
+          }
+        } catch(e) {}
+      }
+      // Always start at cover — no auto-open
     };
   </script>
 </body>
