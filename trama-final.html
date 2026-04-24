@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trama — Sistema de Vestuario</title>
+<title>Trama — Sistema de Vestuario Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
     --bg: #f5f2eb; 
@@ -12,9 +13,9 @@
     --black: #000000;
     --grey-1: #000000;
     --border: #000000;
+    --accent: #d4af37;
   }
 
-  /* RESET Y ELIMINACIÓN DE CURSIVAS */
   * { box-sizing: border-box; margin: 0; padding: 0; font-style: normal !important; }
 
   body {
@@ -24,340 +25,251 @@
     min-height: 100vh;
   }
 
-  /* --- CABECERA ART DÉCO --- */
+  /* --- CABECERA ART DECO --- */
   header {
     background: var(--bg);
-    padding: 2.5rem;
+    padding: 1.5rem 2.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 5px double var(--black);
   }
 
-  .brand-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
+  .brand-block { text-align: center; }
   .logo-symbol {
-    width: 50px; height: 50px;
-    border: 2px solid var(--black);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 12px; position: relative;
+    width: 40px; height: 40px; border: 2px solid var(--black); border-radius: 50%;
+    margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 900;
   }
-  .logo-symbol::after {
-    content: ''; position: absolute; inset: 4px;
-    border: 1px solid var(--black); border-radius: 50%;
-  }
-  .logo-symbol span {
-    font-family: 'Playfair Display', serif;
-    font-weight: 900; font-size: 1.8rem; margin-top: 3px;
-  }
-
   .brand-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.5rem; font-weight: 900;
-    letter-spacing: 0.2em; line-height: 0.9;
-    margin-bottom: 0.5rem; text-transform: uppercase;
-  }
-
-  .brand-tagline {
-    font-size: 0.8rem; letter-spacing: 0.5em;
-    font-weight: 600; text-transform: uppercase;
+    font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900;
+    letter-spacing: 0.2em; text-transform: uppercase;
   }
 
   /* --- NAVEGACIÓN --- */
   nav.tabs {
-    display: flex; justify-content: center;
-    background: var(--black);
+    display: flex; justify-content: center; background: var(--black);
     position: sticky; top: 0; z-index: 100;
   }
-
   .tab-btn {
-    background: none; border: none; color: #fff;
-    padding: 1.2rem 2.5rem; font-family: 'Jost', sans-serif;
-    font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.25em; font-size: 0.75rem;
-    cursor: pointer; transition: background 0.3s;
+    background: none; border: none; color: #fff; padding: 1rem 2rem;
+    font-family: 'Jost', sans-serif; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.2em; font-size: 0.7rem; cursor: pointer; transition: 0.2s;
   }
-  .tab-btn:hover { background: #333; }
-  .tab-btn.active { background: var(--bg); color: var(--black); font-weight: 700; }
+  .tab-btn.active { background: var(--bg); color: var(--black); }
 
-  /* --- CONTENEDORES --- */
-  main { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+  /* --- CONTENIDO --- */
+  main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
   .view-section { display: none; }
   .view-section.active { display: block; }
 
-  .section-header { margin-bottom: 3rem; border-left: 10px solid var(--black); padding-left: 1.5rem; }
-  .section-header h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; text-transform: uppercase; }
-  .section-header p { font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; }
+  .section-header { margin-bottom: 2rem; border-left: 8px solid var(--black); padding-left: 1.2rem; }
+  .section-header h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; text-transform: uppercase; }
 
-  /* --- TARJETAS GEOMÉTRICAS --- */
   .deco-card {
-    background: var(--surface); border: 3px solid var(--black);
-    padding: 2.5rem; position: relative; margin-bottom: 2rem;
+    background: var(--surface); border: 2px solid var(--black);
+    padding: 1.5rem; position: relative; margin-bottom: 2rem;
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
   }
-  .deco-card::before {
-    content: ''; position: absolute; inset: 6px;
-    border: 1px solid var(--black); pointer-events: none;
-  }
+  .deco-card::before { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(0,0,0,0.1); pointer-events: none; }
 
   .card-title {
-    font-family: 'Playfair Display', serif; font-size: 1.4rem;
-    font-weight: 800; text-transform: uppercase;
-    letter-spacing: 0.1em; border-bottom: 2px solid #000;
-    padding-bottom: 0.5rem; margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 800;
+    text-transform: uppercase; border-bottom: 2px solid #000;
+    padding-bottom: 0.4rem; margin-bottom: 1.2rem;
+    display: flex; justify-content: space-between; align-items: center;
   }
 
-  /* --- FORMULARIO --- */
-  .input-group { margin-bottom: 1.5rem; }
-  label {
-    display: block; font-size: 0.7rem; font-weight: 700;
-    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;
-  }
+  /* --- FORMULARIOS --- */
+  .input-group { margin-bottom: 1rem; }
+  label { display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; color: #444; }
   input, textarea, select {
-    width: 100%; padding: 0.8rem 1rem; border: 2px solid var(--black);
-    background: var(--bg); font-family: 'Jost', sans-serif;
-    font-weight: 500; text-transform: uppercase; outline: none;
+    width: 100%; padding: 0.6rem; border: 1.5px solid var(--black);
+    background: var(--bg); font-family: 'Jost', sans-serif; font-size: 0.85rem;
   }
-  input:focus, textarea:focus { background: #fff; }
+  textarea { resize: vertical; min-height: 60px; }
 
   /* --- BOTONES --- */
   .btn {
     background: var(--black); color: #fff; border: 2px solid var(--black);
-    padding: 1rem 2rem; font-family: 'Jost', sans-serif;
-    font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
-    font-size: 0.8rem; cursor: pointer; transition: all 0.3s;
+    padding: 0.8rem 1.2rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; font-size: 0.7rem; cursor: pointer; transition: 0.3s;
   }
   .btn:hover { background: transparent; color: var(--black); }
-  .btn-outline { background: transparent; color: var(--black); border: 1px solid var(--black); }
+  .btn-outline { background: transparent; color: var(--black); border: 1.5px solid var(--black); }
+  .btn-small { padding: 0.4rem 0.6rem; font-size: 0.55rem; }
+  .btn-danger { color: #cc0000; border-color: #cc0000; }
+  .btn-danger:hover { background: #cc0000; color: #fff; }
 
-  /* --- GRID --- */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
 
-  /* --- PALETA DE COLORES --- */
-  .color-palette { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
-  .color-swatch-container { display: flex; align-items: center; gap: 4px; }
-  .color-swatch { 
-    width: 42px; height: 42px; border: 2px solid #000; position: relative; cursor: pointer;
-  }
-  .color-swatch input[type="color"] {
-    position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;
-  }
-  .btn-remove-color {
-    background: none; border: none; color: red; font-weight: bold; cursor: pointer; font-size: 14px;
-  }
+  /* --- PALETAS --- */
+  .color-palette { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .color-swatch { width: 30px; height: 30px; border: 1.5px solid #000; position: relative; border-radius: 2px; }
+  .color-swatch input { position: absolute; opacity: 0; inset: 0; cursor: pointer; width: 100%; height: 100%; }
 
-  /* --- MOODBOARD --- */
-  .mood-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-  .mood-item {
-    aspect-ratio: 1; border: 3px solid #000; position: relative;
-    background: #fff; overflow: hidden;
+  /* --- IA --- */
+  .image-preview-container {
+    width: 100%; aspect-ratio: 1; border: 2px solid #000;
+    background: #fdfdfd; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
   }
-  .mood-item img { width: 100%; height: 100%; object-fit: cover; }
-  .mood-item .remove {
-    position: absolute; top: 5px; right: 5px; background: #000;
-    color: #fff; border: none; padding: 5px 8px; cursor: pointer;
+  .image-preview-container img { width: 100%; height: 100%; object-fit: contain; }
+  .loading-overlay {
+    position: absolute; inset: 0; background: rgba(255,255,255,0.9);
+    display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
   }
 
-  /* --- PROMPT OUTPUT --- */
   .prompt-box {
-    background: var(--black); color: #fff; padding: 2rem;
-    font-size: 0.9rem; line-height: 1.6; position: relative;
-    min-height: 150px; white-space: pre-wrap;
+    font-size: 0.75rem; line-height: 1.4; background: #fff; border: 1px dashed #000; padding: 12px; margin-bottom: 1rem; color: #555;
   }
 
   #toast {
     position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-    background: var(--black); color: #fff; padding: 1rem 3rem;
-    font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em;
-    font-size: 0.7rem; display: none; z-index: 1000;
+    background: var(--black); color: #fff; padding: 0.8rem 2rem;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    display: none; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   }
 
-  @media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
   <header>
-    <div style="flex: 1"><button class="btn-outline btn" style="padding: 0.5rem;" onclick="location.reload()">PROYECTOS</button></div>
-    <div class="brand-block">
-      <div class="logo-symbol"><span>T</span></div>
-      <h1 class="brand-name">TRAMA</h1>
-      <span class="brand-tagline">VESTUARIO ESCÉNICO</span>
+    <div style="display:flex; gap: 8px;">
+      <button class="btn btn-outline btn-small" onclick="exportData()">JSON ↓</button>
+      <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()">JSON ↑</button>
+      <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
     </div>
-    <div style="flex: 1; text-align: right;"><button class="btn" onclick="saveAll()">GUARDAR TODO</button></div>
+    <div class="brand-block">
+      <div class="logo-symbol">T</div>
+      <h1 class="brand-name">TRAMA</h1>
+    </div>
+    <div>
+      <button class="btn" onclick="saveAll()">GUARDAR</button>
+    </div>
   </header>
 
   <nav class="tabs">
     <button class="tab-btn active" onclick="switchTab('general', this)">GENERAL</button>
     <button class="tab-btn" onclick="switchTab('moodboard', this)">MOODBOARD</button>
     <button class="tab-btn" onclick="switchTab('personajes', this)">PERSONAJES</button>
-    <button class="tab-btn" onclick="switchTab('ia', this)">BOCETO</button>
+    <button class="tab-btn" onclick="switchTab('ia', this)">BOCETO IA</button>
   </nav>
 
   <main>
     <!-- SECCIÓN GENERAL -->
     <section id="sec-general" class="view-section active">
-      <div class="section-header">
-        <h2>FICHA TÉCNICA</h2>
-        <p>IDENTIFICACIÓN DE LA PRODUCCIÓN</p>
-      </div>
+      <div class="section-header"><h2>PRODUCCIÓN</h2></div>
       <div class="grid-2">
         <div class="deco-card">
-          <div class="card-title">OBRA</div>
-          <div class="input-group"><label>TÍTULO</label><input type="text" id="g-obra" value="CENICIENTA"></div>
-          <div class="input-group"><label>AUTOR / COMPOSITOR</label><input type="text" id="g-autor" value="PROKOFIEV"></div>
-          <div class="input-group"><label>COMPAÑÍA</label><input type="text" id="g-cia" value=""></div>
+          <div class="card-title">IDENTIFICACIÓN</div>
+          <div class="input-group"><label>TÍTULO DE LA OBRA</label><input type="text" id="g-obra"></div>
+          <div class="input-group"><label>AUTOR / DIRECTOR</label><input type="text" id="g-autor"></div>
         </div>
         <div class="deco-card">
-          <div class="card-title">CRONOGRAMA</div>
-          <div class="input-group"><label>TEMPORADA</label><input type="text" id="g-temp" value="2026"></div>
-          <div class="input-group"><label>DIRECTOR ESCÉNICO</label><input type="text" id="g-dir" value=""></div>
+          <div class="card-title">INTELIGENCIA ARTIFICIAL</div>
+          <div class="input-group"><label>GEMINI API KEY</label><input type="password" id="g-api-key" placeholder="Pega tu clave para generar imágenes..."></div>
+          <p style="font-size: 0.6rem; color: #666; margin-top: 10px;">ESTA CLAVE PERMITE LA GENERACIÓN DE BOCETOS VISUALES DIRECTAMENTE DESDE LA PESTAÑA 'BOCETO IA'.</p>
         </div>
       </div>
     </section>
 
-    <!-- SECCIÓN MOODBOARD -->
+    <!-- MOODBOARD -->
     <section id="sec-moodboard" class="view-section">
-      <div class="section-header">
-        <h2>MOODBOARD Y CONCEPTO</h2>
-        <p>RECOLECCIÓN CREATIVA E INVESTIGACIÓN</p>
-      </div>
-      
+      <div class="section-header"><h2>CONCEPTO VISUAL</h2></div>
       <div class="grid-2">
         <div class="deco-card">
-          <div class="card-title">CONTEXTO CREATIVO</div>
-          <div class="input-group"><label>ÉPOCA DE LA OBRA</label><input type="text" id="m-epoca" placeholder="EJ. 1920s, BARROCO, FUTURISTA..."></div>
-          <div class="input-group"><label>IDEAS BASE / CONCEPTO</label><textarea id="m-ideas" rows="4" placeholder="DESCRIBA EL NÚCLEO CREATIVO..."></textarea></div>
-          <div class="input-group"><label>ESTILO VISUAL (ARTÍSTICO)</label><input type="text" id="m-estilo" placeholder="EJ. ART DÉCO, EXPRESIONISMO..."></div>
+          <div class="card-title">ESTÉTICA</div>
+          <div class="input-group"><label>ÉPOCA O ESTILO PREDOMINANTE</label><input type="text" id="m-epoca"></div>
+          <div class="input-group"><label>PALABRAS CLAVE / CONCEPTOS</label><textarea id="m-ideas" placeholder="Ej: Decadencia, Futurismo, Orgánico..."></textarea></div>
         </div>
         <div class="deco-card">
-          <div class="card-title">AÑADIR REFERENCIA VISUAL</div>
+          <div class="card-title">AÑADIR REFERENCIA</div>
           <div class="input-group"><label>URL DE IMAGEN</label><input type="text" id="m-url"></div>
-          <div class="input-group"><label>COMENTARIO DE REFERENCIA</label><input type="text" id="m-nota"></div>
-          <button class="btn" onclick="addMood()" style="width:100%">CARGAR A GALERÍA</button>
+          <button class="btn" style="width:100%" onclick="addMood()">AÑADIR AL MURO</button>
         </div>
       </div>
-
-      <div id="mood-grid" class="mood-grid"></div>
+      <div id="mood-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;"></div>
     </section>
 
-    <!-- SECCIÓN PERSONAJES -->
+    <!-- PERSONAJES -->
     <section id="sec-personajes" class="view-section">
-      <div class="section-header">
-        <h2>DEFINICIÓN DE PERSONAJES</h2>
-        <p>ARQUETIPOS Y REQUERIMIENTOS TÉCNICOS</p>
-      </div>
+      <div class="section-header"><h2>GESTIÓN DE PERSONAJES</h2></div>
       <div id="personajes-cont"></div>
-      <button class="btn" onclick="addPersonaje()">AÑADIR PERSONAJE AL REPARTO</button>
+      <button class="btn" onclick="addPersonaje()">+ AÑADIR PERSONAJE</button>
     </section>
 
-    <!-- SECCIÓN BOCETO -->
+    <!-- BOCETO IA -->
     <section id="sec-ia" class="view-section">
-      <div class="section-header">
-        <h2>BOCETO</h2>
-        <p>PROCESAMIENTO DE GENERACIÓN DE DISEÑOS</p>
-      </div>
+      <div class="section-header"><h2>GENERADOR DE BOCETOS</h2></div>
       <div class="grid-2">
         <div class="deco-card">
           <div class="card-title">CONFIGURACIÓN DEL PROMPT</div>
-          
-          <div class="input-group">
-            <label>SELECCIONAR PERSONAJE</label>
-            <select id="ia-per-select" onchange="updateZoomTargets()"></select>
-          </div>
-
           <div class="grid-2">
+            <div class="input-group"><label>PERSONAJE</label><select id="ia-per-select"></select></div>
             <div class="input-group">
-              <label>TIPO DE BOCETO</label>
-              <select id="ia-tipo-boceto">
-                <option value="Full body costume design sketch">CUERPO COMPLETO</option>
-                <option value="Accessory technical study">ACCESORIO</option>
-                <option value="Headpiece focus">TOCADO / ROSTRO</option>
-                <option value="Footwear focus">ZAPATOS</option>
-                <option value="Jewelry focus">JOYERÍA</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label>TÉCNICA ARTÍSTICA</label>
-              <select id="ia-tecnica">
-                <option value="watercolor and ink on textured paper">ACUARELA Y TINTA</option>
-                <option value="charcoal and chalk on parchment">CARBONCILLO Y TIZA</option>
-                <option value="clean vector fashion illustration">VECTORIAL LIMPIO</option>
-                <option value="hyper-realistic fabric render, cinematic lighting">RENDER REALISTA</option>
-                <option value="pencil gestural lines, architectural style">LÍNEA GESTUAL</option>
+              <label>TIPO DE VISTA</label>
+              <select id="ia-tipo">
+                <option value="Full body costume design">CUERPO COMPLETO</option>
+                <option value="Detailed headpiece and makeup">ROSTRO Y MAQUILLAJE</option>
+                <option value="Costume accessory and fabric detail">DETALLE DE ACCESORIO</option>
+                <option value="Back view of the costume">VISTA POSTERIOR</option>
               </select>
             </div>
           </div>
-          
-          <!-- SECCIÓN DE ZOOM REFINADA -->
-          <div class="deco-card" style="margin-bottom: 1.5rem; padding: 1.5rem; background: #fafafa;">
-            <div class="input-group" style="display:flex; align-items:center; gap: 10px;">
-                <label style="margin-bottom:0">¿ACTIVAR ZOOM?</label>
-                <select id="ia-zoom-enable" style="width:auto; padding: 0.4rem 1rem;" onchange="toggleZoomFields()">
-                    <option value="no">NO</option>
-                    <option value="si">SÍ</option>
-                </select>
-            </div>
-
-            <div id="zoom-details" style="display:none; margin-top: 1rem; border-top: 1px solid #000; padding-top: 1rem;">
-                <label>ELEMENTO A ENFOCAR (DATOS DEL PERSONAJE)</label>
-                <select id="ia-zoom-target">
-                    <!-- Se llena dinámicamente -->
-                </select>
-                <p style="font-size: 0.6rem; margin-top: 5px; letter-spacing: 0.1em;">SELECCIONE EL ACCESORIO ESPECÍFICO QUE DEFINIÓ EN LA FICHA DEL PERSONAJE.</p>
-            </div>
-          </div>
-
-          <div class="input-group">
-            <label>NOTAS ADICIONALES PARA EL BOCETO</label>
-            <textarea id="ia-extra" rows="3" placeholder="EJ. ENFOCARSE EN EL BRILLO..."></textarea>
-          </div>
-          <button class="btn" style="width:100%" onclick="runIA()">GENERAR PROMPT MAESTRO</button>
+          <button class="btn" style="width:100%; margin-bottom: 1rem;" onclick="generatePrompt()">CONSTRUIR PROMPT TÉCNICO</button>
+          <div class="prompt-box" id="ia-prompt">Construye el prompt para ver los detalles aquí...</div>
+          <button class="btn btn-outline" style="width:100%" onclick="callGeminiIA()">GENERAR IMAGEN (GEMINI 4.0)</button>
         </div>
+        
         <div class="deco-card">
-          <div class="card-title">PROMPT RESULTANTE</div>
-          <div class="prompt-box" id="ia-result">EL RESULTADO APARECERÁ AQUÍ...</div>
-          <button class="btn-outline btn" style="width:100%; margin-top:1rem;" onclick="copyPrompt()">COPIAR AL PORTAPAPELES</button>
+          <div class="card-title">BOCETO RESULTANTE</div>
+          <div class="image-preview-container">
+            <img id="ia-img-result" src="" style="display:none">
+            <div id="ia-placeholder" style="color:#aaa; font-size: 0.7rem; letter-spacing: 0.1em;">SIN VISTA PREVIA</div>
+            <div class="loading-overlay" id="ia-loading">
+              <div style="font-weight: 800; font-size: 0.8rem; letter-spacing: 0.2em;">RENDERIZANDO...</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <div id="toast">MENSAJE DEL SISTEMA</div>
+  <div id="toast"></div>
 
   <script>
     let state = {
-      obra: { titulo: 'Cenicienta', autor: 'Prokofiev', cia: '', temp: '2026', dir: '' },
-      concept: { epoca: '', ideas: '', estilo: '' },
+      apiKey: '',
+      obra: { titulo: '', autor: '' },
+      concept: { epoca: '', ideas: '' },
       personajes: [],
       mood: []
     };
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'trama-pro-final';
 
     function switchTab(id, btn) {
       document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
       document.getElementById('sec-' + id).classList.add('active');
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      if(id === 'ia') {
-        updateIASelect();
-        updateZoomTargets();
-      }
+      if(id === 'ia') updateIASelect();
     }
 
-    /* --- GESTIÓN PERSONAJES --- */
+    // --- PERSONAJES (RECUPERADOS) ---
     function addPersonaje() {
       const p = {
-        id: Date.now(),
+        id: crypto.randomUUID(),
         nombre: 'NUEVO PERSONAJE',
-        edad: '', sexo: '', etnia: '', estrato: '', contextura: '',
-        silueta: '', materiales: '', accesorios: '', ideas: '',
-        paleta: ['#000000']
+        datos: { edad: '', sexo: '', etnia: '', contextura: '', altura: '' },
+        paleta: ['#333333', '#dddddd'],
+        prendas: { base: '', capas: '', calzado: '', accesorios: '' },
+        complejidad: 'Media',
+        notas: ''
       };
       state.personajes.push(p);
       renderPersonajes();
@@ -367,156 +279,223 @@
       const cont = document.getElementById('personajes-cont');
       cont.innerHTML = state.personajes.map((p, i) => `
         <div class="deco-card">
-          <div class="input-group" style="margin-bottom: 2rem;">
-            <label>NOMBRE DEL PERSONAJE</label>
-            <input type="text" value="${p.nombre}" oninput="updatePer(${i}, 'nombre', this.value)" style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; border: 3px solid var(--black); text-transform: uppercase; padding: 1rem;">
+          <div class="card-title">
+            <input type="text" value="${p.nombre}" onchange="updatePer(${i}, 'nombre', this.value)" style="border:none; background:transparent; font-weight:900; width: 60%; font-family: 'Playfair Display'; font-size: 1.2rem;">
+            <div>
+              <button class="btn btn-outline btn-small" onclick="generatePDF(${i})">PDF</button>
+              <button class="btn btn-outline btn-small btn-danger" onclick="deletePer(${i})">ELIMINAR</button>
+            </div>
           </div>
           
-          <div class="grid-3">
-            <div class="input-group"><label>EDAD</label><input type="text" value="${p.edad}" onchange="updatePer(${i}, 'edad', this.value)"></div>
-            <div class="input-group"><label>SEXO</label><input type="text" value="${p.sexo}" onchange="updatePer(${i}, 'sexo', this.value)"></div>
-            <div class="input-group"><label>ETNIA</label><input type="text" value="${p.etnia}" onchange="updatePer(${i}, 'etnia', this.value)"></div>
-            <div class="input-group"><label>ESTRATO SOCIAL</label><input type="text" value="${p.estrato}" onchange="updatePer(${i}, 'estrato', this.value)"></div>
-            <div class="input-group"><label>CONTEXTURA</label><input type="text" value="${p.contextura}" onchange="updatePer(${i}, 'contextura', this.value)"></div>
-            <div class="input-group"><label>SILUETA BASE</label><input type="text" value="${p.silueta}" onchange="updatePer(${i}, 'silueta', this.value)"></div>
+          <div class="grid-4">
+            <div class="input-group"><label>EDAD</label><input type="text" value="${p.datos.edad}" onchange="updatePerData(${i}, 'edad', this.value)"></div>
+            <div class="input-group"><label>SEXO</label><input type="text" value="${p.datos.sexo}" onchange="updatePerData(${i}, 'sexo', this.value)"></div>
+            <div class="input-group"><label>ETNIA</label><input type="text" value="${p.datos.etnia}" onchange="updatePerData(${i}, 'etnia', this.value)"></div>
+            <div class="input-group"><label>CONTEXTURE/ALTURA</label><input type="text" value="${p.datos.contextura}" onchange="updatePerData(${i}, 'contextura', this.value)"></div>
           </div>
 
-          <div class="input-group">
-            <label>PALETA CROMÁTICA</label>
-            <div class="color-palette">
-              ${p.paleta.map((c, ci) => `
-                <div class="color-swatch-container">
-                  <div class="color-swatch" style="background:${c}">
-                    <input type="color" value="${c}" onchange="updateColor(${i}, ${ci}, this.value)">
-                  </div>
-                  <button class="btn-remove-color" onclick="removeColor(${i}, ${ci})">×</button>
-                </div>
-              `).join('')}
-              <button class="btn-outline btn" style="width:42px; height:42px; border-radius:50%;" onclick="addColor(${i})">+</button>
+          <div class="grid-2" style="margin-top:1rem;">
+            <div class="deco-card" style="margin-bottom:0; background:#f9f9f9; padding: 1rem;">
+               <label>PALETA CROMÁTICA</label>
+               <div class="color-palette">
+                  ${p.paleta.map((c, ci) => `
+                    <div class="color-swatch" style="background:${c}">
+                      <input type="color" value="${c}" onchange="updateColor(${i}, ${ci}, this.value)">
+                    </div>
+                  `).join('')}
+                  <button class="btn btn-small btn-outline" onclick="addColor(${i})">+</button>
+               </div>
+            </div>
+            <div class="input-group">
+               <label>COMPLEJIDAD DE CONSTRUCCIÓN</label>
+               <select onchange="updatePer(${i}, 'complejidad', this.value)">
+                  <option ${p.complejidad === 'Baja' ? 'selected' : ''}>Baja</option>
+                  <option ${p.complejidad === 'Media' ? 'selected' : ''}>Media</option>
+                  <option ${p.complejidad === 'Alta' ? 'selected' : ''}>Alta</option>
+                  <option ${p.complejidad === 'Experimental' ? 'selected' : ''}>Experimental</option>
+               </select>
             </div>
           </div>
 
-          <div class="grid-2">
-            <div class="input-group"><label>MATERIALES Y TEXTURAS</label><textarea onchange="updatePer(${i}, 'materiales', this.value)">${p.materiales}</textarea></div>
-            <div class="input-group"><label>ACCESORIOS ESPECIALES (JOYAS, TOCADOS, ZAPATOS)</label><textarea onchange="updatePer(${i}, 'accesorios', this.value)">${p.accesorios}</textarea></div>
+          <div class="grid-2" style="margin-top:1rem;">
+             <div>
+                <div class="input-group"><label>PRENDAS BASE</label><textarea onchange="updatePrenda(${i}, 'base', this.value)">${p.prendas.base}</textarea></div>
+                <div class="input-group"><label>CAPAS Y ABRIGOS</label><textarea onchange="updatePrenda(${i}, 'capas', this.value)">${p.prendas.capas}</textarea></div>
+             </div>
+             <div>
+                <div class="input-group"><label>CALZADO</label><textarea onchange="updatePrenda(${i}, 'calzado', this.value)">${p.prendas.calzado}</textarea></div>
+                <div class="input-group"><label>ACCESORIOS Y COMPLEMENTOS</label><textarea onchange="updatePrenda(${i}, 'accesorios', this.value)">${p.prendas.accesorios}</textarea></div>
+             </div>
           </div>
-          
-          <div class="input-group"><label>NOTAS DRAMATÚRGICAS</label><textarea onchange="updatePer(${i}, 'ideas', this.value)">${p.ideas}</textarea></div>
-          
-          <button class="btn-outline btn" onclick="deletePer(${i})" style="color:red; border-color:red; font-size: 0.6rem;">ELIMINAR PERSONAJE</button>
         </div>
       `).join('');
     }
 
-    function updatePer(i, campo, val) { state.personajes[i][campo] = val; }
+    function updatePer(i, k, v) { state.personajes[i][k] = v; }
+    function updatePerData(i, k, v) { state.personajes[i].datos[k] = v; }
+    function updatePrenda(i, k, v) { state.personajes[i].prendas[k] = v; }
     function deletePer(i) { state.personajes.splice(i, 1); renderPersonajes(); }
-    function updateColor(pIdx, cIdx, val) { state.personajes[pIdx].paleta[cIdx] = val; renderPersonajes(); }
-    function addColor(pIdx) { state.personajes[pIdx].paleta.push('#ffffff'); renderPersonajes(); }
-    function removeColor(pIdx, cIdx) { if(state.personajes[pIdx].paleta.length > 1) { state.personajes[pIdx].paleta.splice(cIdx, 1); renderPersonajes(); } }
+    function updateColor(pi, ci, v) { state.personajes[pi].paleta[ci] = v; renderPersonajes(); }
+    function addColor(pi) { state.personajes[pi].paleta.push('#cccccc'); renderPersonajes(); }
 
-    /* --- GESTIÓN MOODBOARD --- */
-    function addMood() {
-      const url = document.getElementById('m-url').value;
-      const nota = document.getElementById('m-nota').value;
-      if(!url) return;
-      state.mood.push({ url, nota });
-      document.getElementById('m-url').value = '';
-      document.getElementById('m-nota').value = '';
-      renderMood();
+    // --- PDF (CON TODOS LOS CAMPOS) ---
+    function generatePDF(i) {
+      const p = state.personajes[i];
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(22);
+      doc.text("FICHA TÉCNICA DE VESTUARIO", 20, 25);
+      
+      doc.setFontSize(12);
+      doc.text(`PRODUCCIÓN: ${state.obra.titulo.toUpperCase() || 'S/N'}`, 20, 35);
+      doc.text(`PERSONAJE: ${p.nombre.toUpperCase()}`, 20, 42);
+      doc.line(20, 45, 190, 45);
+
+      doc.setFontSize(10);
+      doc.text("DATOS ANTROPOMÉTRICOS Y PERFIL:", 20, 55);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Edad: ${p.datos.edad} | Sexo: ${p.datos.sexo} | Etnia: ${p.datos.etnia} | Contextura/H: ${p.datos.contextura}`, 20, 60);
+
+      doc.setFont("helvetica", "bold");
+      doc.text("PALETA DE COLOR:", 20, 70);
+      p.paleta.forEach((color, idx) => {
+        doc.setFillColor(color);
+        doc.rect(20 + (idx * 15), 73, 12, 12, 'F');
+        doc.rect(20 + (idx * 15), 73, 12, 12, 'S');
+      });
+
+      let y = 100;
+      const sections = [
+        { t: "PRENDAS BASE", d: p.prendas.base },
+        { t: "CAPAS Y ABRIGOS", d: p.prendas.capas },
+        { t: "CALZADO", d: p.prendas.calzado },
+        { t: "ACCESORIOS", d: p.prendas.accesorios }
+      ];
+
+      sections.forEach(s => {
+        doc.setFont("helvetica", "bold");
+        doc.text(s.t + ":", 20, y);
+        doc.setFont("helvetica", "normal");
+        const lines = doc.splitTextToSize(s.d || "No especificado", 160);
+        doc.text(lines, 20, y + 5);
+        y += (lines.length * 5) + 10;
+      });
+
+      doc.save(`Ficha_${p.nombre.replace(/\s+/g, '_')}.pdf`);
+      notificar("PDF GENERADO");
     }
 
-    function renderMood() {
-      const grid = document.getElementById('mood-grid');
-      grid.innerHTML = state.mood.map((m, i) => `
-        <div class="mood-item">
-          <img src="${m.url}">
-          <button class="remove" onclick="removeMood(${i})">X</button>
-          <div style="position:absolute; bottom:0; background:rgba(0,0,0,0.8); color:#fff; width:100%; padding:5px; font-size:10px;">${m.nota}</div>
-        </div>
-      `).join('');
-    }
-    function removeMood(i) { state.mood.splice(i, 1); renderMood(); }
-
-    /* --- LÓGICA DE BOCETO Y ZOOM --- */
+    // --- IA (CON PROMPT ENRIQUECIDO) ---
     function updateIASelect() {
       const sel = document.getElementById('ia-per-select');
       sel.innerHTML = state.personajes.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
     }
 
-    function toggleZoomFields() {
-        const val = document.getElementById('ia-zoom-enable').value;
-        document.getElementById('zoom-details').style.display = (val === 'si') ? 'block' : 'none';
-        updateZoomTargets();
+    function generatePrompt() {
+      const pid = document.getElementById('ia-per-select').value;
+      const p = state.personajes.find(x => x.id === pid);
+      if(!p) return;
+      
+      const tipo = document.getElementById('ia-tipo').value;
+      const paletteStr = p.paleta.join(', ');
+      
+      const prompt = `${tipo} for a character named "${p.nombre}". 
+      Physical profile: ${p.datos.sexo}, ${p.datos.edad} years old, ${p.datos.etnia} origin, ${p.datos.contextura} build. 
+      Style/Era: ${state.concept.epoca}. 
+      Costume details: Base garments include ${p.prendas.base}. Layers: ${p.prendas.capas}. Accessories: ${p.prendas.accesorios}. 
+      Color Palette: ${paletteStr}. 
+      Art style: High-end theatrical costume design illustration, professional watercolor and fine ink linework, clear textures, white background. 
+      Overall mood: ${state.concept.ideas}.`;
+      
+      document.getElementById('ia-prompt').innerText = prompt;
     }
 
-    function updateZoomTargets() {
-        const perId = document.getElementById('ia-per-select').value;
-        const targetSel = document.getElementById('ia-zoom-target');
-        const per = state.personajes.find(p => p.id == perId);
-        
-        if (!per) return;
+    async function callGeminiIA() {
+      const key = document.getElementById('g-api-key').value;
+      const promptText = document.getElementById('ia-prompt').innerText;
+      
+      if(!key) return notificar("FALTA API KEY");
+      if(promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
 
-        // Limpiamos y añadimos opciones basadas en los accesorios guardados
-        // Intentamos separar por comas si el usuario escribió varios
-        const accs = per.accesorios.split(/[,.;]/).map(s => s.trim()).filter(s => s.length > 0);
+      const loading = document.getElementById('ia-loading');
+      const imgRes = document.getElementById('ia-img-result');
+      const placeholder = document.getElementById('ia-placeholder');
+      
+      loading.style.display = 'flex';
+      
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${key}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            instances: [{ prompt: promptText }],
+            parameters: { sampleCount: 1 }
+          })
+        });
         
-        if (accs.length === 0) {
-            targetSel.innerHTML = `<option value="ALL ACCESORIES">SIN ACCESORIOS ESPECÍFICOS GUARDADOS</option>`;
+        const data = await response.json();
+        if(data.predictions && data.predictions[0].bytesBase64Encoded) {
+          const b64 = data.predictions[0].bytesBase64Encoded;
+          imgRes.src = `data:image/png;base64,${b64}`;
+          imgRes.style.display = 'block';
+          placeholder.style.display = 'none';
+          notificar("IMAGEN GENERADA");
         } else {
-            targetSel.innerHTML = accs.map(a => `<option value="${a}">${a.toUpperCase()}</option>`).join('');
+          throw new Error("Respuesta de API inválida");
         }
+      } catch (err) {
+        console.error(err);
+        notificar("ERROR DE CONEXIÓN O API");
+      } finally {
+        loading.style.display = 'none';
+      }
     }
 
-    function runIA() {
-      const perId = document.getElementById('ia-per-select').value;
-      const per = state.personajes.find(p => p.id == perId);
-      if(!per) return notificar('NO HAY PERSONAJE');
-
-      const tipoBoceto = document.getElementById('ia-tipo-boceto').value;
-      const tecnica = document.getElementById('ia-tecnica').value;
-      const extra = document.getElementById('ia-extra').value;
-      const zoomHabilitado = document.getElementById('ia-zoom-enable').value === 'si';
-      const zoomTarget = document.getElementById('ia-zoom-target').value;
-
-      let prompt = "";
-      
-      if(zoomHabilitado) {
-        prompt += `EXTREME CLOSE-UP ZOOM MACRO SHOT. Focusing exclusively on the detail of: ${zoomTarget}.\n`;
-        prompt += `THE OBJECT IS PART OF A COSTUME FOR ${per.nombre}.\n`;
-      } else {
-        prompt += `${tipoBoceto} illustration.\n`;
-      }
-
-      prompt += `STYLE: Theatrical costume design in ${tecnica}.\n\n`;
-      prompt += `CHARACTER CONTEXT: ${per.nombre} (${per.estrato} class, ${per.contextura} build).\n`;
-      prompt += `PALETTE: ${per.paleta.join(', ')}.\n`;
-      prompt += `SPECIFIC MATERIALS: ${per.materiales}.\n`;
-      
-      if(zoomHabilitado) {
-        prompt += `OBJECT DESCRIPTION: Focus on the intricate details of ${zoomTarget}. Highlight textures and craftmanship.\n`;
-      } else {
-        prompt += `OVERALL ACCESSORIES: ${per.accesorios}.\n`;
-      }
-
-      prompt += `PRODUCTION: "${state.obra.titulo}" (${state.obra.autor}). Overall style: ${document.getElementById('m-estilo').value || 'Dramatic'}.\n`;
-      
-      if(extra) prompt += `DIRECTOR NOTES: ${extra}.\n`;
-      
-      prompt += `\nTechnical requirements: White background, sharp edges, professional costume rendering, architectural jewelry/accessory detail.`;
-
-      document.getElementById('ia-result').innerText = prompt;
-      notificar('PROMPT DE BOCETO GENERADO');
+    // --- PERSISTENCIA E IMPORTACIÓN ---
+    function saveAll() {
+      state.obra.titulo = document.getElementById('g-obra').value;
+      state.obra.autor = document.getElementById('g-autor').value;
+      state.apiKey = document.getElementById('g-api-key').value;
+      state.concept.epoca = document.getElementById('m-epoca').value;
+      state.concept.ideas = document.getElementById('m-ideas').value;
+      localStorage.setItem(appId, JSON.stringify(state));
+      notificar("PROYECTO GUARDADO");
     }
 
-    function copyPrompt() {
-      const text = document.getElementById('ia-result').innerText;
-      const el = document.createElement('textarea');
-      el.value = text;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-      notificar('COPIADO');
+    function exportData() {
+      saveAll();
+      const blob = new Blob([JSON.stringify(state)], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Trama_${state.obra.titulo || 'Proyecto'}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          state = JSON.parse(e.target.result);
+          syncUI();
+          notificar("IMPORTACIÓN EXITOSA");
+        } catch (err) { notificar("ERROR AL LEER ARCHIVO"); }
+      };
+      reader.readAsText(file);
+    }
+
+    function syncUI() {
+      document.getElementById('g-obra').value = state.obra.titulo || '';
+      document.getElementById('g-autor').value = state.obra.autor || '';
+      document.getElementById('g-api-key').value = state.apiKey || '';
+      document.getElementById('m-epoca').value = state.concept.epoca || '';
+      document.getElementById('m-ideas').value = state.concept.ideas || '';
+      renderPersonajes();
+      renderMood();
     }
 
     function notificar(m) {
@@ -525,24 +504,30 @@
       setTimeout(() => t.style.display = 'none', 3000);
     }
 
-    function saveAll() {
-      state.obra.titulo = document.getElementById('g-obra').value;
-      state.concept.epoca = document.getElementById('m-epoca').value;
-      state.concept.estilo = document.getElementById('m-estilo').value;
-      localStorage.setItem('trama_v5_data', JSON.stringify(state));
-      notificar('GUARDADO');
+    function addMood() {
+      const url = document.getElementById('m-url').value;
+      if(!url) return;
+      state.mood.push(url);
+      document.getElementById('m-url').value = '';
+      renderMood();
+    }
+
+    function renderMood() {
+      const g = document.getElementById('mood-grid');
+      g.innerHTML = state.mood.map((m, i) => `
+        <div style="position:relative; border:2px solid #000; background:#fff; padding:5px;">
+          <img src="${m}" style="width:100%; height:auto; display:block;">
+          <button onclick="state.mood.splice(${i},1); renderMood();" style="position:absolute; top:-5px; right:-5px; background:red; color:#fff; border:none; width:20px; height:20px; cursor:pointer; font-size:10px; border-radius:50%;">X</button>
+        </div>
+      `).join('');
     }
 
     window.onload = () => {
-      const saved = localStorage.getItem('trama_v5_data');
+      const saved = localStorage.getItem(appId);
       if(saved) {
         state = JSON.parse(saved);
-        document.getElementById('g-obra').value = state.obra.titulo;
-        document.getElementById('m-epoca').value = state.concept.epoca;
-        document.getElementById('m-estilo').value = state.concept.estilo;
+        syncUI();
       }
-      renderPersonajes();
-      renderMood();
     };
   </script>
 </body>
