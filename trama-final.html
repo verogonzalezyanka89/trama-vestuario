@@ -25,7 +25,6 @@
     min-height: 100vh;
   }
 
-  /* --- CABECERA ART DECO --- */
   header {
     background: var(--bg);
     padding: 1.5rem 2.5rem;
@@ -45,7 +44,6 @@
     letter-spacing: 0.2em; text-transform: uppercase;
   }
 
-  /* --- NAVEGACIÓN --- */
   nav.tabs {
     display: flex; justify-content: center; background: var(--black);
     position: sticky; top: 0; z-index: 100;
@@ -57,7 +55,6 @@
   }
   .tab-btn.active { background: var(--bg); color: var(--black); }
 
-  /* --- CONTENIDO --- */
   main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
   .view-section { display: none; }
   .view-section.active { display: block; }
@@ -79,7 +76,6 @@
     display: flex; justify-content: space-between; align-items: center;
   }
 
-  /* --- FORMULARIOS --- */
   .input-group { margin-bottom: 1rem; }
   label { display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; color: #444; }
   input, textarea, select {
@@ -88,7 +84,6 @@
   }
   textarea { resize: vertical; min-height: 60px; }
 
-  /* --- BOTONES --- */
   .btn {
     background: var(--black); color: #fff; border: 2px solid var(--black);
     padding: 0.8rem 1.2rem; font-weight: 700; text-transform: uppercase;
@@ -99,17 +94,17 @@
   .btn-small { padding: 0.4rem 0.6rem; font-size: 0.55rem; }
   .btn-danger { color: #cc0000; border-color: #cc0000; }
   .btn-danger:hover { background: #cc0000; color: #fff; }
+  .btn-gold { background: var(--accent); color: #000; border-color: var(--accent); }
+  .btn-gold:hover { background: transparent; color: var(--accent); border-color: var(--accent); }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
   .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
 
-  /* --- PALETAS --- */
   .color-palette { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .color-swatch { width: 30px; height: 30px; border: 1.5px solid #000; position: relative; border-radius: 2px; }
   .color-swatch input { position: absolute; opacity: 0; inset: 0; cursor: pointer; width: 100%; height: 100%; }
 
-  /* --- IA --- */
   .image-preview-container {
     width: 100%; aspect-ratio: 1; border: 2px solid #000;
     background: #fdfdfd; display: flex; align-items: center; justify-content: center;
@@ -125,12 +120,59 @@
     font-size: 0.75rem; line-height: 1.4; background: #fff; border: 1px dashed #000; padding: 12px; margin-bottom: 1rem; color: #555;
   }
 
+  /* PDF Export Progress Modal */
+  #pdf-modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    z-index: 2000; align-items: center; justify-content: center;
+  }
+  #pdf-modal.active { display: flex; }
+  .pdf-modal-inner {
+    background: var(--bg); border: 3px solid var(--black); padding: 3rem 4rem;
+    text-align: center; max-width: 420px; width: 90%; position: relative;
+  }
+  .pdf-modal-inner::before { content: ''; position: absolute; inset: 6px; border: 1px solid rgba(0,0,0,0.15); pointer-events: none; }
+  .pdf-modal-title {
+    font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;
+  }
+  .pdf-modal-sub { font-size: 0.65rem; letter-spacing: 0.15em; color: #666; margin-bottom: 2rem; text-transform: uppercase; }
+  .pdf-progress-bar { width: 100%; height: 4px; background: #ddd; margin: 1.5rem 0 0.5rem; }
+  .pdf-progress-fill { height: 100%; background: var(--black); transition: width 0.4s ease; width: 0%; }
+  .pdf-progress-label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: #888; }
+
   #toast {
     position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
     background: var(--black); color: #fff; padding: 0.8rem 2rem;
     font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
     display: none; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   }
+
+  /* Export section highlight */
+  .export-highlight {
+    border: 2px solid var(--accent);
+    background: #fffdf5;
+  }
+  .export-highlight::before { border-color: rgba(212,175,55,0.3) !important; }
+  .export-highlight .card-title { border-bottom-color: var(--accent); }
+
+  /* --- OPTION CARDS (IA selector) --- */
+  .option-cards { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .option-card {
+    flex: 1 1 auto; min-width: 80px;
+    border: 1.5px solid #ccc; background: #fff; padding: 0.7rem 0.5rem;
+    text-align: center; cursor: pointer; transition: all 0.15s ease;
+    position: relative; user-select: none;
+  }
+  .option-card:hover { border-color: var(--black); }
+  .option-card.selected {
+    border: 2px solid var(--black); background: var(--black);
+  }
+  .option-card.selected .oc-icon,
+  .option-card.selected .oc-label { color: #fff; }
+  .option-card.selected .oc-desc { color: #aaa; }
+  .oc-icon { font-size: 1.3rem; line-height: 1; margin-bottom: 4px; display: block; }
+  .oc-label { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; display: block; }
+  .oc-desc { font-size: 0.5rem; color: #999; margin-top: 2px; display: block; line-height: 1.3; }
 
   @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
 </style>
@@ -147,7 +189,8 @@
       <div class="logo-symbol">T</div>
       <h1 class="brand-name">TRAMA</h1>
     </div>
-    <div>
+    <div style="display:flex; gap: 8px; align-items: center;">
+      <button class="btn btn-gold btn-small" onclick="exportFullPDF()" title="Exportar dossier completo en PDF">PDF ↓</button>
       <button class="btn" onclick="saveAll()">GUARDAR</button>
     </div>
   </header>
@@ -174,6 +217,57 @@
           <div class="input-group"><label>GEMINI API KEY</label><input type="password" id="g-api-key" placeholder="Pega tu clave para generar imágenes..."></div>
           <p style="font-size: 0.6rem; color: #666; margin-top: 10px;">ESTA CLAVE PERMITE LA GENERACIÓN DE BOCETOS VISUALES DIRECTAMENTE DESDE LA PESTAÑA 'BOCETO IA'.</p>
         </div>
+      </div>
+
+      <!-- FIRMA DE ESTILO -->
+      <div class="deco-card" style="border-color: #000; background: #0a0a0a; color: #fff; position: relative;">
+        <div class="card-title" style="border-bottom-color: #d4af37; color: #d4af37;">
+          <span>FIRMA DE ESTILO PERSONAL</span>
+          <span style="font-size: 0.55rem; font-family: 'Jost'; font-weight: 400; color: #888; letter-spacing: 0.08em;">SE APLICA A TODOS LOS BOCETOS</span>
+        </div>
+        <p style="font-size: 0.6rem; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.8rem; line-height: 1.6;">
+          Esta directriz de estilo se inyecta con prioridad alta en cada prompt generado, por encima de las variables del proyecto o del personaje.
+        </p>
+        <textarea id="g-firma" rows="4"
+          style="width:100%; background:#1a1a1a; color:#e8e0d0; border:1px solid #444; font-family:'Jost',sans-serif;
+          font-size:0.82rem; line-height:1.7; padding:0.8rem; resize:vertical; letter-spacing:0.01em;"></textarea>
+        <div style="display:flex; justify-content:flex-end; margin-top:0.6rem;">
+          <button class="btn btn-small" onclick="resetFirma()"
+            style="background:transparent; color:#666; border-color:#333; font-size:0.5rem;">
+            RESTABLECER ORIGINAL
+          </button>
+        </div>
+      </div>
+
+      <!-- EXPORT FULL PDF PANEL -->
+      <div class="deco-card export-highlight">
+        <div class="card-title" style="color: #8a6d00;">
+          <span>EXPORTAR DOSSIER COMPLETO</span>
+          <span style="font-size: 0.6rem; font-family: 'Jost'; font-weight: 600; color: var(--accent);">★ NUEVO</span>
+        </div>
+        <p style="font-size: 0.75rem; color: #555; line-height: 1.6; margin-bottom: 1.2rem;">
+          Genera un dossier profesional en PDF con toda la información del proyecto: portada, concepto visual, paletas cromáticas y fichas técnicas de todos los personajes.
+        </p>
+        <div class="grid-3" style="margin-bottom: 1.2rem;">
+          <div style="background: #fff; border: 1.5px solid #ddd; padding: 0.8rem; text-align: center;">
+            <div style="font-size: 1.4rem; margin-bottom: 4px;">📋</div>
+            <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Portada + Datos</div>
+            <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Título, autor, concepto</div>
+          </div>
+          <div style="background: #fff; border: 1.5px solid #ddd; padding: 0.8rem; text-align: center;">
+            <div style="font-size: 1.4rem; margin-bottom: 4px;">🎨</div>
+            <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Concepto Visual</div>
+            <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Época, palabras clave</div>
+          </div>
+          <div style="background: #fff; border: 1.5px solid #ddd; padding: 0.8rem; text-align: center;">
+            <div style="font-size: 1.4rem; margin-bottom: 4px;">👗</div>
+            <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Fichas de Personajes</div>
+            <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Una página por personaje</div>
+          </div>
+        </div>
+        <button class="btn btn-gold" style="width: 100%;" onclick="exportFullPDF()">
+          GENERAR DOSSIER COMPLETO EN PDF
+        </button>
       </div>
     </section>
 
@@ -208,18 +302,111 @@
       <div class="grid-2">
         <div class="deco-card">
           <div class="card-title">CONFIGURACIÓN DEL PROMPT</div>
-          <div class="grid-2">
-            <div class="input-group"><label>PERSONAJE</label><select id="ia-per-select"></select></div>
-            <div class="input-group">
-              <label>TIPO DE VISTA</label>
-              <select id="ia-tipo">
-                <option value="Full body costume design">CUERPO COMPLETO</option>
-                <option value="Detailed headpiece and makeup">ROSTRO Y MAQUILLAJE</option>
-                <option value="Costume accessory and fabric detail">DETALLE DE ACCESORIO</option>
-                <option value="Back view of the costume">VISTA POSTERIOR</option>
-              </select>
+
+          <!-- Row 1: personaje -->
+          <div class="input-group" style="margin-bottom: 1rem;">
+            <label>PERSONAJE</label>
+            <select id="ia-per-select" onchange="updateZoomCards()"></select>
+          </div>
+
+          <!-- Tipo de vista: vistas de cuerpo -->
+          <div class="input-group">
+            <label>TIPO DE VISTA</label>
+            <div class="option-cards" id="ia-vista-cards">
+              <div class="option-card selected" data-group="vista"
+                data-value="Full body front view costume design, character standing upright facing forward"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🧍</span>
+                <span class="oc-label">Frente</span>
+                <span class="oc-desc">Cuerpo completo de frente</span>
+              </div>
+              <div class="option-card" data-group="vista"
+                data-value="Full body front view costume design with visible handwritten technical annotations and fabric swatches beside the figure, fashion illustration with notes"
+                onclick="selectCard(this)">
+                <span class="oc-icon">📝</span>
+                <span class="oc-label">Con texto</span>
+                <span class="oc-desc">Cuerpo completo con notas</span>
+              </div>
+              <div class="option-card" data-group="vista"
+                data-value="Full body costume design showing both front and back views side by side, two figures on the same composition"
+                onclick="selectCard(this)">
+                <span class="oc-icon">↔</span>
+                <span class="oc-label">Frente y espalda</span>
+                <span class="oc-desc">Vista doble en composición</span>
+              </div>
             </div>
           </div>
+
+          <!-- Zoom de accesorio: dinámico por personaje -->
+          <div class="input-group" id="ia-zoom-group" style="display:none;">
+            <label>ZOOM DE ACCESORIO</label>
+            <div class="option-cards" id="ia-zoom-cards"></div>
+          </div>
+
+          <!-- Row 2: estilo del boceto -->
+          <div class="input-group">
+            <label>ESTILO DEL BOCETO</label>
+            <div class="option-cards" id="ia-estilo-cards">
+              <div class="option-card selected" data-group="estilo" data-value="Classic theatrical costume illustration, balanced and refined composition, elegant proportions" onclick="selectCard(this)">
+                <span class="oc-icon">🎭</span>
+                <span class="oc-label">Clásico</span>
+                <span class="oc-desc">Equilibrado y elegante</span>
+              </div>
+              <div class="option-card" data-group="estilo" data-value="Dramatic and expressive costume illustration, strong shadows and high contrast, intense mood" onclick="selectCard(this)">
+                <span class="oc-icon">🌑</span>
+                <span class="oc-label">Dramático</span>
+                <span class="oc-desc">Alto contraste y tensión</span>
+              </div>
+              <div class="option-card" data-group="estilo" data-value="Avant-garde experimental costume illustration, deconstructed silhouette, bold unexpected forms" onclick="selectCard(this)">
+                <span class="oc-icon">✦</span>
+                <span class="oc-label">Vanguardista</span>
+                <span class="oc-desc">Formas inesperadas</span>
+              </div>
+              <div class="option-card" data-group="estilo" data-value="Romantic and ethereal costume illustration, soft flowing lines, dreamlike atmosphere" onclick="selectCard(this)">
+                <span class="oc-icon">🌸</span>
+                <span class="oc-label">Romántico</span>
+                <span class="oc-desc">Etéreo y suave</span>
+              </div>
+              <div class="option-card" data-group="estilo" data-value="Minimalist costume illustration, clean lines, sparse detail, strong silhouette on white background" onclick="selectCard(this)">
+                <span class="oc-icon">◻</span>
+                <span class="oc-label">Minimalista</span>
+                <span class="oc-desc">Silueta y síntesis</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: técnica -->
+          <div class="input-group">
+            <label>TÉCNICA DE REPRESENTACIÓN</label>
+            <div class="option-cards" id="ia-tecnica-cards">
+              <div class="option-card selected" data-group="tecnica" data-value="professional watercolor illustration technique, fluid washes, wet-on-wet blooms, fine ink linework" onclick="selectCard(this)">
+                <span class="oc-icon">💧</span>
+                <span class="oc-label">Acuarela</span>
+                <span class="oc-desc">Aguadas y transparencias</span>
+              </div>
+              <div class="option-card" data-group="tecnica" data-value="soft pastel illustration technique, chalky texture, blended tones, visible grain on paper" onclick="selectCard(this)">
+                <span class="oc-icon">🌫</span>
+                <span class="oc-label">Pastel</span>
+                <span class="oc-desc">Textura grano suave</span>
+              </div>
+              <div class="option-card" data-group="tecnica" data-value="acrylic paint illustration technique, bold opaque strokes, rich saturated color, visible brushwork" onclick="selectCard(this)">
+                <span class="oc-icon">🖌</span>
+                <span class="oc-label">Acrílico</span>
+                <span class="oc-desc">Pinceladas opacas</span>
+              </div>
+              <div class="option-card" data-group="tecnica" data-value="fine detailed pencil and ink drawing technique, precise hatching, crisp linework, black and white with selective tone" onclick="selectCard(this)">
+                <span class="oc-icon">✏️</span>
+                <span class="oc-label">Tinta y lápiz</span>
+                <span class="oc-desc">Tramado y línea</span>
+              </div>
+              <div class="option-card" data-group="tecnica" data-value="mixed media collage illustration technique, layered textures, digital and hand-made elements combined" onclick="selectCard(this)">
+                <span class="oc-icon">⬡</span>
+                <span class="oc-label">Técnica mixta</span>
+                <span class="oc-desc">Collage y capas</span>
+              </div>
+            </div>
+          </div>
+
           <button class="btn" style="width:100%; margin-bottom: 1rem;" onclick="generatePrompt()">CONSTRUIR PROMPT TÉCNICO</button>
           <div class="prompt-box" id="ia-prompt">Construye el prompt para ver los detalles aquí...</div>
           <button class="btn btn-outline" style="width:100%" onclick="callGeminiIA()">GENERAR IMAGEN (GEMINI 4.0)</button>
@@ -234,20 +421,36 @@
               <div style="font-weight: 800; font-size: 0.8rem; letter-spacing: 0.2em;">RENDERIZANDO...</div>
             </div>
           </div>
+          <!-- Selection summary badges -->
+          <div id="ia-selection-summary" style="margin-top: 1rem; display: flex; gap: 6px; flex-wrap: wrap;"></div>
         </div>
       </div>
     </section>
   </main>
 
+  <!-- PDF EXPORT PROGRESS MODAL -->
+  <div id="pdf-modal">
+    <div class="pdf-modal-inner">
+      <div class="pdf-modal-title">Generando Dossier</div>
+      <div class="pdf-modal-sub">Compilando fichas técnicas de vestuario</div>
+      <div id="pdf-modal-step" style="font-size: 0.75rem; color: #333; min-height: 1.2rem; font-weight: 600;"></div>
+      <div class="pdf-progress-bar"><div class="pdf-progress-fill" id="pdf-progress-fill"></div></div>
+      <div class="pdf-progress-label" id="pdf-progress-label">Iniciando...</div>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
+    const FIRMA_DEFAULT = `Estética de vestuario escénico con materiales expresivos, trazo visible y carácter teatral, inspirada en la pictórica de Renoir y Degas, pero reinterpretada con un acabado contemporáneo, refinado y personal. Evitar recursos genéricos, 3D, animé, Disney y soluciones visuales de videojuego.`;
+
     let state = {
       apiKey: '',
       obra: { titulo: '', autor: '' },
       concept: { epoca: '', ideas: '' },
       personajes: [],
-      mood: []
+      mood: [],
+      firmaEstilo: FIRMA_DEFAULT
     };
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'trama-pro-final';
@@ -260,15 +463,15 @@
       if(id === 'ia') updateIASelect();
     }
 
-    // --- PERSONAJES (RECUPERADOS) ---
+    // --- PERSONAJES ---
     function addPersonaje() {
       const p = {
         id: crypto.randomUUID(),
         nombre: 'NUEVO PERSONAJE',
-        datos: { edad: '', sexo: '', etnia: '', contextura: '', altura: '' },
-        paleta: ['#333333', '#dddddd'],
-        prendas: { base: '', capas: '', calzado: '', accesorios: '' },
-        complejidad: 'Media',
+        datos: { edad: '', sexo: '', etnia: '', contextura: '' },
+        paleta: ['#1a1a1a', '#e8dcc8', '#8b7355'],
+        prendas: { base: '', calzado: '', accesorios: '' },
+        materiales: '',
         notas: ''
       };
       state.personajes.push(p);
@@ -286,49 +489,74 @@
               <button class="btn btn-outline btn-small btn-danger" onclick="deletePer(${i})">ELIMINAR</button>
             </div>
           </div>
-          
+
+          <!-- PERFIL -->
           <div class="grid-4">
             <div class="input-group"><label>EDAD</label><input type="text" value="${p.datos.edad}" onchange="updatePerData(${i}, 'edad', this.value)"></div>
             <div class="input-group"><label>SEXO</label><input type="text" value="${p.datos.sexo}" onchange="updatePerData(${i}, 'sexo', this.value)"></div>
             <div class="input-group"><label>ETNIA</label><input type="text" value="${p.datos.etnia}" onchange="updatePerData(${i}, 'etnia', this.value)"></div>
-            <div class="input-group"><label>CONTEXTURE/ALTURA</label><input type="text" value="${p.datos.contextura}" onchange="updatePerData(${i}, 'contextura', this.value)"></div>
+            <div class="input-group"><label>CONTEXTURA / ALTURA</label><input type="text" value="${p.datos.contextura}" onchange="updatePerData(${i}, 'contextura', this.value)"></div>
           </div>
 
-          <div class="grid-2" style="margin-top:1rem;">
-            <div class="deco-card" style="margin-bottom:0; background:#f9f9f9; padding: 1rem;">
-               <label>PALETA CROMÁTICA</label>
-               <div class="color-palette">
-                  ${p.paleta.map((c, ci) => `
-                    <div class="color-swatch" style="background:${c}">
-                      <input type="color" value="${c}" onchange="updateColor(${i}, ${ci}, this.value)">
-                    </div>
-                  `).join('')}
-                  <button class="btn btn-small btn-outline" onclick="addColor(${i})">+</button>
-               </div>
+          <!-- PALETA — protagonista -->
+          <div style="margin-top: 1.2rem; margin-bottom: 1.2rem;">
+            <label style="margin-bottom: 0.6rem;">PALETA CROMÁTICA</label>
+            <div style="display: flex; gap: 0; border: 2px solid #000; overflow: hidden; height: 56px;">
+              ${p.paleta.map((c, ci) => `
+                <div style="flex: 1; background:${c}; position: relative; cursor: pointer; transition: flex 0.2s;" title="${c}">
+                  <input type="color" value="${c}" onchange="updateColor(${i}, ${ci}, this.value)"
+                    style="position:absolute; opacity:0; inset:0; width:100%; height:100%; cursor:pointer;">
+                  <button onclick="removeColor(${i}, ${ci})" title="Quitar"
+                    style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.45); color:#fff; border:none;
+                    width:14px; height:14px; font-size:8px; cursor:pointer; border-radius:50%; line-height:14px; text-align:center; padding:0; display:none;"
+                    class="color-remove-btn">×</button>
+                </div>
+              `).join('')}
+              <div style="width:40px; background:#f5f2eb; border-left:2px solid #000; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;"
+                onclick="addColor(${i})" title="Añadir color">
+                <span style="font-size:1.2rem; font-weight:300; color:#000; line-height:1;">+</span>
+              </div>
             </div>
-            <div class="input-group">
-               <label>COMPLEJIDAD DE CONSTRUCCIÓN</label>
-               <select onchange="updatePer(${i}, 'complejidad', this.value)">
-                  <option ${p.complejidad === 'Baja' ? 'selected' : ''}>Baja</option>
-                  <option ${p.complejidad === 'Media' ? 'selected' : ''}>Media</option>
-                  <option ${p.complejidad === 'Alta' ? 'selected' : ''}>Alta</option>
-                  <option ${p.complejidad === 'Experimental' ? 'selected' : ''}>Experimental</option>
-               </select>
+            <div style="display:flex; gap:0; margin-top:4px;">
+              ${p.paleta.map(c => `
+                <div style="flex:1; font-size:0.5rem; color:#888; text-align:center; font-family:monospace; letter-spacing:0.04em;">${c.toUpperCase()}</div>
+              `).join('')}
+              <div style="width:40px; flex-shrink:0;"></div>
             </div>
           </div>
 
-          <div class="grid-2" style="margin-top:1rem;">
-             <div>
-                <div class="input-group"><label>PRENDAS BASE</label><textarea onchange="updatePrenda(${i}, 'base', this.value)">${p.prendas.base}</textarea></div>
-                <div class="input-group"><label>CAPAS Y ABRIGOS</label><textarea onchange="updatePrenda(${i}, 'capas', this.value)">${p.prendas.capas}</textarea></div>
-             </div>
-             <div>
-                <div class="input-group"><label>CALZADO</label><textarea onchange="updatePrenda(${i}, 'calzado', this.value)">${p.prendas.calzado}</textarea></div>
-                <div class="input-group"><label>ACCESORIOS Y COMPLEMENTOS</label><textarea onchange="updatePrenda(${i}, 'accesorios', this.value)">${p.prendas.accesorios}</textarea></div>
-             </div>
+          <!-- MATERIALES — campo destacado -->
+          <div class="input-group" style="margin-bottom: 1.2rem;">
+            <label>MATERIALES Y TEXTURAS</label>
+            <textarea placeholder="Ej: Seda cruda, terciopelo negro, encaje de bolillo, cuero grabado, tul rígido…"
+              onchange="updatePer(${i}, 'materiales', this.value)"
+              style="min-height: 70px;">${p.materiales || ''}</textarea>
+          </div>
+
+          <!-- PRENDAS — 3 columnas -->
+          <div class="grid-3">
+            <div class="input-group" style="margin-bottom:0;">
+              <label>PRENDAS</label>
+              <textarea placeholder="Vestido, traje, blusa…" onchange="updatePrenda(${i}, 'base', this.value)" style="min-height:80px;">${p.prendas.base}</textarea>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>CALZADO</label>
+              <textarea placeholder="Tipo, altura, material…" onchange="updatePrenda(${i}, 'calzado', this.value)" style="min-height:80px;">${p.prendas.calzado}</textarea>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>ACCESORIOS</label>
+              <textarea placeholder="Joyería, sombrero, bolso…" onchange="updatePrenda(${i}, 'accesorios', this.value)" style="min-height:80px;">${p.prendas.accesorios}</textarea>
+            </div>
           </div>
         </div>
       `).join('');
+
+      // Show remove buttons on hover via JS (CSS :hover on nested btn doesn't work well inline)
+      document.querySelectorAll('.color-remove-btn').forEach(btn => {
+        const swatch = btn.parentElement;
+        swatch.addEventListener('mouseenter', () => btn.style.display = 'block');
+        swatch.addEventListener('mouseleave', () => btn.style.display = 'none');
+      });
     }
 
     function updatePer(i, k, v) { state.personajes[i][k] = v; }
@@ -337,128 +565,497 @@
     function deletePer(i) { state.personajes.splice(i, 1); renderPersonajes(); }
     function updateColor(pi, ci, v) { state.personajes[pi].paleta[ci] = v; renderPersonajes(); }
     function addColor(pi) { state.personajes[pi].paleta.push('#cccccc'); renderPersonajes(); }
+    function removeColor(pi, ci) { if(state.personajes[pi].paleta.length > 1) { state.personajes[pi].paleta.splice(ci, 1); renderPersonajes(); } }
 
-    // --- PDF (CON TODOS LOS CAMPOS) ---
+    // --- INDIVIDUAL PDF ---
     function generatePDF(i) {
       const p = state.personajes[i];
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(22);
-      doc.text("FICHA TÉCNICA DE VESTUARIO", 20, 25);
-      
-      doc.setFontSize(12);
-      doc.text(`PRODUCCIÓN: ${state.obra.titulo.toUpperCase() || 'S/N'}`, 20, 35);
-      doc.text(`PERSONAJE: ${p.nombre.toUpperCase()}`, 20, 42);
-      doc.line(20, 45, 190, 45);
-
-      doc.setFontSize(10);
-      doc.text("DATOS ANTROPOMÉTRICOS Y PERFIL:", 20, 55);
-      doc.setFont("helvetica", "normal");
-      doc.text(`Edad: ${p.datos.edad} | Sexo: ${p.datos.sexo} | Etnia: ${p.datos.etnia} | Contextura/H: ${p.datos.contextura}`, 20, 60);
-
-      doc.setFont("helvetica", "bold");
-      doc.text("PALETA DE COLOR:", 20, 70);
-      p.paleta.forEach((color, idx) => {
-        doc.setFillColor(color);
-        doc.rect(20 + (idx * 15), 73, 12, 12, 'F');
-        doc.rect(20 + (idx * 15), 73, 12, 12, 'S');
-      });
-
-      let y = 100;
-      const sections = [
-        { t: "PRENDAS BASE", d: p.prendas.base },
-        { t: "CAPAS Y ABRIGOS", d: p.prendas.capas },
-        { t: "CALZADO", d: p.prendas.calzado },
-        { t: "ACCESORIOS", d: p.prendas.accesorios }
-      ];
-
-      sections.forEach(s => {
-        doc.setFont("helvetica", "bold");
-        doc.text(s.t + ":", 20, y);
-        doc.setFont("helvetica", "normal");
-        const lines = doc.splitTextToSize(s.d || "No especificado", 160);
-        doc.text(lines, 20, y + 5);
-        y += (lines.length * 5) + 10;
-      });
-
+      renderPersonajeSheet(doc, p, 20);
       doc.save(`Ficha_${p.nombre.replace(/\s+/g, '_')}.pdf`);
       notificar("PDF GENERADO");
     }
 
-    // --- IA (CON PROMPT ENRIQUECIDO) ---
+    // Shared rendering function for a single character sheet
+    // Returns the final Y position used
+    function renderPersonajeSheet(doc, p, startY) {
+      const margin = 20;
+      const pageW = 210;
+      const contentW = pageW - margin * 2;
+
+      // Header bar
+      doc.setFillColor(0, 0, 0);
+      doc.rect(margin, startY, contentW, 10, 'F');
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(255, 255, 255);
+      doc.text("FICHA TÉCNICA DE VESTUARIO", margin + 3, startY + 6.5);
+      doc.setTextColor(0, 0, 0);
+
+      let y = startY + 18;
+
+      // Character name
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text(p.nombre.toUpperCase(), margin, y);
+      y += 7;
+
+      // Production subtitle
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(120, 120, 120);
+      doc.text(`Producción: ${state.obra.titulo || 'Sin título'}  |  Director: ${state.obra.autor || 'S/N'}`, margin, y);
+      doc.setTextColor(0, 0, 0);
+      y += 3;
+
+      // Divider
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, margin + contentW, y);
+      y += 7;
+
+      // ANTHROPOMETRIC DATA section
+      doc.setFillColor(245, 242, 235);
+      doc.rect(margin, y, contentW, 6, 'F');
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7);
+      doc.text("DATOS ANTROPOMÉTRICOS Y PERFIL", margin + 2, y + 4);
+      y += 10;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      const profileParts = [
+        p.datos.edad ? `Edad: ${p.datos.edad}` : null,
+        p.datos.sexo ? `Sexo: ${p.datos.sexo}` : null,
+        p.datos.etnia ? `Etnia: ${p.datos.etnia}` : null,
+        p.datos.contextura ? `Contextura/Altura: ${p.datos.contextura}` : null,
+      ].filter(Boolean);
+      doc.text(profileParts.join('   |   ') || 'Sin datos registrados', margin, y);
+      y += 10;
+
+      // COLOR PALETTE — wider swatches
+      doc.setFillColor(245, 242, 235);
+      doc.rect(margin, y, contentW, 6, 'F');
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7);
+      doc.text("PALETA CROMÁTICA", margin + 2, y + 4);
+      y += 9;
+
+      const swatchW = Math.min(20, Math.floor(contentW / Math.max(p.paleta.length, 1)));
+      p.paleta.forEach((color, idx) => {
+        const hexToRgb = hex => {
+          const r = parseInt(hex.slice(1,3), 16);
+          const g = parseInt(hex.slice(3,5), 16);
+          const b = parseInt(hex.slice(5,7), 16);
+          return [r, g, b];
+        };
+        const [r, g, b] = hexToRgb(color);
+        doc.setFillColor(r, g, b);
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.3);
+        doc.rect(margin + (idx * (swatchW + 2)), y, swatchW, 16, 'FD');
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(5.5);
+        doc.setTextColor(80, 80, 80);
+        doc.text(color.toUpperCase(), margin + (idx * (swatchW + 2)), y + 20);
+        doc.setTextColor(0, 0, 0);
+      });
+      y += 28;
+
+      // MATERIALS section (full width, highlighted)
+      if(p.materiales) {
+        doc.setFillColor(245, 242, 235);
+        doc.rect(margin, y, contentW, 6, 'F');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.text("MATERIALES Y TEXTURAS", margin + 2, y + 4);
+        y += 9;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8.5);
+        const matLines = doc.splitTextToSize(p.materiales, contentW);
+        doc.text(matLines, margin, y);
+        y += matLines.length * 5 + 8;
+      }
+
+      // GARMENT sections — three columns
+      const colW3 = (contentW - 8) / 3;
+      const garmentSections = [
+        { t: "PRENDAS", d: p.prendas.base },
+        { t: "CALZADO", d: p.prendas.calzado },
+        { t: "ACCESORIOS", d: p.prendas.accesorios }
+      ];
+
+      const renderGarmentSection = (sec, x, startY, w) => {
+        let sy = startY;
+        doc.setFillColor(0, 0, 0);
+        doc.rect(x, sy, w, 5.5, 'F');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(6.5);
+        doc.setTextColor(255, 255, 255);
+        doc.text(sec.t, x + 2, sy + 4);
+        doc.setTextColor(0, 0, 0);
+        sy += 8;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8.5);
+        const lines = doc.splitTextToSize(sec.d || 'No especificado', w - 2);
+        doc.text(lines, x, sy);
+        sy += lines.length * 5 + 5;
+        return sy;
+      };
+
+      let col0Y = y, col1Y = y, col2Y = y;
+      col0Y = renderGarmentSection(garmentSections[0], margin, col0Y, colW3);
+      col1Y = renderGarmentSection(garmentSections[1], margin + colW3 + 4, col1Y, colW3);
+      col2Y = renderGarmentSection(garmentSections[2], margin + (colW3 + 4) * 2, col2Y, colW3);
+
+      let finalY = Math.max(col0Y, col1Y, col2Y);
+
+      // Footer line
+      finalY += 5;
+      doc.setDrawColor(180, 180, 180);
+      doc.setLineWidth(0.3);
+      doc.line(margin, finalY, margin + contentW, finalY);
+      finalY += 4;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(6.5);
+      doc.setTextColor(160, 160, 160);
+      doc.text(`TRAMA — Sistema de Vestuario Pro`, margin, finalY);
+      doc.text(`${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}`, margin + contentW, finalY, { align: 'right' });
+      doc.setTextColor(0, 0, 0);
+
+      return finalY;
+    }
+
+    // --- FULL PROJECT PDF EXPORT ---
+    async function exportFullPDF() {
+      saveAll();
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const margin = 20;
+      const pageW = 210;
+      const pageH = 297;
+      const contentW = pageW - margin * 2;
+
+      // Show modal
+      const modal = document.getElementById('pdf-modal');
+      const fill = document.getElementById('pdf-progress-fill');
+      const label = document.getElementById('pdf-progress-label');
+      const stepEl = document.getElementById('pdf-modal-step');
+      modal.classList.add('active');
+
+      const progress = (pct, txt, step) => {
+        fill.style.width = pct + '%';
+        label.textContent = txt;
+        stepEl.textContent = step || '';
+      };
+
+      // Small async pause so the UI can update
+      const tick = () => new Promise(r => setTimeout(r, 60));
+
+      progress(5, 'Preparando portada...', '');
+      await tick();
+
+      // ═══════════════════════════════════
+      // PAGE 1 — COVER
+      // ═══════════════════════════════════
+      // Full black top band
+      doc.setFillColor(0, 0, 0);
+      doc.rect(0, 0, pageW, 80, 'F');
+
+      // Decorative gold line
+      doc.setDrawColor(212, 175, 55);
+      doc.setLineWidth(0.8);
+      doc.line(margin, 82, margin + contentW, 82);
+      doc.line(margin, 84, margin + contentW, 84);
+
+      // TRAMA title
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(52);
+      doc.setTextColor(255, 255, 255);
+      doc.text("TRAMA", pageW / 2, 45, { align: 'center' });
+
+      // Subtitle
+      doc.setFontSize(9);
+      doc.setTextColor(180, 160, 100);
+      doc.setFont("helvetica", "normal");
+      doc.text("DOSSIER DE VESTUARIO · FICHAS TÉCNICAS", pageW / 2, 60, { align: 'center' });
+
+      doc.setTextColor(0, 0, 0);
+
+      // Production info block
+      let y = 100;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(22);
+      doc.text((state.obra.titulo || 'Sin título').toUpperCase(), pageW / 2, y, { align: 'center' });
+      y += 10;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(100, 100, 100);
+      if(state.obra.autor) doc.text(`Dirección: ${state.obra.autor}`, pageW / 2, y, { align: 'center' });
+      doc.setTextColor(0, 0, 0);
+      y += 20;
+
+      // Summary stats box
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, contentW, 32);
+      // Inner border
+      doc.setDrawColor(180, 180, 180);
+      doc.setLineWidth(0.2);
+      doc.rect(margin + 2, y + 2, contentW - 4, 28);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text("RESUMEN DEL PROYECTO", margin + 6, y + 8);
+      doc.setTextColor(0, 0, 0);
+
+      const stats = [
+        { label: "PERSONAJES", val: String(state.personajes.length) },
+        { label: "ÉPOCA", val: state.concept.epoca || '—' },
+        { label: "FECHA", val: new Date().toLocaleDateString('es-ES') }
+      ];
+      stats.forEach((s, si) => {
+        const sx = margin + 6 + (si * (contentW / 3));
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text(s.val.length > 12 ? s.val.substring(0, 12) + '…' : s.val, sx, y + 22);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.5);
+        doc.setTextColor(120, 120, 120);
+        doc.text(s.label, sx, y + 28);
+        doc.setTextColor(0, 0, 0);
+      });
+      y += 44;
+
+      // ═══════════════════════════════════
+      // VISUAL CONCEPT block on cover
+      // ═══════════════════════════════════
+      if(state.concept.epoca || state.concept.ideas) {
+        doc.setFillColor(245, 242, 235);
+        doc.rect(margin, y, contentW, state.concept.ideas ? 50 : 22, 'F');
+        doc.setDrawColor(0,0,0);
+        doc.setLineWidth(0.3);
+        doc.rect(margin, y, contentW, state.concept.ideas ? 50 : 22);
+        y += 5;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.text("CONCEPTO VISUAL", margin + 4, y + 3);
+
+        if(state.concept.epoca) {
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(9);
+          doc.text(state.concept.epoca.toUpperCase(), margin + 4, y + 11);
+        }
+        if(state.concept.ideas) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(8.5);
+          const ideaLines = doc.splitTextToSize(state.concept.ideas, contentW - 8);
+          doc.text(ideaLines, margin + 4, y + 20);
+        }
+        y += state.concept.ideas ? 55 : 28;
+      }
+
+      // Character index on cover
+      if(state.personajes.length > 0) {
+        y += 5;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.setTextColor(120,120,120);
+        doc.text("PERSONAJES INCLUIDOS", margin, y);
+        doc.setTextColor(0,0,0);
+        y += 5;
+        doc.setDrawColor(200,200,200);
+        doc.setLineWidth(0.2);
+        state.personajes.forEach((p, pi) => {
+          doc.line(margin, y, margin + contentW, y);
+          doc.setFont("helvetica", pi % 2 === 0 ? "bold" : "normal");
+          doc.setFontSize(9);
+          doc.text(`${String(pi + 1).padStart(2, '0')}  ${p.nombre.toUpperCase()}`, margin + 2, y + 4.5);
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(7.5);
+          doc.setTextColor(160, 160, 160);
+          doc.text(`Complejidad: ${p.complejidad || 'Media'}`, margin + contentW, y + 4.5, { align: 'right' });
+          doc.setTextColor(0, 0, 0);
+          y += 8;
+          if(y > pageH - 25) {
+            doc.addPage();
+            y = margin;
+          }
+        });
+      }
+
+      // Cover footer
+      doc.setDrawColor(212, 175, 55);
+      doc.setLineWidth(0.8);
+      doc.line(margin, pageH - 18, margin + contentW, pageH - 18);
+      doc.line(margin, pageH - 16, margin + contentW, pageH - 16);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.setTextColor(140,140,140);
+      doc.text("Generado por TRAMA — Sistema de Vestuario Pro", margin, pageH - 10);
+      doc.text(`${new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}`, margin + contentW, pageH - 10, { align: 'right' });
+      doc.setTextColor(0,0,0);
+
+      progress(30, 'Portada lista...', `0 / ${state.personajes.length} personajes`);
+      await tick();
+
+      // ═══════════════════════════════════
+      // ONE PAGE PER CHARACTER
+      // ═══════════════════════════════════
+      for(let i = 0; i < state.personajes.length; i++) {
+        const p = state.personajes[i];
+        doc.addPage();
+        renderPersonajeSheet(doc, p, margin);
+
+        const pct = 30 + Math.round(((i + 1) / state.personajes.length) * 65);
+        progress(pct, `Personaje ${i + 1} de ${state.personajes.length}...`, p.nombre.toUpperCase());
+        await tick();
+      }
+
+      progress(98, 'Finalizando PDF...', '');
+      await tick();
+
+      // Save
+      const filename = `Trama_Dossier_${(state.obra.titulo || 'Proyecto').replace(/\s+/g, '_')}.pdf`;
+      doc.save(filename);
+
+      progress(100, 'Dossier completo generado.', '✓');
+      await tick();
+      await tick();
+
+      modal.classList.remove('active');
+      notificar("DOSSIER EXPORTADO CORRECTAMENTE");
+    }
+
+    // --- IA ---
     function updateIASelect() {
       const sel = document.getElementById('ia-per-select');
       sel.innerHTML = state.personajes.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+      updateZoomCards();
+    }
+
+    function updateZoomCards() {
+      const pid = document.getElementById('ia-per-select').value;
+      const p = state.personajes.find(x => x.id === pid);
+      const zoomGroup = document.getElementById('ia-zoom-group');
+      const zoomCards = document.getElementById('ia-zoom-cards');
+      if(!p) { zoomGroup.style.display = 'none'; return; }
+
+      // Parse accessories: split by comma, newline, semicolon or slash
+      const allItems = [
+        ...(p.prendas.accesorios || '').split(/[,;\n\/]+/),
+        ...(p.prendas.calzado || '').split(/[,;\n\/]+/)
+      ].map(s => s.trim()).filter(s => s.length > 2);
+
+      if(allItems.length === 0) { zoomGroup.style.display = 'none'; return; }
+
+      zoomGroup.style.display = 'block';
+      zoomCards.innerHTML = allItems.map(item => {
+        const label = item.length > 18 ? item.substring(0, 17) + '…' : item;
+        const value = `Close-up detail illustration of "${item}", isolated on white background, showing material texture, construction and design detail`;
+        return `<div class="option-card" data-group="vista"
+          data-value="${value.replace(/"/g, '&quot;')}"
+          onclick="selectCard(this); clearVistaCards();">
+          <span class="oc-icon">🔍</span>
+          <span class="oc-label" style="font-size:0.52rem;">${label}</span>
+          <span class="oc-desc">Zoom accesorio</span>
+        </div>`;
+      }).join('');
+    }
+
+    function clearVistaCards() {
+      // Deselect the fixed vista cards when a zoom card is picked
+      document.querySelectorAll('#ia-vista-cards .option-card').forEach(c => c.classList.remove('selected'));
+    }
+
+    function selectCard(el) {
+      const group = el.dataset.group;
+      document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      updateSelectionSummary();
+    }
+
+    function getSelectedCard(group) {
+      const el = document.querySelector(`.option-card[data-group="${group}"].selected`);
+      return el ? { value: el.dataset.value, label: el.querySelector('.oc-label').innerText } : { value: '', label: '' };
+    }
+
+    function updateSelectionSummary() {
+      const summary = document.getElementById('ia-selection-summary');
+      if(!summary) return;
+      const estilo = getSelectedCard('estilo');
+      const tecnica = getSelectedCard('tecnica');
+      const badges = [
+        estilo.label ? `<span style="background:#000;color:#fff;font-size:0.55rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;">${estilo.label}</span>` : '',
+        tecnica.label ? `<span style="background:var(--accent);color:#000;font-size:0.55rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;">${tecnica.label}</span>` : '',
+      ];
+      summary.innerHTML = badges.join('');
     }
 
     function generatePrompt() {
       const pid = document.getElementById('ia-per-select').value;
       const p = state.personajes.find(x => x.id === pid);
       if(!p) return;
-      
-      const tipo = document.getElementById('ia-tipo').value;
+      const vista = getSelectedCard('vista');
+      if(!vista.value) return notificar("SELECCIONA UN TIPO DE VISTA");
       const paletteStr = p.paleta.join(', ');
-      
-      const prompt = `${tipo} for a character named "${p.nombre}". 
-      Physical profile: ${p.datos.sexo}, ${p.datos.edad} years old, ${p.datos.etnia} origin, ${p.datos.contextura} build. 
-      Style/Era: ${state.concept.epoca}. 
-      Costume details: Base garments include ${p.prendas.base}. Layers: ${p.prendas.capas}. Accessories: ${p.prendas.accesorios}. 
-      Color Palette: ${paletteStr}. 
-      Art style: High-end theatrical costume design illustration, professional watercolor and fine ink linework, clear textures, white background. 
-      Overall mood: ${state.concept.ideas}.`;
-      
+      const estilo = getSelectedCard('estilo');
+      const tecnica = getSelectedCard('tecnica');
+      const firma = state.firmaEstilo || FIRMA_DEFAULT;
+
+      const prompt = `${vista.value} for a character named "${p.nombre}". \
+Physical profile: ${p.datos.sexo || 'unspecified'}, ${p.datos.edad ? p.datos.edad + ' years old' : ''}, ${p.datos.etnia ? p.datos.etnia + ' origin' : ''}, ${p.datos.contextura ? p.datos.contextura + ' build' : ''}. \
+Style/Era: ${state.concept.epoca || 'contemporary'}. \
+Costume details: Garments: ${p.prendas.base || 'unspecified'}. Footwear: ${p.prendas.calzado || 'unspecified'}. Accessories: ${p.prendas.accesorios || 'none'}. \
+Fabrics and textures: ${p.materiales || 'unspecified'}. \
+Color palette: ${paletteStr}. \
+Illustration style: ${estilo.value}. \
+Rendering technique: ${tecnica.value}. \
+White background, no props or scenery. \
+Overall mood/concept: ${state.concept.ideas || 'theatrical'}. \
+MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
+
       document.getElementById('ia-prompt').innerText = prompt;
+      updateSelectionSummary();
     }
 
     async function callGeminiIA() {
       const key = document.getElementById('g-api-key').value;
       const promptText = document.getElementById('ia-prompt').innerText;
-      
       if(!key) return notificar("FALTA API KEY");
       if(promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
-
       const loading = document.getElementById('ia-loading');
       const imgRes = document.getElementById('ia-img-result');
       const placeholder = document.getElementById('ia-placeholder');
-      
       loading.style.display = 'flex';
-      
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${key}`, {
           method: 'POST',
-          body: JSON.stringify({
-            instances: [{ prompt: promptText }],
-            parameters: { sampleCount: 1 }
-          })
+          body: JSON.stringify({ instances: [{ prompt: promptText }], parameters: { sampleCount: 1 } })
         });
-        
         const data = await response.json();
         if(data.predictions && data.predictions[0].bytesBase64Encoded) {
-          const b64 = data.predictions[0].bytesBase64Encoded;
-          imgRes.src = `data:image/png;base64,${b64}`;
+          imgRes.src = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
           imgRes.style.display = 'block';
           placeholder.style.display = 'none';
           notificar("IMAGEN GENERADA");
-        } else {
-          throw new Error("Respuesta de API inválida");
-        }
-      } catch (err) {
-        console.error(err);
-        notificar("ERROR DE CONEXIÓN O API");
-      } finally {
-        loading.style.display = 'none';
-      }
+        } else { throw new Error("Respuesta de API inválida"); }
+      } catch (err) { console.error(err); notificar("ERROR DE CONEXIÓN O API"); }
+      finally { loading.style.display = 'none'; }
     }
 
-    // --- PERSISTENCIA E IMPORTACIÓN ---
+    // --- PERSISTENCIA ---
     function saveAll() {
       state.obra.titulo = document.getElementById('g-obra').value;
       state.obra.autor = document.getElementById('g-autor').value;
       state.apiKey = document.getElementById('g-api-key').value;
       state.concept.epoca = document.getElementById('m-epoca').value;
       state.concept.ideas = document.getElementById('m-ideas').value;
+      state.firmaEstilo = document.getElementById('g-firma').value || FIRMA_DEFAULT;
       localStorage.setItem(appId, JSON.stringify(state));
       notificar("PROYECTO GUARDADO");
     }
@@ -468,9 +1065,7 @@
       const blob = new Blob([JSON.stringify(state)], {type: "application/json"});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `Trama_${state.obra.titulo || 'Proyecto'}.json`;
-      a.click();
+      a.href = url; a.download = `Trama_${state.obra.titulo || 'Proyecto'}.json`; a.click();
       URL.revokeObjectURL(url);
     }
 
@@ -479,11 +1074,8 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (e) => {
-        try {
-          state = JSON.parse(e.target.result);
-          syncUI();
-          notificar("IMPORTACIÓN EXITOSA");
-        } catch (err) { notificar("ERROR AL LEER ARCHIVO"); }
+        try { state = JSON.parse(e.target.result); syncUI(); notificar("IMPORTACIÓN EXITOSA"); }
+        catch (err) { notificar("ERROR AL LEER ARCHIVO"); }
       };
       reader.readAsText(file);
     }
@@ -494,8 +1086,15 @@
       document.getElementById('g-api-key').value = state.apiKey || '';
       document.getElementById('m-epoca').value = state.concept.epoca || '';
       document.getElementById('m-ideas').value = state.concept.ideas || '';
+      document.getElementById('g-firma').value = state.firmaEstilo || FIRMA_DEFAULT;
       renderPersonajes();
       renderMood();
+    }
+
+    function resetFirma() {
+      document.getElementById('g-firma').value = FIRMA_DEFAULT;
+      state.firmaEstilo = FIRMA_DEFAULT;
+      notificar("FIRMA RESTABLECIDA");
     }
 
     function notificar(m) {
@@ -524,10 +1123,8 @@
 
     window.onload = () => {
       const saved = localStorage.getItem(appId);
-      if(saved) {
-        state = JSON.parse(saved);
-        syncUI();
-      }
+      if(saved) { state = JSON.parse(saved); syncUI(); }
+      else { document.getElementById('g-firma').value = FIRMA_DEFAULT; }
     };
   </script>
 </body>
