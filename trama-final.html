@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -729,9 +728,127 @@
             </div>
           </div>
 
+          <!-- ILUMINACIÓN -->
+          <div class="input-group">
+            <label>ILUMINACIÓN</label>
+            <div class="option-cards" id="ia-luz-cards">
+              <div class="option-card selected" data-group="luz"
+                data-value="soft zenith lighting, light falling from above, gentle shadows below the chin and arms"
+                onclick="selectCard(this)">
+                <span class="oc-icon">☀️</span>
+                <span class="oc-label">Cenital</span>
+                <span class="oc-desc">Luz desde arriba</span>
+              </div>
+              <div class="option-card" data-group="luz"
+                data-value="dramatic lateral lighting, strong raking sidelight casting long shadows across the costume, high contrast between lit and shadow sides"
+                onclick="selectCard(this)">
+                <span class="oc-icon">◑</span>
+                <span class="oc-label">Lateral</span>
+                <span class="oc-desc">Contraste de claroscuro</span>
+              </div>
+              <div class="option-card" data-group="luz"
+                data-value="warm theatrical stage lighting from below and front, footlight quality, dramatic upward shadows on the face, warm amber tones"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🎭</span>
+                <span class="oc-label">Escénica</span>
+                <span class="oc-desc">Luz de escena cálida</span>
+              </div>
+              <div class="option-card" data-group="luz"
+                data-value="backlight / contre-jour, strong light source behind the figure creating a luminous halo around the silhouette, figure slightly in shadow"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🌟</span>
+                <span class="oc-label">Contraluz</span>
+                <span class="oc-desc">Halo y silueta</span>
+              </div>
+              <div class="option-card" data-group="luz"
+                data-value="flat even studio lighting, no strong shadows, all costume details equally visible, neutral white light"
+                onclick="selectCard(this)">
+                <span class="oc-icon">⬜</span>
+                <span class="oc-label">Plana</span>
+                <span class="oc-desc">Sin sombras, detalle técnico</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FONDO -->
+          <div class="input-group">
+            <label>FONDO</label>
+            <div class="option-cards" id="ia-fondo-cards">
+              <div class="option-card selected" data-group="fondo"
+                data-value="pure white background, clean and minimal"
+                onclick="selectCard(this)">
+                <span class="oc-icon">⬜</span>
+                <span class="oc-label">Blanco</span>
+                <span class="oc-desc">Limpio y técnico</span>
+              </div>
+              <div class="option-card" data-group="fondo"
+                data-value="deep black background, figure emerging from darkness"
+                onclick="selectCard(this)">
+                <span class="oc-icon">⬛</span>
+                <span class="oc-label">Negro</span>
+                <span class="oc-desc">Figura desde la oscuridad</span>
+              </div>
+              <div class="option-card" data-group="fondo"
+                data-value="aged cream parchment paper texture background, warm ivory tone"
+                onclick="selectCard(this)">
+                <span class="oc-icon">📄</span>
+                <span class="oc-label">Papel</span>
+                <span class="oc-desc">Pergamino cálido</span>
+              </div>
+              <div class="option-card" data-group="fondo"
+                data-value="subtle soft watercolor wash background in a muted tone complementary to the costume, loose and atmospheric, not distracting"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🎨</span>
+                <span class="oc-label">Mancha</span>
+                <span class="oc-desc">Aguada difusa de color</span>
+              </div>
+              <div class="option-card" data-group="fondo"
+                data-value="soft drop shadow cast by the figure on a white ground, grounding the figure in space"
+                onclick="selectCard(this)">
+                <span class="oc-icon">🔲</span>
+                <span class="oc-label">Sombra</span>
+                <span class="oc-desc">Figura con sombra proyectada</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- NIVEL DE DETALLE -->
+          <div class="input-group">
+            <label>NIVEL DE DETALLE</label>
+            <div class="option-cards" id="ia-detalle-cards">
+              <div class="option-card selected" data-group="detalle"
+                data-value="fully finished illustration, maximum detail on textures, fabrics, accessories and facial features, polished and complete"
+                onclick="selectCard(this)">
+                <span class="oc-icon">💎</span>
+                <span class="oc-label">Terminado</span>
+                <span class="oc-desc">Máximo detalle y acabado</span>
+              </div>
+              <div class="option-card" data-group="detalle"
+                data-value="semi-finished illustration, clear silhouette and main costume shapes defined, selective detail on key elements only, some areas suggested rather than rendered"
+                onclick="selectCard(this)">
+                <span class="oc-icon">◈</span>
+                <span class="oc-label">Semifinished</span>
+                <span class="oc-desc">Silueta clara, detalle selectivo</span>
+              </div>
+              <div class="option-card" data-group="detalle"
+                data-value="quick concept sketch, loose expressive linework, gestural and spontaneous, capturing the essence of the costume without precise rendering, raw and immediate"
+                onclick="selectCard(this)">
+                <span class="oc-icon">✍️</span>
+                <span class="oc-label">Boceto rápido</span>
+                <span class="oc-desc">Gestual y espontáneo</span>
+              </div>
+            </div>
+          </div>
+
           <button class="btn" style="width:100%; margin-bottom: 1rem;" onclick="generatePrompt()">CONSTRUIR PROMPT TÉCNICO</button>
+
+          <!-- Prompt editable -->
           <div style="position:relative;">
-            <div class="prompt-box" id="ia-prompt">Construye el prompt para ver los detalles aquí...</div>
+            <textarea id="ia-prompt"
+              style="width:100%;min-height:120px;background:#fff;border:1px dashed #000;
+              padding:12px;font-family:'Jost',sans-serif;font-size:0.74rem;line-height:1.55;
+              color:#444;resize:vertical;"
+              placeholder="Construye el prompt para ver los detalles aquí..."></textarea>
             <button id="copy-prompt-btn" onclick="copyPrompt()"
               style="position:absolute; top:8px; right:8px; background:#000; color:#fff; border:none;
               font-size:0.5rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase;
@@ -740,7 +857,7 @@
               COPIAR
             </button>
           </div>
-          <button class="btn btn-outline" style="width:100%" onclick="callGeminiIA()">GENERAR IMAGEN (GEMINI 4.0)</button>
+          <button class="btn btn-outline" style="width:100%; margin-top:0.8rem;" onclick="callGeminiIA()">GENERAR IMAGEN (GEMINI 4.0)</button>
         </div>
         
         <div class="deco-card">
@@ -795,6 +912,146 @@
       if(id === 'ia') updateIASelect();
     }
 
+    // Catálogo de prendas con atributos específicos
+    const PRENDAS_CATALOGO = {
+      // ── PARTE SUPERIOR ──
+      'leotardo': {
+        label: 'Leotardo / Bodice', grupo: 'Parte superior',
+        atributos: {
+          'Manga': ['Manga larga', 'Manga corta', 'Manga princesa', 'Pabilos / Sin manga']
+        }
+      },
+      'corsé': {
+        label: 'Corsé', grupo: 'Parte superior',
+        atributos: {
+          'Estructura': ['Rígido con ballenas', 'Semiestructurado', 'Flexible'],
+          'Cierre': ['Cordones', 'Ganchos', 'Invisible']
+        }
+      },
+      'blusa': {
+        label: 'Blusa', grupo: 'Parte superior',
+        atributos: {
+          'Manga': ['Sin manga', 'Manga corta', 'Manga larga', 'Manga abullonada'],
+          'Escote': ['Recto', 'En V', 'Cuello alto', 'Off-shoulder']
+        }
+      },
+      'camisa': {
+        label: 'Camisa', grupo: 'Parte superior',
+        atributos: {
+          'Manga': ['Sin manga', 'Manga corta', 'Manga larga', 'Manga francesa'],
+          'Cuello': ['Clásico', 'Mao', 'Sin cuello', 'Con volantes']
+        }
+      },
+      'chaqueta': {
+        label: 'Chaqueta', grupo: 'Parte superior',
+        atributos: {
+          'Largo': ['Corta / bolero', 'Cadera', 'Rodilla'],
+          'Cierre': ['Abierta', 'Botones', 'Cremallera']
+        }
+      },
+      'capa': {
+        label: 'Capa / Sobrecapa', grupo: 'Parte superior',
+        atributos: {
+          'Vuelo': ['Ceñida', 'Vuelo medio', 'Vuelo total'],
+          'Largo': ['Corta', 'Midi', 'Larga / suelo'],
+          'Collar': ['Sin collar', 'Con collar alto', 'Con capucha']
+        }
+      },
+      // ── PARTE INFERIOR ──
+      'tutú': {
+        label: 'Tutú', grupo: 'Parte inferior',
+        atributos: {
+          'Estilo': ['Clásico (rígido, horizontal)', 'Romántico (largo, suave)', 'Campana (volumen medio)']
+        }
+      },
+      'falda': {
+        label: 'Falda', grupo: 'Parte inferior',
+        atributos: {
+          'Volumen': ['Plana / pegada', 'Vuelo medio', 'Vuelo total'],
+          'Largo': ['Mini', 'Rodilla', 'Midi', 'Maxi / suelo']
+        }
+      },
+      'pantalón': {
+        label: 'Pantalón', grupo: 'Parte inferior',
+        atributos: {
+          'Corte': ['Ajustado', 'Recto', 'Acampanado', 'Palazzo / ancho'],
+          'Largo': ['Corto', 'A la rodilla', 'Largo']
+        }
+      },
+      'shorts': {
+        label: 'Shorts de escena', grupo: 'Parte inferior',
+        atributos: {
+          'Largo': ['Muy corto', 'Mid-thigh', 'A la rodilla'],
+          'Corte': ['Ajustado', 'Suelto']
+        }
+      },
+      // ── PIEZAS COMPLETAS ──
+      'vestido': {
+        label: 'Vestido', grupo: 'Pieza completa',
+        atributos: {
+          'Escote': ['Recto', 'En V', 'Halter', 'Off-shoulder', 'Cuello alto'],
+          'Largo': ['Corto', 'Midi', 'Largo', 'Con cola']
+        }
+      },
+      'jumpsuit': {
+        label: 'Jumpsuit / Mono', grupo: 'Pieza completa',
+        atributos: {
+          'Manga': ['Sin manga', 'Manga corta', 'Manga larga'],
+          'Corte': ['Ajustado', 'Holgado', 'Palazzo']
+        }
+      },
+      'kimono': {
+        label: 'Kimono / Túnica', grupo: 'Pieza completa',
+        atributos: {
+          'Largo': ['Corto', 'Midi', 'Largo / suelo'],
+          'Manga': ['Manga estrecha', 'Manga ancha', 'Manga mariposa']
+        }
+      },
+      // ── ESCÉNICO LIBRE ──
+      'especial': {
+        label: 'Pieza escénica especial', grupo: 'Escénico',
+        atributos: {}  // free-form only
+      }
+    };
+
+    // Grupos para el selector organizado
+    const PRENDAS_GRUPOS = {
+      'Parte superior':  ['leotardo','corsé','blusa','camisa','chaqueta','capa'],
+      'Parte inferior':  ['tutú','falda','pantalón','shorts'],
+      'Pieza completa':  ['vestido','jumpsuit','kimono'],
+      'Escénico':        ['especial']
+    };
+
+    // Catálogo de accesorios con secciones separadas
+    const ACCESORIOS_CATALOGO = {
+      'joyeria': {
+        label: 'Joyería', grupo: 'Accesorios', multiSelect: true,
+        atributos: {
+          'Tipo': ['Collar', 'Aretes / Pendientes', 'Pulsera / Brazalete', 'Anillo', 'Diadema', 'Conjunto múltiple']
+        }
+      },
+      'tocado': {
+        label: 'Sombrerería / Tocado', grupo: 'Accesorios', multiSelect: true,
+        atributos: {
+          'Tipo': ['Sombrero', 'Corona', 'Velo', 'Turbante', 'Tocado de plumas', 'Máscara', 'Tiaras / Diadema ornamental']
+        }
+      },
+      'accesorio-escenico': {
+        label: 'Accesorio escénico', grupo: 'Accesorios',
+        atributos: {}
+      }
+    };
+
+    const CALZADO_CATALOGO = {
+      'calzado': {
+        label: 'Calzado', grupo: 'Calzado',
+        atributos: {
+          'Tipo': ['Zapatilla de ballet (soft)', 'Punta / Pointe', 'Zapato de carácter', 'Bota', 'Sandalia', 'Descalzo / Pie desnudo'],
+          'Tacón': ['Sin tacón', 'Tacón bajo', 'Tacón alto', 'Plataforma']
+        }
+      }
+    };
+
     // --- PERSONAJES ---
     function addPersonaje() {
       const p = {
@@ -802,12 +1059,191 @@
         nombre: 'NUEVO PERSONAJE',
         datos: { edad: '', sexo: '', pielTono: '', cabello: '', peinado: '', contextura: '' },
         paleta: ['#1a1a1a', '#e8dcc8', '#8b7355'],
-        prendas: { base: '', calzado: '', accesorios: '' },
+        fichasPrenda: [],
+        fichasCalzado: [],
+        fichasAccesorio: [],
+        prendas: { calzado: '', accesorios: '' }, // kept for backward compat
         materiales: '',
         notas: ''
       };
       state.personajes.push(p);
       renderPersonajes();
+    }
+
+    function addFicha(pi, tipo) {
+      const key = tipo === 'prenda' ? 'fichasPrenda' : tipo === 'calzado' ? 'fichasCalzado' : 'fichasAccesorio';
+      if(!state.personajes[pi][key]) state.personajes[pi][key] = [];
+      const defaultTipo = tipo === 'calzado' ? 'calzado' : tipo === 'accesorio' ? '' : '';
+      state.personajes[pi][key].push({ tipo: defaultTipo, atributos: {}, color: '#cccccc', material: '' });
+      renderPersonajes();
+    }
+
+    function removeFichaKey(pi, key, fi) {
+      state.personajes[pi][key].splice(fi, 1);
+      renderPersonajes();
+    }
+
+    function updateFichaCampo(pi, key, fi, campo, valor) {
+      if(campo === 'tipo') {
+        state.personajes[pi][key][fi].tipo = valor;
+        state.personajes[pi][key][fi].atributos = {};
+      } else if(campo === 'color') {
+        state.personajes[pi][key][fi].color = valor;
+      } else if(campo === 'material') {
+        state.personajes[pi][key][fi].material = valor;
+      } else {
+        state.personajes[pi][key][fi].atributos[campo] = valor;
+      }
+      if(campo !== 'tipo') return; // only re-render on tipo change
+      renderPersonajes();
+    }
+
+    function renderAtributos(f, fi, pi, stateKey, cat) {
+      if(!cat || Object.keys(cat.atributos).length === 0) return '';
+      return Object.entries(cat.atributos).map(([key, opciones]) => {
+        const isMulti = cat.multiSelect === true;
+        const selVal = f.atributos[key]; // string (radio) or array (checkbox)
+        const selArr = isMulti ? (Array.isArray(selVal) ? selVal : []) : null;
+        return `
+        <div style="margin-top:0.5rem;">
+          <div style="font-size:0.5rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:3px;">${key}${isMulti ? ' <span style="font-weight:400;color:#bbb;">(varios)</span>' : ''}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            ${opciones.map(op => {
+              const safeOp = op.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+              const sel = isMulti ? selArr.includes(op) : (selVal === op);
+              if(isMulti) {
+                return `<label style="cursor:pointer;font-size:0.6rem;font-weight:${sel?'700':'400'};
+                  background:${sel?'#000':'#f5f2eb'};color:${sel?'#fff':'#555'};
+                  border:1.5px solid ${sel?'#000':'#ccc'};padding:3px 9px;transition:all 0.15s;user-select:none;">
+                  <input type="checkbox" ${sel?'checked':''} style="display:none;"
+                    onchange="toggleFichaAccesorio(${pi},'${stateKey}',${fi},'${key}','${safeOp}',this.checked);renderPersonajes();">
+                  ${op}
+                </label>`;
+              } else {
+                return `<label style="cursor:pointer;font-size:0.6rem;font-weight:${sel?'700':'400'};
+                  background:${sel?'#000':'#f5f2eb'};color:${sel?'#fff':'#555'};
+                  border:1.5px solid ${sel?'#000':'#ccc'};padding:3px 9px;transition:all 0.15s;">
+                  <input type="radio" name="fa-${pi}-${stateKey}-${fi}-${key}" value="${op}"
+                    ${sel?'checked':''} style="display:none;"
+                    onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'${key}','${safeOp}');renderPersonajes();">
+                  ${op}
+                </label>`;
+              }
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function toggleFichaAccesorio(pi, stateKey, fi, key, valor, checked) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.atributos[key] || !Array.isArray(f.atributos[key])) f.atributos[key] = [];
+      if(checked) { if(!f.atributos[key].includes(valor)) f.atributos[key].push(valor); }
+      else { f.atributos[key] = f.atributos[key].filter(v => v !== valor); }
+    }
+
+    function addFichaColor(pi, stateKey, fi) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.colores) f.colores = [f.color || '#cccccc'];
+      f.colores.push('#cccccc');
+      renderPersonajes();
+    }
+
+    function updateFichaColor(pi, stateKey, fi, ci, valor) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.colores) f.colores = [f.color || '#cccccc'];
+      f.colores[ci] = valor;
+      if(ci === 0) f.color = valor; // keep legacy sync
+    }
+
+    function removeFichaColor(pi, stateKey, fi, ci) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.colores || f.colores.length <= 1) return;
+      f.colores.splice(ci, 1);
+      f.color = f.colores[0];
+      renderPersonajes();
+    }
+
+    function renderColorStrip(f, fi, pi, stateKey) {
+      const colores = f.colores || [f.color || '#cccccc'];
+      return `
+        <div style="display:flex;gap:0.6rem;align-items:center;margin-top:0.7rem;
+          padding-top:0.6rem;border-top:1px dashed #eee;">
+          <div style="display:flex;gap:0;border:1.5px solid #000;overflow:hidden;height:24px;flex-shrink:0;min-width:24px;">
+            ${colores.map((c, ci) => `
+              <div style="flex:1;min-width:24px;background:${c};position:relative;" title="${c.toUpperCase()}">
+                <input type="color" value="${c}"
+                  onchange="updateFichaColor(${pi},'${stateKey}',${fi},${ci},this.value);this.parentElement.style.background=this.value;"
+                  style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
+                ${colores.length > 1 ? `<button onclick="removeFichaColor(${pi},'${stateKey}',${fi},${ci})"
+                  style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.5);color:#fff;
+                  border:none;width:10px;height:10px;font-size:7px;cursor:pointer;
+                  border-radius:50%;line-height:10px;text-align:center;padding:0;">×</button>` : ''}
+              </div>
+            `).join('')}
+          </div>
+          <div style="font-size:0.48rem;color:#aaa;font-family:monospace;">
+            ${colores.map(c => c.toUpperCase()).join(' + ')}
+          </div>
+          <button onclick="addFichaColor(${pi},'${stateKey}',${fi})"
+            style="background:none;border:1px dashed #ccc;color:#aaa;font-size:0.55rem;
+            font-weight:800;padding:2px 7px;cursor:pointer;flex-shrink:0;">+ COLOR</button>
+          <input type="text" placeholder="Material…"
+            value="${f.material||''}"
+            onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'material',this.value)"
+            style="flex:1;border:1px solid #ddd;background:#fafafa;
+            font-family:'Jost',sans-serif;font-size:0.72rem;padding:3px 7px;">
+        </div>`;
+    }
+
+    function renderFichasSection(fichas, pi, stateKey, catalogo, grupos) {
+      if(!fichas || fichas.length === 0) return '';
+      return fichas.map((f, fi) => {
+        const cat = catalogo[f.tipo];
+        const atribHTML = renderAtributos(f, fi, pi, stateKey, cat);
+        const colorStripHTML = renderColorStrip(f, fi, pi, stateKey);
+
+        let optionsHTML = `<option value="">— Seleccionar —</option>`;
+        if(grupos) {
+          Object.entries(grupos).forEach(([grp, keys]) => {
+            optionsHTML += `<optgroup label="${grp}">`;
+            keys.forEach(k => {
+              if(catalogo[k]) optionsHTML += `<option value="${k}" ${f.tipo===k?'selected':''}>${catalogo[k].label}</option>`;
+            });
+            optionsHTML += `</optgroup>`;
+          });
+        } else {
+          Object.entries(catalogo).forEach(([k, v]) => {
+            optionsHTML += `<option value="${k}" ${f.tipo===k?'selected':''}>${v.label}</option>`;
+          });
+        }
+
+        const esFreeForm = f.tipo === 'especial' || f.tipo === 'accesorio-escenico';
+        const freeFormHTML = esFreeForm ? `
+          <input type="text" placeholder="${f.tipo === 'accesorio-escenico' ? 'Ej: abanico, espada, bastón, guantes…' : 'Describe la pieza…'}"
+            value="${f.atributos['descripcion']||''}"
+            onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'descripcion',this.value)"
+            style="width:100%;margin-top:0.5rem;border:1.5px solid #ccc;background:#f5f2eb;
+            font-family:'Jost',sans-serif;font-size:0.8rem;padding:0.4rem;">` : '';
+
+        return `
+          <div style="border:1.5px solid #ddd;background:#fff;padding:0.8rem 0.9rem;
+            margin-bottom:0.6rem;position:relative;">
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <select onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'tipo',this.value)"
+                style="flex:1;border:1.5px solid #000;background:#f5f2eb;
+                font-family:'Jost',sans-serif;font-size:0.78rem;padding:0.35rem;">
+                ${optionsHTML}
+              </select>
+              <button onclick="removeFichaKey(${pi},'${stateKey}',${fi})"
+                style="background:none;border:1px solid #cc0000;color:#cc0000;
+                font-size:0.55rem;font-weight:800;padding:3px 7px;cursor:pointer;">✕</button>
+            </div>
+            ${freeFormHTML}
+            ${atribHTML}
+            ${colorStripHTML}
+          </div>`;
+      }).join('');
     }
 
     function renderPersonajes() {
@@ -865,55 +1301,34 @@
             <div class="input-group"><label>CONTEXTURA / ALTURA</label><input type="text" value="${p.datos.contextura}" onchange="updatePerData(${i}, 'contextura', this.value)"></div>
           </div>
 
-          <!-- PALETA — protagonista -->
-          <div style="margin-top: 1.2rem; margin-bottom: 1.2rem;">
-            <label style="margin-bottom: 0.6rem;">PALETA CROMÁTICA</label>
-            <div style="display: flex; gap: 0; border: 2px solid #000; overflow: hidden; height: 56px;">
-              ${p.paleta.map((c, ci) => `
-                <div style="flex: 1; background:${c}; position: relative; cursor: pointer; transition: flex 0.2s;" title="${c}">
-                  <input type="color" value="${c}" onchange="updateColor(${i}, ${ci}, this.value)"
-                    style="position:absolute; opacity:0; inset:0; width:100%; height:100%; cursor:pointer;">
-                  <button onclick="removeColor(${i}, ${ci})" title="Quitar"
-                    style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.45); color:#fff; border:none;
-                    width:14px; height:14px; font-size:8px; cursor:pointer; border-radius:50%; line-height:14px; text-align:center; padding:0; display:none;"
-                    class="color-remove-btn">×</button>
-                </div>
-              `).join('')}
-              <div style="width:40px; background:#f5f2eb; border-left:2px solid #000; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;"
-                onclick="addColor(${i})" title="Añadir color">
-                <span style="font-size:1.2rem; font-weight:300; color:#000; line-height:1;">+</span>
-              </div>
-            </div>
-            <div style="display:flex; gap:0; margin-top:4px;">
-              ${p.paleta.map(c => `
-                <div style="flex:1; font-size:0.5rem; color:#888; text-align:center; font-family:monospace; letter-spacing:0.04em;">${c.toUpperCase()}</div>
-              `).join('')}
-              <div style="width:40px; flex-shrink:0;"></div>
-            </div>
-          </div>
-
-          <!-- MATERIALES — campo destacado -->
-          <div class="input-group" style="margin-bottom: 1.2rem;">
-            <label>MATERIALES Y TEXTURAS</label>
-            <textarea placeholder="Ej: Seda cruda, terciopelo negro, encaje de bolillo, cuero grabado, tul rígido…"
-              onchange="updatePer(${i}, 'materiales', this.value)"
-              style="min-height: 70px;">${p.materiales || ''}</textarea>
-          </div>
-
-          <!-- PRENDAS — 3 columnas -->
-          <div class="grid-3">
-            <div class="input-group" style="margin-bottom:0;">
+          <!-- PRENDAS — fichas estructuradas -->
+          <div style="margin-bottom:1.2rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
               <label>PRENDAS</label>
-              <textarea placeholder="Vestido, traje, blusa…" onchange="updatePrenda(${i}, 'base', this.value)" style="min-height:80px;">${p.prendas.base}</textarea>
+              <button class="btn btn-small btn-outline" onclick="addFicha(${i},'prenda')">+ AÑADIR PRENDA</button>
             </div>
-            <div class="input-group" style="margin-bottom:0;">
+            ${renderFichasSection(p.fichasPrenda||[], i, 'fichasPrenda', PRENDAS_CATALOGO, PRENDAS_GRUPOS)}
+            ${(p.fichasPrenda||[]).length===0 ? `<div style="font-size:0.65rem;color:#bbb;padding:0.5rem 0;">Sin prendas registradas.</div>` : ''}
+          </div>
+
+          <!-- CALZADO — fichas estructuradas -->
+          <div style="margin-bottom:1.2rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
               <label>CALZADO</label>
-              <textarea placeholder="Tipo, altura, material…" onchange="updatePrenda(${i}, 'calzado', this.value)" style="min-height:80px;">${p.prendas.calzado}</textarea>
+              <button class="btn btn-small btn-outline" onclick="addFicha(${i},'calzado')">+ AÑADIR CALZADO</button>
             </div>
-            <div class="input-group" style="margin-bottom:0;">
-              <label>ACCESORIOS</label>
-              <textarea placeholder="Joyería, sombrero, bolso…" onchange="updatePrenda(${i}, 'accesorios', this.value)" style="min-height:80px;">${p.prendas.accesorios}</textarea>
+            ${renderFichasSection(p.fichasCalzado||[], i, 'fichasCalzado', CALZADO_CATALOGO, null)}
+            ${(p.fichasCalzado||[]).length===0 ? `<div style="font-size:0.65rem;color:#bbb;padding:0.5rem 0;">Sin calzado registrado.</div>` : ''}
+          </div>
+
+          <!-- JOYERÍA Y TOCADOS — fichas estructuradas -->
+          <div style="margin-bottom:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+              <label>JOYERÍA Y TOCADOS</label>
+              <button class="btn btn-small btn-outline" onclick="addFicha(${i},'accesorio')">+ AÑADIR ACCESORIO</button>
             </div>
+            ${renderFichasSection(p.fichasAccesorio||[], i, 'fichasAccesorio', ACCESORIOS_CATALOGO, null)}
+            ${(p.fichasAccesorio||[]).length===0 ? `<div style="font-size:0.65rem;color:#bbb;padding:0.5rem 0;">Sin accesorios registrados.</div>` : ''}
           </div>
 
           <!-- GUARDAR por personaje -->
@@ -1009,56 +1424,59 @@
       doc.text(profileParts.join('   |   ') || 'Sin datos registrados', margin, y);
       y += 10;
 
-      // COLOR PALETTE — wider swatches
-      doc.setFillColor(245, 242, 235);
-      doc.rect(margin, y, contentW, 6, 'F');
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(7);
-      doc.text("PALETA CROMÁTICA", margin + 2, y + 4);
-      y += 9;
+      // COLOR SUMMARY from fichas
+      const allFichaColors = [
+        ...(p.fichasPrenda||[]),
+        ...(p.fichasCalzado||[]),
+        ...(p.fichasAccesorio||[])
+      ].map(f => f.color).filter(c => c && c !== '#cccccc');
 
-      const swatchW = Math.min(20, Math.floor(contentW / Math.max(p.paleta.length, 1)));
-      p.paleta.forEach((color, idx) => {
-        const hexToRgb = hex => {
-          const r = parseInt(hex.slice(1,3), 16);
-          const g = parseInt(hex.slice(3,5), 16);
-          const b = parseInt(hex.slice(5,7), 16);
-          return [r, g, b];
-        };
-        const [r, g, b] = hexToRgb(color);
-        doc.setFillColor(r, g, b);
-        doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(0.3);
-        doc.rect(margin + (idx * (swatchW + 2)), y, swatchW, 16, 'FD');
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(5.5);
-        doc.setTextColor(80, 80, 80);
-        doc.text(color.toUpperCase(), margin + (idx * (swatchW + 2)), y + 20);
-        doc.setTextColor(0, 0, 0);
-      });
-      y += 28;
-
-      // MATERIALS section (full width, highlighted)
-      if(p.materiales) {
+      if(allFichaColors.length > 0) {
         doc.setFillColor(245, 242, 235);
         doc.rect(margin, y, contentW, 6, 'F');
         doc.setFont("helvetica", "bold");
         doc.setFontSize(7);
-        doc.text("MATERIALES Y TEXTURAS", margin + 2, y + 4);
+        doc.text("PALETA DE PRENDAS", margin + 2, y + 4);
         y += 9;
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.5);
-        const matLines = doc.splitTextToSize(p.materiales, contentW);
-        doc.text(matLines, margin, y);
-        y += matLines.length * 5 + 8;
+        const hexToRgb = hex => [
+          parseInt(hex.slice(1,3),16),
+          parseInt(hex.slice(3,5),16),
+          parseInt(hex.slice(5,7),16)
+        ];
+        const swW = 16;
+        allFichaColors.forEach((color, idx) => {
+          const [r,g,b] = hexToRgb(color);
+          doc.setFillColor(r,g,b);
+          doc.setDrawColor(0,0,0);
+          doc.setLineWidth(0.3);
+          doc.rect(margin + idx*(swW+2), y, swW, swW, 'FD');
+          doc.setFont("helvetica","normal");
+          doc.setFontSize(5);
+          doc.setTextColor(100,100,100);
+          doc.text(color.toUpperCase(), margin + idx*(swW+2), y + swW + 4);
+          doc.setTextColor(0,0,0);
+        });
+        y += swW + 10;
       }
 
-      // GARMENT sections — three columns
+      // Build garment strings from fichas
+      function pdfDescFichas(fichas, catalogo) {
+        if(!fichas || fichas.length === 0) return 'No especificado';
+        return fichas.map(f => {
+          if(!f.tipo) return null;
+          const cat = catalogo[f.tipo];
+          const label = cat ? cat.label : f.tipo;
+          const attrs = [...Object.values(f.atributos||{}).filter(Boolean)];
+          if(f.material) attrs.push(f.material);
+          return attrs.length > 0 ? `${label} (${attrs.join(', ')})` : label;
+        }).filter(Boolean).join('\n') || 'No especificado';
+      }
+
       const colW3 = (contentW - 8) / 3;
       const garmentSections = [
-        { t: "PRENDAS", d: p.prendas.base },
-        { t: "CALZADO", d: p.prendas.calzado },
-        { t: "ACCESORIOS", d: p.prendas.accesorios }
+        { t: "PRENDAS",   d: pdfDescFichas(p.fichasPrenda,    PRENDAS_CATALOGO) },
+        { t: "CALZADO",   d: pdfDescFichas(p.fichasCalzado,   CALZADO_CATALOGO) },
+        { t: "ACCESORIOS",d: pdfDescFichas(p.fichasAccesorio, ACCESORIOS_CATALOGO) }
       ];
 
       const renderGarmentSection = (sec, x, startY, w) => {
@@ -1308,8 +1726,9 @@
 
     // --- IA ---
     function copyPrompt() {
-      const text = document.getElementById('ia-prompt').innerText;
-      if(text.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
+      const el = document.getElementById('ia-prompt');
+      const text = el.value || el.innerText;
+      if(!text || text.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
       navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById('copy-prompt-btn');
         btn.textContent = '✓ COPIADO';
@@ -1328,9 +1747,16 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const palette = p ? p.paleta : ['#c8a97e'];
-      let baseColor = palette[0] || '#c8a97e';
-      for(const c of palette) {
+      // Pick a color from ficha colors, falling back to a warm neutral
+      const fichaColors = [
+        ...(p ? p.fichasPrenda||[] : []),
+        ...(p ? p.fichasCalzado||[] : []),
+        ...(p ? p.fichasAccesorio||[] : [])
+      ].flatMap(f => f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []))
+       .filter(Boolean);
+
+      let baseColor = fichaColors[0] || '#c8a97e';
+      for(const c of fichaColors) {
         const r = parseInt(c.slice(1,3),16);
         const g = parseInt(c.slice(3,5),16);
         const b = parseInt(c.slice(5,7),16);
@@ -1432,15 +1858,23 @@
       const summary = document.getElementById('ia-selection-summary');
       if(!summary) return;
       const tecnica = getSelectedCard('tecnica');
-      const pose = getSelectedCard('pose');
-      const animo = getSelectedCard('animo');
+      const pose    = getSelectedCard('pose');
+      const animo   = getSelectedCard('animo');
+      const luz     = getSelectedCard('luz');
+      const fondo   = getSelectedCard('fondo');
+      const detalle = getSelectedCard('detalle');
       const badge = (label, bg, color, border) => label
-        ? `<span style="background:${bg};color:${color};font-size:0.55rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;${border ? 'border:1px solid #ccc;' : ''}">${label}</span>`
+        ? `<span style="background:${bg};color:${color};font-size:0.5rem;font-weight:700;
+           letter-spacing:0.08em;text-transform:uppercase;padding:3px 7px;
+           ${border?'border:1px solid #ccc;':''}">${label}</span>`
         : '';
       summary.innerHTML = [
         badge(tecnica.label, 'var(--accent)', '#000'),
-        badge(pose.label, '#000', '#fff'),
-        badge(animo.label, '#f5f2eb', '#000', true),
+        badge(pose.label,    '#000',          '#fff'),
+        badge(animo.label,   '#f5f2eb',       '#000', true),
+        badge(luz.label,     '#1a1a2e',       '#d4af37'),
+        badge(fondo.label,   '#e8e8e8',       '#333', true),
+        badge(detalle.label, '#fff',          '#000', true),
       ].join('');
     }
 
@@ -1459,8 +1893,10 @@
           `fabrics and materials: ${p.materiales}`
         );
       }
-      const paletteStr = p.paleta.join(', ');
       const tecnica = getSelectedCard('tecnica');
+      const luz = getSelectedCard('luz');
+      const fondo = getSelectedCard('fondo');
+      const detalle = getSelectedCard('detalle');
       const firma = state.firmaEstilo || FIRMA_DEFAULT;
 
       const skinDesc = p.datos.pielTono ? `skin tone: ${p.datos.pielTono}` : '';
@@ -1476,29 +1912,58 @@
       const pose = getSelectedCard('pose');
       const animo = getSelectedCard('animo');
 
+      // Build garment descriptions from structured fichas
+      function describeFichas(fichas, catalogo) {
+        if(!fichas || fichas.length === 0) return '';
+        return fichas.map(f => {
+          if(!f.tipo) return null;
+          const cat = catalogo[f.tipo];
+          const label = cat ? cat.label : f.tipo;
+          const attrs = [];
+          // shape/style attributes — handle both string and array (multi-select)
+          Object.values(f.atributos||{}).forEach(v => {
+            if(!v) return;
+            if(Array.isArray(v)) { if(v.length) attrs.push(v.join(' + ')); }
+            else attrs.push(v);
+          });
+          // colors
+          const colores = f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []);
+          if(colores.length > 1) attrs.push(colores.join(' + '));
+          else if(colores.length === 1) attrs.push(colores[0]);
+          // material
+          if(f.material) attrs.push(f.material);
+          return attrs.length > 0 ? `${label} (${attrs.join(', ')})` : label;
+        }).filter(Boolean).join('; ');
+      }
+
+      const prendasDesc  = describeFichas(p.fichasPrenda,   PRENDAS_CATALOGO)  || 'unspecified';
+      const calzadoDesc  = describeFichas(p.fichasCalzado,  CALZADO_CATALOGO)  || 'unspecified';
+      const accesorioDesc = describeFichas(p.fichasAccesorio, ACCESORIOS_CATALOGO) || 'none';
+
       const prompt = `${vistaValue} for a character named "${p.nombre}". \
 Physical appearance: ${physicalDesc || 'unspecified'}. \
 Pose: ${pose.value || 'standing upright, neutral pose'}. \
 Expression and mood: ${animo.value || 'neutral expression'}. \
 Style/Era: ${state.concept.epoca || 'contemporary'}. \
-Costume details: Garments: ${p.prendas.base || 'unspecified'}. Footwear: ${p.prendas.calzado || 'unspecified'}. Accessories: ${p.prendas.accesorios || 'none'}. \
-Fabrics and textures: ${p.materiales || 'unspecified'}. \
-Color palette: ${paletteStr}. \
+Costume: ${prendasDesc}. Footwear: ${calzadoDesc}. Accessories and headwear: ${accesorioDesc}. \
 ${tecnica.value}. \
-White background, no props or scenery. \
+Lighting: ${luz.value || 'soft zenith lighting'}. \
+Background: ${fondo.value || 'pure white background'}. \
+Detail level: ${detalle.value || 'fully finished illustration'}. \
 Overall mood/concept: ${state.concept.ideas || 'theatrical'}. \
 MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
 
-      document.getElementById('ia-prompt').innerText = prompt;
+      document.getElementById('ia-prompt').value = prompt;
       updateSelectionSummary();
       paintWatercolorBg();
     }
 
     async function callGeminiIA() {
       const key = document.getElementById('g-api-key').value;
-      const promptText = document.getElementById('ia-prompt').innerText;
+      const el = document.getElementById('ia-prompt');
+      const promptText = el.value || el.innerText;
       if(!key) return notificar("FALTA API KEY");
-      if(promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
+      if(!promptText || promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
       const loading = document.getElementById('ia-loading');
       const imgRes = document.getElementById('ia-img-result');
       const placeholder = document.getElementById('ia-placeholder');
