@@ -4,34 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trama — Sistema de Vestuario Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Cormorant+SC:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
-    --bg: #f5f2eb; 
+    --bg: #f5f5f5;
     --surface: #ffffff;
-    --black: #000000;
-    --grey-1: #000000;
-    --border: #000000;
-    --accent: #d4af37;
+    --black: #1a1a1a;
+    --grey-1: #1a1a1a;
+    --border: #e0e0e0;
+    --border-focus: #1a1a1a;
+    --accent: #c9a227;
+    --accent-light: #fdf8ec;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.09);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.13);
+    --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-style: normal !important; }
 
   body {
-    font-family: 'Jost', sans-serif;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
     background: var(--bg);
     color: var(--grey-1);
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
 
   header {
-    background: var(--bg);
-    padding: 1.5rem 2.5rem;
+    background: var(--surface);
+    padding: 1.2rem 2.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 5px double var(--black);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
   }
 
   .brand-block { text-align: center; }
@@ -40,139 +52,190 @@
     margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 900;
   }
   .brand-name {
-    font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900;
+    font-family: 'Cormorant SC', serif; font-size: 2rem; font-weight: 400;
     letter-spacing: 0.2em; text-transform: uppercase;
   }
 
   nav.tabs {
     display: flex; justify-content: center; background: var(--black);
     position: sticky; top: 0; z-index: 100;
+    gap: 4px; padding: 8px 1rem;
   }
   .tab-btn {
-    background: none; border: none; color: #fff; padding: 1rem 2rem;
-    font-family: 'Jost', sans-serif; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.2em; font-size: 0.7rem; cursor: pointer; transition: 0.2s;
+    background: none; border: none; color: rgba(255,255,255,0.45); padding: 0.6rem 1.6rem;
+    font-family: 'DM Sans', sans-serif; font-weight: 400; text-transform: uppercase;
+    letter-spacing: 0.22em; font-size: 0.65rem; cursor: pointer; transition: var(--transition);
+    border-radius: var(--radius-sm); position: relative;
   }
-  .tab-btn.active { background: var(--bg); color: var(--black); }
+  .tab-btn::after {
+    content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 0; height: 1px; background: var(--accent);
+    transition: width var(--transition);
+  }
+  .tab-btn:hover { color: var(--accent); }
+  .tab-btn:hover::after { width: 60%; }
+  .tab-btn.active { color: #fff; background: rgba(255,255,255,0.06); }
+  .tab-btn.active::after { width: 60%; background: var(--accent); }
 
-  main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+  main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem; }
   .view-section { display: none; }
   .view-section.active { display: block; }
 
-  .section-header { margin-bottom: 2rem; border-left: 8px solid var(--black); padding-left: 1.2rem; }
-  .section-header h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; text-transform: uppercase; }
+  .section-header { margin-bottom: 2rem; padding-left: 1.2rem; border-left: 2px solid var(--accent); }
+  .section-header h2 { font-family: 'Cormorant SC', serif; font-size: 1.9rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
 
   .deco-card {
-    background: var(--surface); border: 2px solid var(--black);
-    padding: 1.5rem; position: relative; margin-bottom: 2rem;
-    box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.8rem;
+    position: relative;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition);
   }
-  .deco-card::before { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(0,0,0,0.1); pointer-events: none; }
+  .deco-card:hover { box-shadow: var(--shadow-md); }
 
   .card-title {
-    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 800;
-    text-transform: uppercase; border-bottom: 2px solid #000;
-    padding-bottom: 0.4rem; margin-bottom: 1.2rem;
+    font-family: 'Cormorant SC', serif; font-size: 0.9rem; font-weight: 600;
+    text-transform: uppercase; border-bottom: 1px solid var(--border);
+    padding-bottom: 0.6rem; margin-bottom: 1.4rem;
     display: flex; justify-content: space-between; align-items: center;
+    letter-spacing: 0.06em; color: var(--black);
   }
 
   .input-group { margin-bottom: 1rem; }
-  label { display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; color: #444; }
+  label { display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem; color: #666; }
   input, textarea, select {
-    width: 100%; padding: 0.6rem; border: 1.5px solid var(--black);
-    background: var(--bg); font-family: 'Jost', sans-serif; font-size: 0.85rem;
+    width: 100%; padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    color: var(--black);
+    transition: border-color var(--transition), box-shadow var(--transition);
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.12);
+    background: var(--surface);
   }
   textarea { resize: vertical; min-height: 60px; }
 
   .btn {
-    background: var(--black); color: #fff; border: 2px solid var(--black);
-    padding: 0.8rem 1.2rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.1em; font-size: 0.7rem; cursor: pointer; transition: 0.3s;
+    background: var(--black); color: #fff; border: 1.5px solid var(--black);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1.3rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; font-size: 0.7rem; cursor: pointer;
+    transition: all var(--transition);
+    font-family: 'DM Sans', sans-serif;
   }
-  .btn:hover { background: transparent; color: var(--black); }
-  .btn-outline { background: transparent; color: var(--black); border: 1.5px solid var(--black); }
-  .btn-small { padding: 0.4rem 0.6rem; font-size: 0.55rem; }
-  .btn-danger { color: #cc0000; border-color: #cc0000; }
-  .btn-danger:hover { background: #cc0000; color: #fff; }
+  .btn:hover { background: #333; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .btn:active { transform: translateY(0); }
+  .btn-outline { background: transparent; color: var(--black); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--black); background: var(--bg); }
+  .btn-small { padding: 0.38rem 0.75rem; font-size: 0.55rem; border-radius: 6px; }
+  .btn-danger { color: #cc0000; border-color: #f0c0c0; background: transparent; }
+  .btn-danger:hover { background: #cc0000; color: #fff; border-color: #cc0000; }
   .btn-gold { background: var(--accent); color: #000; border-color: var(--accent); }
-  .btn-gold:hover { background: transparent; color: var(--accent); border-color: var(--accent); }
+  .btn-gold:hover { background: #b8911f; border-color: #b8911f; color: #fff; transform: translateY(-1px); }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
   .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
 
-  .color-palette { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-  .color-swatch { width: 30px; height: 30px; border: 1.5px solid #000; position: relative; border-radius: 2px; }
+  .color-palette { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .color-swatch { width: 32px; height: 32px; border: 1.5px solid var(--border); position: relative; border-radius: 50%; overflow: hidden; box-shadow: var(--shadow-sm); }
   .color-swatch input { position: absolute; opacity: 0; inset: 0; cursor: pointer; width: 100%; height: 100%; }
 
   .image-preview-container {
-    width: 100%; aspect-ratio: 1; border: 2px solid #000;
-    background: #fdfdfd; display: flex; align-items: center; justify-content: center;
+    width: 100%; aspect-ratio: 1;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg); display: flex; align-items: center; justify-content: center;
     position: relative; overflow: hidden;
   }
   .image-preview-container img { width: 100%; height: 100%; object-fit: contain; }
   .loading-overlay {
-    position: absolute; inset: 0; background: rgba(255,255,255,0.9);
+    position: absolute; inset: 0; background: rgba(255,255,255,0.92);
+    border-radius: var(--radius-md);
     display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
   }
 
   .prompt-box {
-    font-size: 0.75rem; line-height: 1.4; background: #fff; border: 1px dashed #000; padding: 12px; margin-bottom: 1rem; color: #555;
+    font-size: 0.75rem; line-height: 1.5; background: var(--bg);
+    border: 1px dashed var(--border); border-radius: var(--radius-sm);
+    padding: 14px; margin-bottom: 1rem; color: #666;
   }
 
   /* PDF Export Progress Modal */
   #pdf-modal {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
     z-index: 2000; align-items: center; justify-content: center;
   }
   #pdf-modal.active { display: flex; }
   .pdf-modal-inner {
-    background: var(--bg); border: 3px solid var(--black); padding: 3rem 4rem;
-    text-align: center; max-width: 420px; width: 90%; position: relative;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 3rem 4rem;
+    text-align: center; max-width: 420px; width: 90%;
+    box-shadow: var(--shadow-lg);
   }
-  .pdf-modal-inner::before { content: ''; position: absolute; inset: 6px; border: 1px solid rgba(0,0,0,0.15); pointer-events: none; }
   .pdf-modal-title {
-    font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900;
+    font-family: 'Cormorant SC', serif; font-size: 1.4rem; font-weight: 500;
     text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;
   }
-  .pdf-modal-sub { font-size: 0.65rem; letter-spacing: 0.15em; color: #666; margin-bottom: 2rem; text-transform: uppercase; }
-  .pdf-progress-bar { width: 100%; height: 4px; background: #ddd; margin: 1.5rem 0 0.5rem; }
-  .pdf-progress-fill { height: 100%; background: var(--black); transition: width 0.4s ease; width: 0%; }
-  .pdf-progress-label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: #888; }
+  .pdf-modal-sub { font-size: 0.65rem; letter-spacing: 0.15em; color: #888; margin-bottom: 2rem; text-transform: uppercase; }
+  .pdf-progress-bar { width: 100%; height: 4px; background: #eee; border-radius: 4px; margin: 1.5rem 0 0.5rem; overflow: hidden; }
+  .pdf-progress-fill { height: 100%; background: var(--black); border-radius: 4px; transition: width 0.4s ease; width: 0%; }
+  .pdf-progress-label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: #999; }
 
   #toast {
     position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-    background: var(--black); color: #fff; padding: 0.8rem 2rem;
+    background: var(--black); color: #fff; padding: 0.75rem 2rem;
     font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-    display: none; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: none; z-index: 1000;
+    border-radius: 100px;
+    box-shadow: var(--shadow-lg);
+    letter-spacing: 0.1em;
   }
 
   /* Export section highlight */
   .export-highlight {
-    border: 2px solid var(--accent);
-    background: #fffdf5;
+    border: 1px solid var(--border);
+    background: #fafaf8;
   }
-  .export-highlight::before { border-color: rgba(212,175,55,0.3) !important; }
-  .export-highlight .card-title { border-bottom-color: var(--accent); }
+  .export-highlight .card-title { border-bottom-color: var(--border); }
 
   /* --- OPTION CARDS (IA selector) --- */
   .option-cards { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
   .option-card {
     flex: 1 1 auto; min-width: 80px;
-    border: 1.5px solid #ccc; background: #fff; padding: 0.7rem 0.5rem;
-    text-align: center; cursor: pointer; transition: all 0.15s ease;
+    border: 1.5px solid var(--border); background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 0.5rem;
+    text-align: center; cursor: pointer; transition: all var(--transition);
     position: relative; user-select: none;
   }
-  .option-card:hover { border-color: var(--black); }
+  .option-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow-sm);
+    transform: translateY(-1px);
+    color: var(--accent);
+  }
+  .option-card:hover .oc-desc { color: #bba060; }
   .option-card.selected {
-    border: 2px solid var(--black); background: var(--black);
+    border: 2px solid var(--accent);
+    background: #fdf8ec;
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow-sm);
   }
   .option-card.selected .oc-icon,
-  .option-card.selected .oc-label { color: #fff; }
-  .option-card.selected .oc-desc { color: #aaa; }
-  .oc-icon { font-size: 1.3rem; line-height: 1; margin-bottom: 4px; display: block; }
-  .oc-label { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; display: block; }
-  .oc-desc { font-size: 0.5rem; color: #999; margin-top: 2px; display: block; line-height: 1.3; }
+  .option-card.selected .oc-label { color: #8a6a00; }
+  .option-card.selected .oc-desc { color: #b8962a; }
+  .oc-icon { font-size: 0; line-height: 1; margin-bottom: 2px; display: block; color: inherit; }
+  .oc-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: block; }
+  .oc-desc { font-size: 0.5rem; color: #999; margin-top: 2px; display: block; line-height: 1.3; transition: color var(--transition); }
 
   @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
 
@@ -189,7 +252,7 @@
   #screen-cover.hidden { opacity: 0; pointer-events: none; }
 
   .cover-ornament {
-    width: 1px; background: #d4af37;
+    width: 1px; background: linear-gradient(to bottom, transparent, var(--accent), transparent);
     animation: ornament-grow 1.2s ease forwards;
     margin-bottom: 3rem;
   }
@@ -197,38 +260,39 @@
 
   .cover-logo-ring {
     width: 90px; height: 90px;
-    border: 2px solid #d4af37;
+    border: 1px solid #444;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 1.5rem;
     animation: fade-in 1s ease 0.4s both;
   }
   .cover-logo-ring span {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem; font-weight: 900; color: #d4af37;
+    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Cormorant SC', serif; font-size: 2.2rem; font-weight: 300; color: #ccc; letter-spacing: 0.1em;
   }
   .cover-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 4rem; font-weight: 900; color: #fff;
-    letter-spacing: 0.35em; text-transform: uppercase;
+    font-family: 'Cormorant SC', serif;
+    font-size: 4rem; font-weight: 300; color: #fff;
+    letter-spacing: 0.45em; text-transform: uppercase;
     animation: fade-in 1s ease 0.6s both;
     margin-bottom: 0.4rem;
   }
   .cover-sub {
-    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.3em;
-    text-transform: uppercase; color: #666;
+    font-family: 'DM Sans', sans-serif; font-size: 0.58rem; font-weight: 400; letter-spacing: 0.35em;
+    text-transform: uppercase; color: #555;
     animation: fade-in 1s ease 0.8s both;
     margin-bottom: 3.5rem;
   }
   .cover-btn {
-    background: transparent; border: 1px solid #d4af37;
-    color: #d4af37; padding: 1rem 3rem;
-    font-family: 'Jost', sans-serif; font-weight: 700;
-    font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+    background: transparent; border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.7); padding: 1rem 3rem;
+    font-family: 'DM Sans', sans-serif; font-weight: 400;
+    font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase;
     cursor: pointer; transition: all 0.3s ease;
+    border-radius: 2px;
     animation: fade-in 1s ease 1s both;
   }
-  .cover-btn:hover { background: #d4af37; color: #000; }
+  .cover-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.6); }
 
   @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -244,18 +308,18 @@
   #screen-selector.visible { display: flex; }
 
   .selector-header {
-    background: #000; padding: 1.8rem 3rem;
+    background: #111; padding: 1.6rem 3rem;
     display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 3px solid #d4af37; flex-shrink: 0;
+    border-bottom: 1px solid rgba(201,162,39,0.25); flex-shrink: 0;
   }
   .selector-header-brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem; font-weight: 900; color: #fff;
+    font-family: 'Cormorant SC', serif;
+    font-size: 1.3rem; font-weight: 500; color: #fff; letter-spacing: 0.2em;
     letter-spacing: 0.25em; text-transform: uppercase;
   }
   .selector-header-sub {
     font-size: 0.55rem; letter-spacing: 0.2em;
-    text-transform: uppercase; color: #d4af37; margin-top: 2px;
+    text-transform: uppercase; color: #888; margin-top: 2px;
   }
 
   .selector-body {
@@ -265,7 +329,7 @@
   .selector-eyebrow {
     font-size: 0.6rem; font-weight: 800; letter-spacing: 0.2em;
     text-transform: uppercase; color: #aaa; margin-bottom: 1.5rem;
-    border-left: 4px solid #d4af37; padding-left: 0.8rem;
+    border-left: 2px solid var(--accent); padding-left: 0.8rem;
   }
 
   .prod-grid {
@@ -274,49 +338,53 @@
     gap: 1.2rem; margin-bottom: 2rem;
   }
   .prod-card {
-    background: #fff; border: 2px solid #000;
-    padding: 1.5rem; cursor: pointer; position: relative;
-    transition: all 0.2s ease; box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.6rem; cursor: pointer; position: relative;
+    transition: all var(--transition); box-shadow: var(--shadow-sm);
   }
-  .prod-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 rgba(0,0,0,0.12); }
-  .prod-card::before { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(0,0,0,0.08); pointer-events: none; }
+  .prod-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent); }
   .prod-card-num {
     font-size: 0.5rem; font-weight: 800; letter-spacing: 0.15em;
-    color: #bbb; text-transform: uppercase; margin-bottom: 0.6rem;
+    color: #ccc; text-transform: uppercase; margin-bottom: 0.6rem;
   }
   .prod-card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.15rem; font-weight: 900; text-transform: uppercase;
+    font-family: 'Cormorant SC', serif;
+    font-size: 1.1rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em;
     line-height: 1.2; margin-bottom: 0.3rem;
   }
   .prod-card-autor {
-    font-size: 0.65rem; color: #888; margin-bottom: 1rem;
+    font-size: 0.65rem; color: #999; margin-bottom: 1rem;
   }
   .prod-card-meta {
-    display: flex; gap: 0.8rem; flex-wrap: wrap;
+    display: flex; gap: 0.6rem; flex-wrap: wrap;
   }
   .prod-tag {
     font-size: 0.5rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; background: #f5f2eb;
-    border: 1px solid #ddd; padding: 2px 7px; color: #666;
+    text-transform: uppercase; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 3px 9px; color: #777;
   }
   .prod-card-delete {
-    position: absolute; top: 8px; right: 8px;
-    background: none; border: none; color: #ccc;
+    position: absolute; top: 10px; right: 10px;
+    background: none; border: none; color: #ddd;
     font-size: 0.9rem; cursor: pointer; line-height: 1;
-    transition: color 0.2s;
+    transition: color var(--transition);
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
   }
-  .prod-card-delete:hover { color: #cc0000; }
+  .prod-card-delete:hover { color: #cc0000; background: #fff0f0; }
 
   /* Nueva producción */
   .prod-card-new {
-    border: 2px dashed #ccc; background: transparent;
+    border: 1.5px dashed var(--border); background: transparent;
+    border-radius: var(--radius-lg);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     min-height: 140px; gap: 0.5rem;
-    color: #aaa; transition: all 0.2s ease;
+    color: #bbb; transition: all var(--transition);
   }
-  .prod-card-new:hover { border-color: #000; color: #000; box-shadow: none; transform: none; }
+  .prod-card-new:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow-sm); transform: translateY(-3px); background: var(--surface); }
   .prod-card-new .new-icon { font-size: 1.8rem; line-height: 1; }
   .prod-card-new .new-label {
     font-size: 0.6rem; font-weight: 800;
@@ -326,20 +394,92 @@
   /* Modal nueva producción */
   #modal-nueva {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6); z-index: 1500;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    z-index: 1500;
     align-items: center; justify-content: center;
   }
   #modal-nueva.active { display: flex; }
   .modal-inner {
-    background: var(--bg); border: 2px solid #000;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     padding: 2.5rem; width: 420px; max-width: 90%;
-    position: relative;
+    box-shadow: var(--shadow-lg);
   }
-  .modal-inner::before { content:''; position:absolute; inset:5px; border:1px solid rgba(0,0,0,0.1); pointer-events:none; }
   .modal-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; font-weight: 900; text-transform: uppercase;
-    margin-bottom: 1.5rem; border-bottom: 2px solid #000; padding-bottom: 0.5rem;
+    font-family: 'Cormorant SC', serif;
+    font-size: 1.2rem; font-weight: 500; text-transform: uppercase;
+    margin-bottom: 1.5rem; letter-spacing: 0.12em; border-bottom: 1px solid var(--border); padding-bottom: 0.7rem;
+  }
+
+  /* ─── PRESETS DE PRODUCCIÓN ─── */
+  .presets-section {
+    margin-bottom: 2rem;
+  }
+  .presets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 0.6rem;
+  }
+  .preset-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem 0.9rem 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .preset-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--border);
+    transition: background var(--transition);
+  }
+  .preset-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .preset-card:hover::before { background: var(--accent); }
+  .preset-card.active {
+    border-color: var(--accent);
+    background: #fdf8ec;
+  }
+  .preset-card.active::before { background: var(--accent); }
+  .preset-card.active .preset-name { color: #7a5f00; }
+  .preset-card.active .preset-desc { color: #a07830; }
+  .preset-glyph {
+    font-family: 'Cormorant SC', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: #ccc;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    display: block;
+    transition: color var(--transition);
+  }
+  .preset-card:hover .preset-glyph { color: var(--accent); }
+  .preset-card.active .preset-glyph { color: #8a6a00; }
+  .preset-name {
+    font-family: 'Cormorant SC', serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.25rem;
+    transition: color var(--transition);
+  }
+  .preset-desc {
+    font-size: 0.5rem;
+    color: #aaa;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    display: block;
   }
 </style>
 </head>
@@ -423,20 +563,20 @@
       </div>
 
       <!-- FIRMA DE ESTILO -->
-      <div class="deco-card" style="border-color: #000; background: #0a0a0a; color: #fff; position: relative;">
-        <div class="card-title" style="border-bottom-color: #d4af37; color: #d4af37;">
+      <div class="deco-card" style="border-color: #2a2a2a; background: #0d0d0d; color: #fff; position: relative; border-radius: var(--radius-lg);">
+        <div class="card-title" style="border-bottom-color: #2a2a2a; color: #fff;">
           <span>FIRMA DE ESTILO PERSONAL</span>
-          <span style="font-size: 0.55rem; font-family: 'Jost'; font-weight: 400; color: #888; letter-spacing: 0.08em;">SE APLICA A TODOS LOS BOCETOS</span>
+          <span style="font-size: 0.55rem; font-family: 'DM Sans'; font-weight: 400; color: #666; letter-spacing: 0.08em;">SE APLICA A TODOS LOS BOCETOS</span>
         </div>
-        <p style="font-size: 0.6rem; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.8rem; line-height: 1.6;">
+        <p style="font-size: 0.6rem; color: #666; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.8rem; line-height: 1.6;">
           Esta directriz de estilo se inyecta con prioridad alta en cada prompt generado, por encima de las variables del proyecto o del personaje.
         </p>
         <textarea id="g-firma" rows="4"
-          style="width:100%; background:#1a1a1a; color:#e8e0d0; border:1px solid #444; font-family:'Jost',sans-serif;
+          style="width:100%; background:#1a1a1a; color:#e8e0d0; border:1px solid #333; border-radius: var(--radius-sm); font-family:'DM Sans',sans-serif;
           font-size:0.82rem; line-height:1.7; padding:0.8rem; resize:vertical; letter-spacing:0.01em;"></textarea>
         <div style="display:flex; justify-content:flex-end; margin-top:0.6rem;">
           <button class="btn btn-small" onclick="resetFirma()"
-            style="background:transparent; color:#666; border-color:#333; font-size:0.5rem;">
+            style="background:transparent; color:#555; border-color:#333; font-size:0.5rem;">
             RESTABLECER ORIGINAL
           </button>
         </div>
@@ -444,26 +584,26 @@
 
       <!-- EXPORT FULL PDF PANEL -->
       <div class="deco-card export-highlight">
-        <div class="card-title" style="color: #8a6d00;">
+        <div class="card-title">
           <span>EXPORTAR DOSSIER COMPLETO</span>
-          <span style="font-size: 0.6rem; font-family: 'Jost'; font-weight: 600; color: var(--accent);">★ NUEVO</span>
+          <span style="font-size: 0.55rem; font-family: 'DM Sans'; font-weight: 400; color: #aaa; letter-spacing:0.1em;">PDF</span>
         </div>
         <p style="font-size: 0.75rem; color: #555; line-height: 1.6; margin-bottom: 1.2rem;">
           Genera un dossier profesional en PDF con toda la información del proyecto: portada, concepto visual, paletas cromáticas y fichas técnicas de todos los personajes.
         </p>
         <div class="grid-3" style="margin-bottom: 1.2rem;">
-          <div style="background: #fff; border: 1.5px solid #ddd; padding: 0.8rem; text-align: center;">
-            <div style="font-size: 1.4rem; margin-bottom: 4px;">📋</div>
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.8rem; text-align: center;">
+            <div style="font-size: 1.4rem; margin-bottom: 8px; display:flex; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/><path d="M9 12h6M9 16h4"/></svg></div>
             <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Portada + Datos</div>
             <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Título, autor, concepto</div>
           </div>
-          <div style="background: #fff; border: 1.5px solid #ddd; padding: 0.8rem; text-align: center;">
-            <div style="font-size: 1.4rem; margin-bottom: 4px;">🎨</div>
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.8rem; text-align: center;">
+            <div style="font-size: 1.4rem; margin-bottom: 8px; display:flex; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l-1.5 5.5L2 9l5.5 1.5L9 22l1.5-5.5L22 15l-5.5-1.5z"/></svg></div>
             <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Concepto Visual</div>
             <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Época, palabras clave</div>
           </div>
-          <div style="background: #fff; border: 1.5px solid #ddd; padding: 0.8rem; text-align: center;">
-            <div style="font-size: 1.4rem; margin-bottom: 4px;">👗</div>
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.8rem; text-align: center;">
+            <div style="font-size: 1.4rem; margin-bottom: 8px; display:flex; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2l-4 6h4v12h8V8h4L16 2m-8 0h8"/></svg></div>
             <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Fichas de Personajes</div>
             <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Una página por personaje</div>
           </div>
@@ -499,9 +639,60 @@
       <button class="btn" onclick="addPersonaje()">+ AÑADIR PERSONAJE</button>
     </section>
 
-    <!-- BOCETO IA -->
+
+    <!-- PRESETS DE PRODUCCIÓN -->
     <section id="sec-ia" class="view-section">
       <div class="section-header"><h2>GENERADOR DE BOCETOS</h2></div>
+
+      <!-- PRESETS -->
+      <div class="presets-section">
+        <label style="display:block; font-size:0.6rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:#999; margin-bottom:0.6rem;">
+          PRESET DE PRODUCCIÓN — aplica firma + técnica visual recomendada
+        </label>
+        <div class="presets-grid" id="presets-grid">
+          <div class="preset-card" data-preset="opera" onclick="applyPreset(this)">
+            <span class="preset-glyph">Ō</span>
+            <span class="preset-name">Ópera</span>
+            <span class="preset-desc">Gran aparato, telas nobles, drama extremo</span>
+          </div>
+          <div class="preset-card" data-preset="ballet" onclick="applyPreset(this)">
+            <span class="preset-glyph">B</span>
+            <span class="preset-name">Ballet</span>
+            <span class="preset-desc">Línea pura, ligereza, estructura geométrica</span>
+          </div>
+          <div class="preset-card" data-preset="contemporaneo" onclick="applyPreset(this)">
+            <span class="preset-glyph">C</span>
+            <span class="preset-name">Contemporáneo</span>
+            <span class="preset-desc">Ruptura, materiales no convencionales, asimetría</span>
+          </div>
+          <div class="preset-card" data-preset="sigloxx" onclick="applyPreset(this)">
+            <span class="preset-glyph">XX</span>
+            <span class="preset-name">S. XX · Drama</span>
+            <span class="preset-desc">Realismo psicológico, cotidiano, capas de época</span>
+          </div>
+          <div class="preset-card" data-preset="musical" onclick="applyPreset(this)">
+            <span class="preset-glyph">M</span>
+            <span class="preset-name">Musical</span>
+            <span class="preset-desc">Espectáculo, color, movimiento, practicidad</span>
+          </div>
+          <div class="preset-card" data-preset="callejero" onclick="applyPreset(this)">
+            <span class="preset-glyph">T</span>
+            <span class="preset-name">Teatro Callejero</span>
+            <span class="preset-desc">Resistencia, color vibrante, símbolo sobre detalle</span>
+          </div>
+          <div class="preset-card" data-preset="performance" onclick="applyPreset(this)">
+            <span class="preset-glyph">P</span>
+            <span class="preset-name">Performance</span>
+            <span class="preset-desc">Cuerpo como soporte, concepto radical, anti-moda</span>
+          </div>
+          <div class="preset-card" data-preset="griego" onclick="applyPreset(this)">
+            <span class="preset-glyph">Γ</span>
+            <span class="preset-name">Clásico Grecolatino</span>
+            <span class="preset-desc">Drapeado, peplos, escultura en movimiento</span>
+          </div>
+        </div>
+      </div>
+
       <div class="grid-2">
         <div class="deco-card">
           <div class="card-title">CONFIGURACIÓN DEL PROMPT</div>
@@ -519,21 +710,21 @@
               <div class="option-card selected" data-group="vista"
                 data-value="Full body front view costume illustration, character facing forward, maximum detail on every garment layer, fabric texture, construction and silhouette clearly visible, single figure centered on white background"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🧍</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v18M8 7l4-2 4 2M9 21l3-7 3 7"/></svg></span>
                 <span class="oc-label">Frente</span>
                 <span class="oc-desc">Cuerpo completo, máximo detalle</span>
               </div>
               <div class="option-card" data-group="vista"
                 data-value="Full body front view costume illustration with technical callout annotations: handwritten labels pointing to specific fabrics, textures and materials used in each part of the costume, fashion design technical sheet style, detailed linework, annotations integrated into the composition"
                 onclick="selectCard(this)">
-                <span class="oc-icon">📋</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/><path d="M9 12h6M9 16h4"/></svg></span>
                 <span class="oc-label">Con detalles</span>
                 <span class="oc-desc">Figura + etiquetas de materiales</span>
               </div>
               <div class="option-card" data-group="vista"
                 data-value="Two-figure costume design composition on a single white background: left figure showing full front view, right figure showing full back view of the same costume, both figures at the same scale, clear and complete design reference showing all construction details from both sides"
                 onclick="selectCard(this)">
-                <span class="oc-icon">↔</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4"/></svg></span>
                 <span class="oc-label">Frente y espalda</span>
                 <span class="oc-desc">Vista doble, diseño completo</span>
               </div>
@@ -553,63 +744,63 @@
               <div class="option-card selected" data-group="pose"
                 data-value="standing upright, weight evenly distributed, neutral pose"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🧍</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v18M8 7l4-2 4 2M9 21l3-7 3 7"/></svg></span>
                 <span class="oc-label">Neutral</span>
                 <span class="oc-desc">De pie, centrado</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="contrapposto pose, weight on one hip, slight torso twist, one arm relaxed"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🕴</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-1 5l-2 3m3-3 1.5 3M12 8v5m-3 4 1.5-3.5M14 17l-1.5-3.5"/></svg></span>
                 <span class="oc-label">Contrapposto</span>
                 <span class="oc-desc">Cadera desplazada</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="arms raised above head, open expansive gesture, triumphant"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🙌</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3v5M8 4l2 4M16 4l-2 4M5 10l4 3M19 10l-4 3M12 13v8"/></svg></span>
                 <span class="oc-label">Brazos arriba</span>
                 <span class="oc-desc">Gesto abierto</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="arms extended outward to the sides, wide open stance"
                 onclick="selectCard(this)">
-                <span class="oc-icon">✈</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M4 12h16M12 4v16"/></svg></span>
                 <span class="oc-label">Brazos abiertos</span>
                 <span class="oc-desc">Cruz / apertura</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="mid-leap, body airborne, legs extended, dynamic jumping pose"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🦘</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2v8M8 6l4-3 4 3M7 14l5-4 5 4M9 21l3-7 3 7"/></svg></span>
                 <span class="oc-label">Salto</span>
                 <span class="oc-desc">En el aire</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="ballet first arabesque pose, one leg extended behind, arms graceful"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🩰</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v7M8 7l4 3M16 5l-4 5M12 10l-3 7M12 10l2 5"/></svg></span>
                 <span class="oc-label">Arabesque</span>
                 <span class="oc-desc">Ballet · pierna extendida</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="ballet attitude pose, one knee bent and raised, arms in port de bras"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🩰</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v7M8 7l4 3M16 5l-4 5M12 10l-3 7M12 10l2 5"/></svg></span>
                 <span class="oc-label">Attitude</span>
                 <span class="oc-desc">Ballet · rodilla alzada</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="crouching low, body contracted, tense and coiled"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🫛</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v4M9 8h6M8 12l4-1 4 1M9 17l3-4 3 4"/></svg></span>
                 <span class="oc-label">Agachado</span>
                 <span class="oc-desc">Contraído / tenso</span>
               </div>
               <div class="option-card" data-group="pose"
                 data-value="walking stride, mid-step, one foot forward, natural movement"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🚶</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-2 3l-1 4 2 3-2 5m5-12 1 4-2 3 2 5"/></svg></span>
                 <span class="oc-label">Caminando</span>
                 <span class="oc-desc">Paso natural</span>
               </div>
@@ -623,56 +814,56 @@
               <div class="option-card selected" data-group="animo"
                 data-value="serene and composed expression, inner calm, subtle presence"
                 onclick="selectCard(this)">
-                <span class="oc-icon">😌</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></span>
                 <span class="oc-label">Sereno</span>
                 <span class="oc-desc">Calma interior</span>
               </div>
               <div class="option-card" data-group="animo"
                 data-value="intense and dramatic expression, fierce gaze, powerful emotional presence"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🔥</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2c0 4 3 6 3 10s-3 3-3 6zm3-6c0-4-3-6-3-10 4 0 7 4 7 8a4 4 0 0 1-4 4v-2z"/></svg></span>
                 <span class="oc-label">Intenso</span>
                 <span class="oc-desc">Mirada feroz</span>
               </div>
               <div class="option-card" data-group="animo"
                 data-value="melancholic and introspective expression, downward gaze, quiet sorrow"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🌧</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 19v2M8 13v2M12 21v2M12 15v2M16 19v2M16 13v2"/></svg></span>
                 <span class="oc-label">Melancólico</span>
                 <span class="oc-desc">Ensimismado</span>
               </div>
               <div class="option-card" data-group="animo"
                 data-value="joyful and radiant expression, open smile, light energy"
                 onclick="selectCard(this)">
-                <span class="oc-icon">☀️</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
                 <span class="oc-label">Alegre</span>
                 <span class="oc-desc">Energía abierta</span>
               </div>
               <div class="option-card" data-group="animo"
                 data-value="mysterious and enigmatic expression, slight knowing smile, concealed intent"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🌙</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
                 <span class="oc-label">Misterioso</span>
                 <span class="oc-desc">Enigmático</span>
               </div>
               <div class="option-card" data-group="animo"
                 data-value="defiant and confrontational expression, raised chin, strong direct gaze"
                 onclick="selectCard(this)">
-                <span class="oc-icon">⚡</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
                 <span class="oc-label">Desafiante</span>
                 <span class="oc-desc">Mirada directa</span>
               </div>
               <div class="option-card" data-group="animo"
                 data-value="fearful and vulnerable expression, tense body, wide eyes, fragile"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🫀</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
                 <span class="oc-label">Vulnerable</span>
                 <span class="oc-desc">Tenso / frágil</span>
               </div>
               <div class="option-card" data-group="animo"
                 data-value="ecstatic and transcendent expression, eyes closed or upward, transported"
                 onclick="selectCard(this)">
-                <span class="oc-icon">✨</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></span>
                 <span class="oc-label">Extático</span>
                 <span class="oc-desc">Arrobado / elevado</span>
               </div>
@@ -686,42 +877,42 @@
               <div class="option-card selected" data-group="tecnica"
                 data-value="illustrated in professional watercolor technique: transparent fluid washes layered wet-on-wet, soft blooms of pigment, fine india ink linework defining edges, zenith lighting casting subtle warm shadows, clean white paper ground showing through highlights"
                 onclick="selectCard(this)">
-                <span class="oc-icon">💧</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
                 <span class="oc-label">Acuarela clásica</span>
                 <span class="oc-desc">Aguadas fluidas · luz cenital</span>
               </div>
               <div class="option-card" data-group="tecnica"
                 data-value="illustrated in expressive watercolor technique: heavily saturated pigment, deep pools of dark color, bold wet ink bleeds into wet wash, dramatic chiaroscuro with strong shadow masses, high contrast between light and dark areas, visible paper texture"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🌊</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2v14c-2.5 0-2.5 2-5 2-2.5 0-2.5-2-5-2C7 19 7 21 4.5 21c-1.3 0-1.9-.5-2.5-1"/></svg></span>
                 <span class="oc-label">Acuarela dramática</span>
                 <span class="oc-desc">Pigmento intenso · claroscuro</span>
               </div>
               <div class="option-card" data-group="tecnica"
                 data-value="illustrated in pen and ink technique: precise quill linework, dense cross-hatching and parallel hatching for shadow and volume, no color, sepia or black ink on cream textured paper, fine stippling for mid-tones, sharp expressive contour lines"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🪶</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5zM16 8L2 22M17.5 15H9"/></svg></span>
                 <span class="oc-label">Tinta y línea</span>
                 <span class="oc-desc">Plumilla · tramado · sin color</span>
               </div>
               <div class="option-card" data-group="tecnica"
                 data-value="illustrated in dry pastel technique on textured paper: chalky soft pigment blended with finger, visible grain of the paper, warm lateral light raking across the figure, rich velvety shadows, muted color palette with dusty mid-tones, no sharp outlines"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🌫</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 12h18M3 8h18M3 16h18"/></svg></span>
                 <span class="oc-label">Pastel teatral</span>
                 <span class="oc-desc">Pastel seco · luz lateral</span>
               </div>
               <div class="option-card" data-group="tecnica"
                 data-value="illustrated in gouache technique: fully opaque matte paint strokes, flat color areas with deliberate brushwork visible, rich saturated palette, strong graphic silhouette, no transparency, areas of solid color next to precise painted detail"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🟫</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span>
                 <span class="oc-label">Gouache opaco</span>
                 <span class="oc-desc">Pinceladas cubiertas · gráfico</span>
               </div>
               <div class="option-card" data-group="tecnica"
                 data-value="illustrated in graphite and grey wash technique: expressive pencil linework with varying pressure, broad grey ink wash applied over pencil for volume and shadow, nebulous atmospheric quality, soft smudged transitions, restrained palette of blacks greys and white"
                 onclick="selectCard(this)">
-                <span class="oc-icon">✏️</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
                 <span class="oc-label">Grafito y mancha</span>
                 <span class="oc-desc">Lápiz · lavado gris · atmósfera</span>
               </div>
@@ -735,35 +926,35 @@
               <div class="option-card selected" data-group="luz"
                 data-value="soft zenith lighting, light falling from above, gentle shadows below the chin and arms"
                 onclick="selectCard(this)">
-                <span class="oc-icon">☀️</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
                 <span class="oc-label">Cenital</span>
                 <span class="oc-desc">Luz desde arriba</span>
               </div>
               <div class="option-card" data-group="luz"
                 data-value="dramatic lateral lighting, strong raking sidelight casting long shadows across the costume, high contrast between lit and shadow sides"
                 onclick="selectCard(this)">
-                <span class="oc-icon">◑</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 2v20"/></svg></span>
                 <span class="oc-label">Lateral</span>
                 <span class="oc-desc">Contraste de claroscuro</span>
               </div>
               <div class="option-card" data-group="luz"
                 data-value="warm theatrical stage lighting from below and front, footlight quality, dramatic upward shadows on the face, warm amber tones"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🎭</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M8 9h.01M16 9h.01"/></svg></span>
                 <span class="oc-label">Escénica</span>
                 <span class="oc-desc">Luz de escena cálida</span>
               </div>
               <div class="option-card" data-group="luz"
                 data-value="backlight / contre-jour, strong light source behind the figure creating a luminous halo around the silhouette, figure slightly in shadow"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🌟</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></span>
                 <span class="oc-label">Contraluz</span>
                 <span class="oc-desc">Halo y silueta</span>
               </div>
               <div class="option-card" data-group="luz"
                 data-value="flat even studio lighting, no strong shadows, all costume details equally visible, neutral white light"
                 onclick="selectCard(this)">
-                <span class="oc-icon">⬜</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/></svg></span>
                 <span class="oc-label">Plana</span>
                 <span class="oc-desc">Sin sombras, detalle técnico</span>
               </div>
@@ -777,35 +968,35 @@
               <div class="option-card selected" data-group="fondo"
                 data-value="pure white background, clean and minimal"
                 onclick="selectCard(this)">
-                <span class="oc-icon">⬜</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/></svg></span>
                 <span class="oc-label">Blanco</span>
                 <span class="oc-desc">Limpio y técnico</span>
               </div>
               <div class="option-card" data-group="fondo"
                 data-value="deep black background, figure emerging from darkness"
                 onclick="selectCard(this)">
-                <span class="oc-icon">⬛</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:block;margin:0 auto 4px;"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span>
                 <span class="oc-label">Negro</span>
                 <span class="oc-desc">Figura desde la oscuridad</span>
               </div>
               <div class="option-card" data-group="fondo"
                 data-value="aged cream parchment paper texture background, warm ivory tone"
                 onclick="selectCard(this)">
-                <span class="oc-icon">📄</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></span>
                 <span class="oc-label">Papel</span>
                 <span class="oc-desc">Pergamino cálido</span>
               </div>
               <div class="option-card" data-group="fondo"
                 data-value="subtle soft watercolor wash background in a muted tone complementary to the costume, loose and atmospheric, not distracting"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🎨</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12c0 1.82.487 3.53 1.338 5"/><path d="M12 6v6l4 2"/></svg></span>
                 <span class="oc-label">Mancha</span>
                 <span class="oc-desc">Aguada difusa de color</span>
               </div>
               <div class="option-card" data-group="fondo"
                 data-value="soft drop shadow cast by the figure on a white ground, grounding the figure in space"
                 onclick="selectCard(this)">
-                <span class="oc-icon">🔲</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/><path d="M3 21l18-6"/></svg></span>
                 <span class="oc-label">Sombra</span>
                 <span class="oc-desc">Figura con sombra proyectada</span>
               </div>
@@ -819,21 +1010,21 @@
               <div class="option-card selected" data-group="detalle"
                 data-value="fully finished illustration, maximum detail on textures, fabrics, accessories and facial features, polished and complete"
                 onclick="selectCard(this)">
-                <span class="oc-icon">💎</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/><path d="M12 3L8 9l4 13 4-13-4-6"/></svg></span>
                 <span class="oc-label">Terminado</span>
                 <span class="oc-desc">Máximo detalle y acabado</span>
               </div>
               <div class="option-card" data-group="detalle"
                 data-value="semi-finished illustration, clear silhouette and main costume shapes defined, selective detail on key elements only, some areas suggested rather than rendered"
                 onclick="selectCard(this)">
-                <span class="oc-icon">◈</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l10 10-10 10L2 12zM12 6l7 6-7 6-7-6z"/></svg></span>
                 <span class="oc-label">Semifinished</span>
                 <span class="oc-desc">Silueta clara, detalle selectivo</span>
               </div>
               <div class="option-card" data-group="detalle"
                 data-value="quick concept sketch, loose expressive linework, gestural and spontaneous, capturing the essence of the costume without precise rendering, raw and immediate"
                 onclick="selectCard(this)">
-                <span class="oc-icon">✍️</span>
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z M2 2l7.586 7.586"/></svg></span>
                 <span class="oc-label">Boceto rápido</span>
                 <span class="oc-desc">Gestual y espontáneo</span>
               </div>
@@ -845,9 +1036,10 @@
           <!-- Prompt editable -->
           <div style="position:relative;">
             <textarea id="ia-prompt"
-              style="width:100%;min-height:120px;background:#fff;border:1px dashed #000;
-              padding:12px;font-family:'Jost',sans-serif;font-size:0.74rem;line-height:1.55;
-              color:#444;resize:vertical;"
+              style="width:100%;min-height:120px;background:var(--surface);border:1.5px solid var(--border);
+              border-radius: var(--radius-sm);
+              padding:12px;font-family:'DM Sans',sans-serif;font-size:0.74rem;line-height:1.55;
+              color:#444;resize:vertical; outline:none; transition: border-color var(--transition);"
               placeholder="Construye el prompt para ver los detalles aquí..."></textarea>
             <button id="copy-prompt-btn" onclick="copyPrompt()"
               style="position:absolute; top:8px; right:8px; background:#000; color:#fff; border:none;
@@ -858,6 +1050,7 @@
             </button>
           </div>
           <button class="btn btn-outline" style="width:100%; margin-top:0.8rem;" onclick="callGeminiIA()">GENERAR IMAGEN (GEMINI FLASH)</button>
+          <button class="btn" style="width:100%; margin-top:0.5rem;" onclick="callPollinationsIA()">GENERAR IMAGEN (GRATUITO · SIN KEY)</button>
         </div>
         
         <div class="deco-card">
@@ -1192,7 +1385,7 @@
             value="${f.material||''}"
             onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'material',this.value)"
             style="flex:1;border:1px solid #ddd;background:#fafafa;
-            font-family:'Jost',sans-serif;font-size:0.72rem;padding:3px 7px;">
+            font-family:'DM Sans',sans-serif;font-size:0.72rem;padding:3px 7px;">
         </div>`;
     }
 
@@ -1224,7 +1417,7 @@
             value="${f.atributos['descripcion']||''}"
             onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'descripcion',this.value)"
             style="width:100%;margin-top:0.5rem;border:1.5px solid #ccc;background:#f5f2eb;
-            font-family:'Jost',sans-serif;font-size:0.8rem;padding:0.4rem;">` : '';
+            font-family:'DM Sans',sans-serif;font-size:0.8rem;padding:0.4rem;">` : '';
 
         return `
           <div style="border:1.5px solid #ddd;background:#fff;padding:0.8rem 0.9rem;
@@ -1232,7 +1425,7 @@
             <div style="display:flex;gap:0.5rem;align-items:center;">
               <select onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'tipo',this.value)"
                 style="flex:1;border:1.5px solid #000;background:#f5f2eb;
-                font-family:'Jost',sans-serif;font-size:0.78rem;padding:0.35rem;">
+                font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.35rem;">
                 ${optionsHTML}
               </select>
               <button onclick="removeFichaKey(${pi},'${stateKey}',${fi})"
@@ -1842,6 +2035,115 @@
       document.querySelectorAll('#ia-vista-cards .option-card').forEach(c => c.classList.remove('selected'));
     }
 
+
+    // ─── PRESETS DE PRODUCCIÓN ──────────────────────────────────────────────────
+    const PRESETS = {
+      opera: {
+        firma: `Vestuario de gran ópera: telas suntuosas (terciopelo, brocado, organza estructurada), siluetas ampulosas y arquitectónicas, color profundo y saturado. Técnica de ilustración con gouache opaco o acuarela dramática, claroscuro intenso, iluminación lateral teatral. Inspiración en diseños de Zeffirelli y Lila de Nobili. Sin minimalismo, sin moda contemporánea.`,
+        tecnica: 0, // gouache opaco (index en ia-tecnica-cards)
+        fondo: 1,   // negro
+        luz: 1,     // lateral
+        detalle: 0  // terminado
+      },
+      ballet: {
+        firma: `Vestuario de ballet clásico y neoclásico: línea depurada, telas fluidas o estructuradas (tul, seda, licra mate), silueta elongada que exalta la geometría del movimiento. Ilustración en acuarela clásica sobre papel blanco, luz cenital, trazo limpio y controlado. Referencia: Oscar Araiz, Franca Squarciapino.`,
+        tecnica: 0, // acuarela clásica
+        fondo: 0,   // blanco
+        luz: 0,     // cenital
+        detalle: 0  // terminado
+      },
+      contemporaneo: {
+        firma: `Vestuario contemporáneo experimental: ruptura de la silueta convencional, materiales inesperados (goma, papel, metal, plástico intervenido), asimetría radical. Técnica de boceto rápido en grafito y mancha, gestual, sin acabado pulido. Anti-decorativo. Referencia: Rei Kawakubo, Martin Margiela aplicados al teatro.`,
+        tecnica: 5, // grafito y mancha
+        fondo: 1,   // negro
+        luz: 3,     // contraluz
+        detalle: 2  // boceto rápido
+      },
+      sigloxx: {
+        firma: `Vestuario de drama del siglo XX: realismo psicológico, ropa de uso cotidiano con historia, capas de desgaste y tiempo. Paleta contenida, materiales naturales (algodón, lana, lino). Ilustración en pastel teatral o tinta y línea, luz lateral suave, atmósfera introspectiva. Referencia: Theoni V. Aldredge, Ann Roth.`,
+        tecnica: 3, // pastel teatral
+        fondo: 2,   // papel
+        luz: 1,     // lateral
+        detalle: 1  // semifinished
+      },
+      musical: {
+        firma: `Vestuario de musical Broadway/West End: espectáculo visual, color vibrante y coordinado, practicidad para el movimiento y el número coral. Siluetas claras y reconocibles desde la butaca. Ilustración en acuarela clásica o gouache, luz escénica frontal, detalle completo. Referencia: William Ivey Long, Bob Mackie.`,
+        tecnica: 0, // acuarela clásica
+        fondo: 0,   // blanco
+        luz: 2,     // escénica
+        detalle: 0  // terminado
+      },
+      callejero: {
+        firma: `Vestuario de teatro callejero y de calle: resistencia y visibilidad, colores primarios o altamente saturados, símbolo sobre detalle naturalista. Materiales duraderos, silueta legible a distancia. Ilustración gestual en tinta y línea con color plano. Referencia: Royal de Luxe, Bread and Puppet Theater.`,
+        tecnica: 2, // tinta y línea
+        fondo: 3,   // mancha
+        luz: 4,     // plana
+        detalle: 2  // boceto rápido
+      },
+      performance: {
+        firma: `Vestuario-objeto de performance art: el cuerpo como soporte y material. Concepto radical por encima de la función, anti-moda, anti-ilusionismo. Materiales encontrados, industriales o efímeros. Ilustración en grafito conceptual, boceto de idea más que de prenda. Referencia: Marina Abramović, Jana Sterbak, Yoko Ono.`,
+        tecnica: 5, // grafito y mancha
+        fondo: 1,   // negro
+        luz: 3,     // contraluz
+        detalle: 2  // boceto rápido
+      },
+      griego: {
+        firma: `Vestuario grecolatino de teatro clásico: drapeado escultórico en lino, lana o seda, peplos, himation, toga. La prenda como arquitectura del cuerpo. Ilustración en acuarela dramática o tinta de plumilla, luz cenital fuerte, referencia a la escultura helenística y a pinturas de vasos áticos.`,
+        tecnica: 1, // acuarela dramática
+        fondo: 2,   // papel
+        luz: 0,     // cenital
+        detalle: 0  // terminado
+      }
+    };
+
+    function applyPreset(el) {
+      const key = el.dataset.preset;
+      const preset = PRESETS[key];
+      if (!preset) return;
+
+      // Mark active preset card
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+
+      // Apply firma
+      const firmaEl = document.getElementById('g-firma');
+      if (firmaEl) {
+        firmaEl.value = preset.firma;
+        state.firmaEstilo = preset.firma;
+        // brief highlight flash
+        firmaEl.style.transition = 'border-color 0.3s';
+        firmaEl.style.borderColor = 'var(--accent)';
+        setTimeout(() => firmaEl.style.borderColor = '', 1200);
+      }
+
+      // Apply técnica card (by index)
+      const tecCards = document.querySelectorAll('#ia-tecnica-cards .option-card');
+      tecCards.forEach((c, i) => {
+        c.classList.toggle('selected', i === preset.tecnica);
+      });
+
+      // Apply fondo card
+      const fondoCards = document.querySelectorAll('#ia-fondo-cards .option-card');
+      fondoCards.forEach((c, i) => {
+        c.classList.toggle('selected', i === preset.fondo);
+      });
+
+      // Apply luz card
+      const luzCards = document.querySelectorAll('#ia-luz-cards .option-card');
+      luzCards.forEach((c, i) => {
+        c.classList.toggle('selected', i === preset.luz);
+      });
+
+      // Apply detalle card
+      const detalleCards = document.querySelectorAll('#ia-detalle-cards .option-card');
+      detalleCards.forEach((c, i) => {
+        c.classList.toggle('selected', i === preset.detalle);
+      });
+
+      const name = el.querySelector('.preset-name').textContent;
+      notificar(`PRESET "${name.toUpperCase()}" APLICADO`);
+    }
+
     function selectCard(el) {
       const group = el.dataset.group;
       document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
@@ -2072,7 +2374,57 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
       loading.style.display = 'none';
     }
 
-    // --- PERSISTENCIA ---
+    // --- POLLINATIONS (gratuito, sin key) ---
+    async function callPollinationsIA() {
+      const el = document.getElementById('ia-prompt');
+      const promptText = el.value || el.innerText;
+      if(!promptText || promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
+
+      const loading = document.getElementById('ia-loading');
+      const imgRes = document.getElementById('ia-img-result');
+      const placeholder = document.getElementById('ia-placeholder');
+
+      loading.style.display = 'flex';
+      placeholder.style.color = '#aaa';
+      placeholder.style.fontSize = '0.7rem';
+      placeholder.style.padding = '0';
+      placeholder.textContent = 'SIN VISTA PREVIA';
+
+      try {
+        // Pollinations accepts prompt as URL-encoded string, returns image directly
+        // width/height optimized for portrait figurin
+        const encoded = encodeURIComponent(promptText);
+        const seed = Math.floor(Math.random() * 999999);
+        const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&seed=${seed}&nologo=true&enhance=true`;
+
+        // Load as image element
+        await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            imgRes.src = img.src;
+            imgRes.style.display = 'block';
+            placeholder.style.display = 'none';
+            resolve();
+          };
+          img.onerror = () => reject(new Error('No se pudo cargar la imagen desde Pollinations'));
+          img.src = url;
+        });
+
+        notificar("IMAGEN GENERADA · POLLINATIONS");
+      } catch(err) {
+        console.error(err);
+        placeholder.style.display = 'block';
+        placeholder.style.color = '#cc0000';
+        placeholder.style.fontSize = '0.62rem';
+        placeholder.style.padding = '1rem';
+        placeholder.style.lineHeight = '1.5';
+        placeholder.textContent = `Error: ${err.message}`;
+        notificar("ERROR AL GENERAR");
+      } finally {
+        loading.style.display = 'none';
+      }
+    }
     function saveAll() {
       if(!currentProjectId) return;
       state.obra.titulo = document.getElementById('g-obra').value;
@@ -2151,9 +2503,9 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
     function renderMood() {
       const g = document.getElementById('mood-grid');
       g.innerHTML = state.mood.map((m, i) => `
-        <div style="position:relative; border:2px solid #000; background:#fff; padding:5px;">
-          <img src="${m}" style="width:100%; height:auto; display:block;">
-          <button onclick="state.mood.splice(${i},1); renderMood();" style="position:absolute; top:-5px; right:-5px; background:red; color:#fff; border:none; width:20px; height:20px; cursor:pointer; font-size:10px; border-radius:50%;">X</button>
+        <div style="position:relative; border:1px solid var(--border); border-radius: var(--radius-md); background:#fff; padding:5px; overflow:hidden; box-shadow: var(--shadow-sm);">
+          <img src="${m}" style="width:100%; height:auto; display:block; border-radius: 8px;">
+          <button onclick="state.mood.splice(${i},1); renderMood();" style="position:absolute; top:6px; right:6px; background:rgba(200,0,0,0.85); color:#fff; border:none; width:22px; height:22px; cursor:pointer; font-size:10px; border-radius:50%; display:flex; align-items:center; justify-content:center;">×</button>
         </div>
       `).join('');
     }
@@ -2203,7 +2555,7 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
 
       const newCard = `
         <div class="prod-card prod-card-new" onclick="abrirModal()">
-          <span class="new-icon">＋</span>
+          <span class="new-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" style="display:block;"><path d="M12 5v14M5 12h14"/></svg></span>
           <span class="new-label">Nueva producción</span>
         </div>
       `;
