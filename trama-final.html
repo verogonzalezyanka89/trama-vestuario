@@ -1964,54 +1964,112 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
       const promptText = el.value || el.innerText;
       if(!key) return notificar("FALTA API KEY");
       if(!promptText || promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
+
       const loading = document.getElementById('ia-loading');
       const imgRes = document.getElementById('ia-img-result');
       const placeholder = document.getElementById('ia-placeholder');
       loading.style.display = 'flex';
-      // Reset placeholder style
       placeholder.style.color = '#aaa';
       placeholder.style.fontSize = '0.7rem';
       placeholder.style.padding = '0';
       placeholder.textContent = 'SIN VISTA PREVIA';
-      try {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${key}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: promptText }] }],
-              generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
-            })
+
+      // Models to try in order
+      const MODELS = [
+        {
+          id: 'gemini-2.0-flash-exp-image-generation',
+          call: async () => {
+            const r = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${key}`,
+              { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ contents:[{parts:[{text:promptText}]}], generationConfig:{responseModalities:['TEXT','IMAGE']} }) }
+            );
+            const d = await r.json();
+            if(!r.ok) throw new Error(d?.error?.message || `HTTP ${r.status}`);
+            const parts = d?.candidates?.[0]?.content?.parts || [];
+            const img = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
+            if(!img) throw new Error(parts.find(p=>p.text)?.text || 'Sin imagen');
+            return img;
           }
-        );
-        const data = await response.json();
-        if(!response.ok) {
-          throw new Error(data?.error?.message || `HTTP ${response.status}`);
+        },
+        {
+          id: 'gemini-2.0-flash-preview-image-generation',
+          call: async () => {
+            const r = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${key}`,
+              { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ contents:[{parts:[{text:promptText}]}], generationConfig:{responseModalities:['TEXT','IMAGE']} }) }
+            );
+            const d = await r.json();
+            if(!r.ok) throw new Error(d?.error?.message || `HTTP ${r.status}`);
+            const parts = d?.candidates?.[0]?.content?.parts || [];
+            const img = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
+            if(!img) throw new Error(parts.find(p=>p.text)?.text || 'Sin imagen');
+            return img;
+          }
+        },
+        {
+          id: 'imagen-3.0-generate-002',
+          call: async () => {
+            const r = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${key}`,
+              { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ instances:[{prompt:promptText}], parameters:{sampleCount:1} }) }
+            );
+            const d = await r.json();
+            if(!r.ok) throw new Error(d?.error?.message || `HTTP ${r.status}`);
+            const b64 = d?.predictions?.[0]?.bytesBase64Encoded;
+            if(!b64) throw new Error('Sin imagen en respuesta');
+            return { inlineData: { mimeType: 'image/png', data: b64 } };
+          }
+        },
+        {
+          id: 'imagen-3.0-fast-generate-001',
+          call: async () => {
+            const r = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-fast-generate-001:predict?key=${key}`,
+              { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ instances:[{prompt:promptText}], parameters:{sampleCount:1} }) }
+            );
+            const d = await r.json();
+            if(!r.ok) throw new Error(d?.error?.message || `HTTP ${r.status}`);
+            const b64 = d?.predictions?.[0]?.bytesBase64Encoded;
+            if(!b64) throw new Error('Sin imagen en respuesta');
+            return { inlineData: { mimeType: 'image/png', data: b64 } };
+          }
         }
-        const parts = data?.candidates?.[0]?.content?.parts || [];
-        const imgPart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
-        if(imgPart) {
+      ];
+
+      let lastError = '';
+      for(const model of MODELS) {
+        try {
+          placeholder.textContent = `Probando ${model.id}...`;
+          placeholder.style.display = 'block';
+          const imgPart = await model.call();
           imgRes.src = `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`;
           imgRes.style.display = 'block';
           placeholder.style.display = 'none';
-          notificar("IMAGEN GENERADA");
-        } else {
-          const textPart = parts.find(p => p.text);
-          throw new Error(textPart?.text || "La API no devolvió una imagen");
+          notificar(`IMAGEN GENERADA · ${model.id}`);
+          loading.style.display = 'none';
+          return; // success
+        } catch(err) {
+          lastError = `${model.id}: ${err.message}`;
+          console.warn('Model failed:', model.id, err.message);
         }
-      } catch(err) {
-        console.error(err);
-        placeholder.style.display = 'block';
-        placeholder.style.color = '#cc0000';
-        placeholder.style.fontSize = '0.62rem';
-        placeholder.style.padding = '1rem';
-        placeholder.style.lineHeight = '1.5';
-        placeholder.textContent = `Error: ${err.message}`;
-        notificar("ERROR — VER ÁREA DE BOCETO");
-      } finally {
-        loading.style.display = 'none';
       }
+
+      // All models failed
+      placeholder.style.display = 'block';
+      placeholder.style.color = '#cc0000';
+      placeholder.style.fontSize = '0.58rem';
+      placeholder.style.padding = '1rem';
+      placeholder.style.lineHeight = '1.6';
+      placeholder.innerHTML = `Ningún modelo disponible para esta API key.<br><br>
+        <strong>Último error:</strong><br>${lastError}<br><br>
+        Verifica que tu key tenga acceso a generación de imágenes en<br>
+        <a href="https://aistudio.google.com" target="_blank" style="color:#cc0000;">aistudio.google.com</a>`;
+      notificar("SIN MODELOS DISPONIBLES");
+      loading.style.display = 'none';
     }
 
     // --- PERSISTENCIA ---
