@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trama — Sistema de Vestuario Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Cormorant+SC:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
@@ -137,8 +137,8 @@
   .btn-small { padding: 0.38rem 0.75rem; font-size: 0.55rem; border-radius: 6px; }
   .btn-danger { color: #cc0000; border-color: #f0c0c0; background: transparent; }
   .btn-danger:hover { background: #cc0000; color: #fff; border-color: #cc0000; }
-  .btn-gold { background: var(--accent); color: #000; border-color: var(--accent); }
-  .btn-gold:hover { background: #b8911f; border-color: #b8911f; color: #fff; transform: translateY(-1px); }
+  .btn-gold { background: rgba(201,162,39,0.15); color: #8a6a00; border-color: rgba(201,162,39,0.4); }
+  .btn-gold:hover { background: rgba(201,162,39,0.28); border-color: var(--accent); color: #6b5200; transform: translateY(-1px); }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
@@ -237,7 +237,13 @@
   .oc-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: block; }
   .oc-desc { font-size: 0.5rem; color: #999; margin-top: 2px; display: block; line-height: 1.3; transition: color var(--transition); }
 
-  @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    #sec-general > div[style*="grid-template-columns: 1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+    #sec-moodboard > div[style*="280px"] { grid-template-columns: 1fr !important; }
+    #sec-ia > div[style*="360px"] { grid-template-columns: 1fr !important; }
+    #sec-ia > div > div[style*="sticky"] { position: static !important; }
+  }
 
   /* ═══════════════════════════════════
      PANTALLA DE PORTADA
@@ -267,7 +273,6 @@
     animation: fade-in 1s ease 0.4s both;
   }
   .cover-logo-ring span {
-    font-family: 'Cormorant Garamond', serif;
     font-family: 'Cormorant SC', serif; font-size: 2.2rem; font-weight: 300; color: #ccc; letter-spacing: 0.1em;
   }
   .cover-title {
@@ -284,15 +289,15 @@
     margin-bottom: 3.5rem;
   }
   .cover-btn {
-    background: transparent; border: 1px solid rgba(255,255,255,0.3);
-    color: rgba(255,255,255,0.7); padding: 1rem 3rem;
-    font-family: 'DM Sans', sans-serif; font-weight: 400;
-    font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase;
+    background: rgba(201,162,39,0.18); border: 1px solid rgba(201,162,39,0.5);
+    color: #c9a227; padding: 0.9rem 3rem;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
     cursor: pointer; transition: all 0.3s ease;
-    border-radius: 2px;
+    border-radius: 100px;
     animation: fade-in 1s ease 1s both;
   }
-  .cover-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.6); }
+  .cover-btn:hover { background: rgba(201,162,39,0.32); border-color: var(--accent); color: #a07800; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,162,39,0.2); }
 
   @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -411,6 +416,78 @@
     margin-bottom: 1.5rem; letter-spacing: 0.12em; border-bottom: 1px solid var(--border); padding-bottom: 0.7rem;
   }
 
+  /* ─── SISTEMA DE CAPAS DE MATERIAL ─── */
+  .capas-strip {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    align-items: center; margin-top: 0.7rem;
+    padding-top: 0.6rem; border-top: 1px dashed #eee;
+  }
+  .capa-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f5f2eb; border: 1.5px solid #ccc;
+    padding: 3px 8px 3px 10px;
+    font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.15s; user-select: none;
+    max-width: 200px;
+  }
+  .capa-chip:hover { border-color: var(--accent); background: var(--accent-light); }
+  .capa-chip .capa-chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .capa-chip .capa-chip-swatch {
+    width: 10px; height: 10px; border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0; border-radius: 50%;
+  }
+  .capa-chip-del {
+    background: none; border: none; color: #bbb; cursor: pointer;
+    font-size: 0.7rem; line-height: 1; padding: 0 0 0 2px;
+    transition: color 0.15s; flex-shrink: 0;
+  }
+  .capa-chip-del:hover { color: #cc0000; }
+  .add-capa-btn {
+    background: none; border: 1px dashed #ccc; color: #aaa;
+    font-size: 0.55rem; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 9px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .add-capa-btn:hover { border-color: var(--black); color: var(--black); }
+
+  /* Panel flotante de edición de capa */
+  #capa-panel {
+    display: none; position: fixed; z-index: 3000;
+    background: var(--surface); border: 1.5px solid var(--black);
+    box-shadow: var(--shadow-lg);
+    padding: 1.2rem 1.4rem 1rem;
+    width: 340px;
+  }
+  #capa-panel.visible { display: block; }
+  .capa-panel-title {
+    font-family: 'Cormorant SC', serif; font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.9rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .capa-panel-close {
+    background: none; border: none; cursor: pointer; font-size: 1rem;
+    color: #aaa; line-height: 1; transition: color 0.15s;
+  }
+  .capa-panel-close:hover { color: var(--black); }
+  .capa-dim-label {
+    font-size: 0.48rem; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #888; margin-bottom: 4px; margin-top: 0.6rem;
+    display: block;
+  }
+  .capa-dim-label:first-child { margin-top: 0; }
+  .capa-opts {
+    display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .capa-opt {
+    font-size: 0.55rem; font-weight: 600; letter-spacing: 0.06em;
+    padding: 3px 8px; border: 1.5px solid #ddd; background: #fafafa;
+    cursor: pointer; transition: all 0.12s; user-select: none;
+  }
+  .capa-opt:hover { border-color: #999; background: #f0f0f0; }
+  .capa-opt.sel { background: var(--black); color: #fff; border-color: var(--black); }
+
   /* ─── PRESETS DE PRODUCCIÓN ─── */
   .presets-section {
     margin-bottom: 2rem;
@@ -522,19 +599,36 @@
   </div>
 
   <header id="app-header" style="display:none;">
-    <div style="display:flex; gap: 8px; align-items:center;">
-      <button class="btn btn-outline btn-small" onclick="volverSelector()" title="Cambiar producción">← OBRAS</button>
-      <button class="btn btn-outline btn-small" onclick="exportData()">JSON ↓</button>
-      <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()">JSON ↑</button>
+    <!-- Left: utility actions, small and quiet -->
+    <div style="display:flex; gap:6px; align-items:center;">
+      <button class="btn btn-outline btn-small" onclick="volverSelector()" title="Cambiar producción"
+        style="display:flex; align-items:center; gap:4px; opacity:0.7; transition:opacity 0.2s;"
+        onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.7">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        OBRAS
+      </button>
+      <button class="btn btn-outline btn-small" onclick="exportData()" title="Exportar JSON" style="opacity:0.6; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.6">↓ JSON</button>
+      <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()" title="Importar JSON" style="opacity:0.6; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.6">↑ JSON</button>
       <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
     </div>
-    <div class="brand-block">
-      <div class="logo-symbol">T</div>
-      <h1 class="brand-name" id="app-obra-title">TRAMA</h1>
+
+    <!-- Center: obra title as protagonist -->
+    <div style="text-align:center; flex:1; padding:0 1.5rem;">
+      <div style="font-family:'Cormorant SC', serif; font-size:0.45rem; font-weight:400;
+        letter-spacing:0.3em; text-transform:uppercase; color:#bbb; margin-bottom:2px;">
+        PRODUCCIÓN ACTIVA
+      </div>
+      <h1 id="app-obra-title" style="font-family:'Cormorant SC', serif; font-size:1.5rem;
+        font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--black);
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.1;">
+        TRAMA
+      </h1>
     </div>
-    <div style="display:flex; gap: 8px; align-items: center;">
-      <button class="btn btn-gold btn-small" onclick="exportFullPDF()" title="Exportar dossier completo en PDF">PDF ↓</button>
-      <button class="btn" onclick="saveAll()">GUARDAR</button>
+
+    <!-- Right: primary actions -->
+    <div style="display:flex; gap:6px; align-items:center;">
+      <button class="btn btn-gold btn-small" onclick="exportFullPDF()" title="Exportar dossier PDF">PDF ↓</button>
+      <button class="btn btn-small" onclick="saveAll()">GUARDAR</button>
     </div>
   </header>
 
@@ -549,87 +643,78 @@
     <!-- SECCIÓN GENERAL -->
     <section id="sec-general" class="view-section active">
       <div class="section-header"><h2>PRODUCCIÓN</h2></div>
-      <div class="grid-2">
-        <div class="deco-card">
+
+      <!-- Top row: 3 columns -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1.4rem; margin-bottom:1.5rem;">
+        <div class="deco-card" style="margin-bottom:0;">
           <div class="card-title">IDENTIFICACIÓN</div>
           <div class="input-group"><label>TÍTULO DE LA OBRA</label><input type="text" id="g-obra"></div>
-          <div class="input-group"><label>AUTOR / DIRECTOR</label><input type="text" id="g-autor"></div>
+          <div class="input-group" style="margin-bottom:0;"><label>AUTOR / DIRECTOR</label><input type="text" id="g-autor"></div>
         </div>
-        <div class="deco-card">
-          <div class="card-title">INTELIGENCIA ARTIFICIAL</div>
-          <div class="input-group"><label>GEMINI API KEY</label><input type="password" id="g-api-key" placeholder="Pega tu clave para generar imágenes..."></div>
-          <p style="font-size: 0.6rem; color: #666; margin-top: 10px;">ESTA CLAVE PERMITE LA GENERACIÓN DE BOCETOS VISUALES DIRECTAMENTE DESDE LA PESTAÑA 'BOCETO IA'.</p>
+        <div class="deco-card" style="margin-bottom:0;">
+          <div class="card-title">API KEYS</div>
+          <div class="input-group"><label>GEMINI</label><input type="password" id="g-api-key" placeholder="Clave Gemini..."></div>
+          <div class="input-group" style="margin-bottom:0;"><label>OPENAI</label><input type="password" id="g-openai-key" placeholder="Clave OpenAI / DALL·E..."></div>
+        </div>
+        <div class="deco-card export-highlight" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="card-title">DOSSIER PDF</div>
+            <p style="font-size:0.72rem; color:#777; line-height:1.6; margin-bottom:1rem;">Exporta portada, concepto visual y fichas técnicas de todos los personajes.</p>
+          </div>
+          <button class="btn btn-gold" style="width:100%;" onclick="exportFullPDF()">EXPORTAR DOSSIER</button>
         </div>
       </div>
 
-      <!-- FIRMA DE ESTILO -->
-      <div class="deco-card" style="border-color: #2a2a2a; background: #0d0d0d; color: #fff; position: relative; border-radius: var(--radius-lg);">
-        <div class="card-title" style="border-bottom-color: #2a2a2a; color: #fff;">
-          <span>FIRMA DE ESTILO PERSONAL</span>
-          <span style="font-size: 0.55rem; font-family: 'DM Sans'; font-weight: 400; color: #666; letter-spacing: 0.08em;">SE APLICA A TODOS LOS BOCETOS</span>
-        </div>
-        <p style="font-size: 0.6rem; color: #666; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.8rem; line-height: 1.6;">
-          Esta directriz de estilo se inyecta con prioridad alta en cada prompt generado, por encima de las variables del proyecto o del personaje.
-        </p>
-        <textarea id="g-firma" rows="4"
-          style="width:100%; background:#1a1a1a; color:#e8e0d0; border:1px solid #333; border-radius: var(--radius-sm); font-family:'DM Sans',sans-serif;
-          font-size:0.82rem; line-height:1.7; padding:0.8rem; resize:vertical; letter-spacing:0.01em;"></textarea>
-        <div style="display:flex; justify-content:flex-end; margin-top:0.6rem;">
-          <button class="btn btn-small" onclick="resetFirma()"
-            style="background:transparent; color:#555; border-color:#333; font-size:0.5rem;">
-            RESTABLECER ORIGINAL
-          </button>
-        </div>
-      </div>
-
-      <!-- EXPORT FULL PDF PANEL -->
-      <div class="deco-card export-highlight">
-        <div class="card-title">
-          <span>EXPORTAR DOSSIER COMPLETO</span>
-          <span style="font-size: 0.55rem; font-family: 'DM Sans'; font-weight: 400; color: #aaa; letter-spacing:0.1em;">PDF</span>
-        </div>
-        <p style="font-size: 0.75rem; color: #555; line-height: 1.6; margin-bottom: 1.2rem;">
-          Genera un dossier profesional en PDF con toda la información del proyecto: portada, concepto visual, paletas cromáticas y fichas técnicas de todos los personajes.
-        </p>
-        <div class="grid-3" style="margin-bottom: 1.2rem;">
-          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.8rem; text-align: center;">
-            <div style="font-size: 1.4rem; margin-bottom: 8px; display:flex; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/><path d="M9 12h6M9 16h4"/></svg></div>
-            <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Portada + Datos</div>
-            <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Título, autor, concepto</div>
+      <!-- Firma de estilo — full width, more compact -->
+      <div class="deco-card" style="background:#0d0d0d; border-color:#2a2a2a; color:#fff;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:2rem;">
+          <div style="flex:1;">
+            <div class="card-title" style="border-bottom-color:#2a2a2a; color:#fff; margin-bottom:0.8rem;">
+              <span>FIRMA DE ESTILO PERSONAL</span>
+              <span style="font-size:0.5rem; color:#555; font-weight:400; letter-spacing:0.1em;">SE APLICA A TODOS LOS BOCETOS</span>
+            </div>
+            <textarea id="g-firma" rows="3"
+              style="width:100%; background:#1a1a1a; color:#e8e0d0; border:1px solid #333;
+              border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif;
+              font-size:0.8rem; line-height:1.7; padding:0.8rem; resize:vertical;"></textarea>
           </div>
-          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.8rem; text-align: center;">
-            <div style="font-size: 1.4rem; margin-bottom: 8px; display:flex; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l-1.5 5.5L2 9l5.5 1.5L9 22l1.5-5.5L22 15l-5.5-1.5z"/></svg></div>
-            <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Concepto Visual</div>
-            <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Época, palabras clave</div>
-          </div>
-          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.8rem; text-align: center;">
-            <div style="font-size: 1.4rem; margin-bottom: 8px; display:flex; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2l-4 6h4v12h8V8h4L16 2m-8 0h8"/></svg></div>
-            <div style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Fichas de Personajes</div>
-            <div style="font-size: 0.55rem; color: #888; margin-top: 2px;">Una página por personaje</div>
+          <div style="display:flex; flex-direction:column; gap:8px; padding-top:2.2rem; flex-shrink:0;">
+            <button class="btn btn-small" onclick="resetFirma()"
+              style="background:transparent; color:#555; border-color:#333; white-space:nowrap;">
+              RESTABLECER
+            </button>
           </div>
         </div>
-        <button class="btn btn-gold" style="width: 100%;" onclick="exportFullPDF()">
-          GENERAR DOSSIER COMPLETO EN PDF
-        </button>
       </div>
     </section>
 
     <!-- MOODBOARD -->
     <section id="sec-moodboard" class="view-section">
       <div class="section-header"><h2>CONCEPTO VISUAL</h2></div>
-      <div class="grid-2">
-        <div class="deco-card">
-          <div class="card-title">ESTÉTICA</div>
-          <div class="input-group"><label>ÉPOCA O ESTILO PREDOMINANTE</label><input type="text" id="m-epoca"></div>
-          <div class="input-group"><label>PALABRAS CLAVE / CONCEPTOS</label><textarea id="m-ideas" placeholder="Ej: Decadencia, Futurismo, Orgánico..."></textarea></div>
+      <div style="display:grid; grid-template-columns: 280px 1fr; gap:1.4rem; align-items:start;">
+        <!-- Sidebar -->
+        <div>
+          <div class="deco-card" style="margin-bottom:1rem;">
+            <div class="card-title">ESTÉTICA</div>
+            <div class="input-group"><label>ÉPOCA O ESTILO</label><input type="text" id="m-epoca"></div>
+            <div class="input-group" style="margin-bottom:0;"><label>PALABRAS CLAVE</label><textarea id="m-ideas" placeholder="Ej: Decadencia, Futurismo…" style="min-height:80px;"></textarea></div>
+          </div>
+          <div class="deco-card" style="margin-bottom:0;">
+            <div class="card-title">AÑADIR REFERENCIA</div>
+            <div class="input-group" style="margin-bottom:0.8rem;"><label>URL DE IMAGEN</label><input type="text" id="m-url"></div>
+            <button class="btn" style="width:100%" onclick="addMood()">AÑADIR AL MURO</button>
+          </div>
         </div>
-        <div class="deco-card">
-          <div class="card-title">AÑADIR REFERENCIA</div>
-          <div class="input-group"><label>URL DE IMAGEN</label><input type="text" id="m-url"></div>
-          <button class="btn" style="width:100%" onclick="addMood()">AÑADIR AL MURO</button>
+        <!-- Mood wall -->
+        <div>
+          <div id="mood-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem;"></div>
+          <div id="mood-empty" style="display:flex; align-items:center; justify-content:center; min-height:200px;
+            border:1.5px dashed var(--border); border-radius:var(--radius-lg); color:#ccc;
+            font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase;">
+            SIN REFERENCIAS AÚN
+          </div>
         </div>
       </div>
-      <div id="mood-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;"></div>
     </section>
 
     <!-- PERSONAJES -->
@@ -693,7 +778,7 @@
         </div>
       </div>
 
-      <div class="grid-2">
+      <div style="display:grid; grid-template-columns: 1fr 360px; gap:1.4rem; align-items:start;">
         <div class="deco-card">
           <div class="card-title">CONFIGURACIÓN DEL PROMPT</div>
 
@@ -1031,40 +1116,66 @@
             </div>
           </div>
 
-          <button class="btn" style="width:100%; margin-bottom: 1rem;" onclick="generatePrompt()">CONSTRUIR PROMPT TÉCNICO</button>
+          <button class="btn" style="width:100%; margin-bottom: 1rem;" onclick="generatePrompt()">CONSTRUIR PROMPT</button>
 
           <!-- Prompt editable -->
           <div style="position:relative;">
             <textarea id="ia-prompt"
-              style="width:100%;min-height:120px;background:var(--surface);border:1.5px solid var(--border);
+              style="width:100%;min-height:100px;background:var(--surface);border:1.5px solid var(--border);
               border-radius: var(--radius-sm);
               padding:12px;font-family:'DM Sans',sans-serif;font-size:0.74rem;line-height:1.55;
               color:#444;resize:vertical; outline:none; transition: border-color var(--transition);"
               placeholder="Construye el prompt para ver los detalles aquí..."></textarea>
             <button id="copy-prompt-btn" onclick="copyPrompt()"
               style="position:absolute; top:8px; right:8px; background:#000; color:#fff; border:none;
-              font-size:0.5rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase;
-              padding:4px 10px; cursor:pointer; opacity:0.7; transition:opacity 0.2s;"
-              onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.7">
+              border-radius:4px; font-size:0.48rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase;
+              padding:4px 10px; cursor:pointer; opacity:0.6; transition:opacity 0.2s;"
+              onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.6">
               COPIAR
             </button>
           </div>
-          <button class="btn btn-outline" style="width:100%; margin-top:0.8rem;" onclick="callGeminiIA()">GENERAR IMAGEN (GEMINI FLASH)</button>
-          <button class="btn" style="width:100%; margin-top:0.5rem;" onclick="callPollinationsIA()">GENERAR IMAGEN (GRATUITO · SIN KEY)</button>
         </div>
-        
-        <div class="deco-card">
-          <div class="card-title">BOCETO RESULTANTE</div>
-          <div class="image-preview-container" id="ia-preview-container">
-            <canvas id="ia-watercolor-bg" style="position:absolute; inset:0; width:100%; height:100%; opacity:0.18;"></canvas>
-            <img id="ia-img-result" src="" style="display:none; position:relative; z-index:2;">
-            <div id="ia-placeholder" style="color:#aaa; font-size: 0.7rem; letter-spacing: 0.1em; position:relative; z-index:2;">SIN VISTA PREVIA</div>
-            <div class="loading-overlay" id="ia-loading">
-              <div style="font-weight: 800; font-size: 0.8rem; letter-spacing: 0.2em;">RENDERIZANDO...</div>
+
+        <!-- RIGHT COLUMN: sticky result + motor -->
+        <div style="position:sticky; top:72px;">
+          <div class="deco-card" style="margin-bottom:1rem;">
+            <div class="card-title">BOCETO RESULTANTE</div>
+            <div class="image-preview-container" id="ia-preview-container" style="aspect-ratio: 3/4;">
+              <canvas id="ia-watercolor-bg" style="position:absolute; inset:0; width:100%; height:100%; opacity:0.18;"></canvas>
+              <img id="ia-img-result" src="" style="display:none; position:relative; z-index:2;">
+              <div id="ia-placeholder" style="color:#ccc; font-size: 0.6rem; letter-spacing: 0.15em; position:relative; z-index:2; text-transform:uppercase;">Sin vista previa</div>
+              <div class="loading-overlay" id="ia-loading">
+                <div style="font-size: 0.7rem; letter-spacing: 0.2em; color:#555;">RENDERIZANDO…</div>
+              </div>
             </div>
+            <div id="ia-selection-summary" style="margin-top:0.8rem; display:flex; gap:5px; flex-wrap:wrap;"></div>
           </div>
-          <!-- Selection summary badges -->
-          <div id="ia-selection-summary" style="margin-top: 1rem; display: flex; gap: 6px; flex-wrap: wrap;"></div>
+
+          <!-- Motor selector -->
+          <div class="deco-card" style="margin-bottom:0;">
+            <div class="card-title" style="margin-bottom:0.8rem;">MOTOR DE IMAGEN</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:1rem;">
+              <label id="motor-openai" style="cursor:pointer; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+                padding:0.6rem 0.4rem; text-align:center; transition:all 0.2s; background:var(--surface);">
+                <input type="radio" name="ia-motor" value="openai" style="display:none;" onchange="selectMotor('openai')">
+                <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:inherit;">DALL·E</div>
+                <div style="font-size:0.48rem; color:#aaa; margin-top:2px;">OpenAI · key</div>
+              </label>
+              <label id="motor-gemini" style="cursor:pointer; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+                padding:0.6rem 0.4rem; text-align:center; transition:all 0.2s; background:var(--surface);">
+                <input type="radio" name="ia-motor" value="gemini" style="display:none;" onchange="selectMotor('gemini')">
+                <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:inherit;">Gemini</div>
+                <div style="font-size:0.48rem; color:#aaa; margin-top:2px;">Google · key</div>
+              </label>
+              <label id="motor-pollinations" style="cursor:pointer; border:1.5px solid var(--accent); border-radius:var(--radius-sm);
+                padding:0.6rem 0.4rem; text-align:center; transition:all 0.2s; background:var(--accent-light);">
+                <input type="radio" name="ia-motor" value="pollinations" checked style="display:none;" onchange="selectMotor('pollinations')">
+                <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:inherit;">Libre</div>
+                <div style="font-size:0.48rem; color:#aaa; margin-top:2px;">Sin key · gratis</div>
+              </label>
+            </div>
+            <button class="btn" style="width:100%;" onclick="generateImageAuto()">GENERAR BOCETO</button>
+          </div>
         </div>
       </div>
     </section>
@@ -1082,6 +1193,56 @@
   </div>
 
   <div id="toast"></div>
+
+  <!-- PANEL FLOTANTE: EDITAR CAPA DE MATERIAL -->
+  <div id="capa-panel">
+    <div class="capa-panel-title">
+      <span id="capa-panel-heading">CAPA DE MATERIAL</span>
+      <button class="capa-panel-close" onclick="cerrarCapaPanel()">×</button>
+    </div>
+
+    <!-- Nombre -->
+    <span class="capa-dim-label">NOMBRE DE LA CAPA</span>
+    <input type="text" id="cp-nombre" placeholder="ej: exterior, forro, vuelo…"
+      style="width:100%; border:1.5px solid #ddd; padding:5px 8px;
+      font-family:'DM Sans',sans-serif; font-size:0.78rem; background:#fafafa; margin-bottom:0.2rem;"
+      oninput="capaSetField('nombre',this.value)">
+
+    <!-- 1. Material base -->
+    <span class="capa-dim-label">1 · MATERIAL BASE</span>
+    <div class="capa-opts" id="cp-base"></div>
+
+    <!-- 2. Estructura -->
+    <span class="capa-dim-label">2 · ESTRUCTURA</span>
+    <div class="capa-opts" id="cp-estructura"></div>
+
+    <!-- 3. Superficie -->
+    <span class="capa-dim-label">3 · SUPERFICIE</span>
+    <div class="capa-opts" id="cp-superficie"></div>
+
+    <!-- 4. Brillo (independiente) -->
+    <span class="capa-dim-label">4 · BRILLO</span>
+    <div class="capa-opts" id="cp-brillo"></div>
+
+    <!-- 5. Intervención -->
+    <span class="capa-dim-label">5 · INTERVENCIÓN</span>
+    <div class="capa-opts" id="cp-intervencion"></div>
+
+    <!-- 6. Estado -->
+    <span class="capa-dim-label">6 · ESTADO</span>
+    <div class="capa-opts" id="cp-estado"></div>
+
+    <!-- Densidad (solo visible si intervención es embroidered/beaded/appliqué/ruched) -->
+    <div id="cp-densidad-wrap" style="display:none;">
+      <span class="capa-dim-label">DENSIDAD DEL DETALLE</span>
+      <div class="capa-opts" id="cp-densidad"></div>
+    </div>
+
+    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid #eee;
+      display:flex; justify-content:flex-end; gap:6px;">
+      <button class="btn btn-small btn-outline" onclick="cerrarCapaPanel()">LISTO</button>
+    </div>
+  </div>
 
   <script>
     const FIRMA_DEFAULT = `Estética de vestuario escénico con materiales expresivos, trazo visible y carácter teatral, inspirada en la pictórica de Renoir y Degas, pero reinterpretada con un acabado contemporáneo, refinado y personal. Evitar recursos genéricos, 3D, animé, Disney y soluciones visuales de videojuego.`;
@@ -1357,35 +1518,221 @@
       renderPersonajes();
     }
 
+    // ═══════════════════════════════════════════════════════
+    // SISTEMA DE CAPAS DE MATERIAL
+    // ═══════════════════════════════════════════════════════
+    const CAPAS_DIMS = {
+      base:        { opts: ['lycra / stretch','silk / satin','tulle','organza','velvet','cotton / linen','wool','synthetic / plastic','metallic / foil'] },
+      estructura:  { opts: ['structured','semi-structured','fluid','layered','draped','rigid','modular'] },
+      superficie:  { opts: ['matte','satin','glossy','iridescent','textured','sheer','opaque'] },
+      brillo:      { opts: ['matte','soft sheen','satin glow','high gloss'] },
+      intervencion:{ opts: ['clean','embroidered','beaded','appliqué','distressed','painted','pleated','ruched'] },
+      estado:      { opts: ['pristine','worn','aged','fragile','reinforced','decaying'] },
+      densidad:    { opts: ['minimal density','moderate density','rich density'] }
+    };
+    const INTERVENCION_CON_DENSIDAD = ['embroidered','beaded','appliqué','ruched'];
+    let _capaCtx = null;
+
+    function capaTextoResumen(c) {
+      return [c.nombre||'', c.base, c.estructura].filter(Boolean).join(' · ') || 'capa';
+    }
+    function capaColorPrincipal(c) {
+      return (c.colores && c.colores.length) ? c.colores[0] : (c.color || '#cccccc');
+    }
+
+    function abrirCapaPanel(pi, stateKey, fi, capaIdx, evt) {
+      evt.stopPropagation();
+      _capaCtx = { pi, stateKey, fi, capaIdx };
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.capas) f.capas = [];
+      const c = f.capas[capaIdx];
+      document.getElementById('capa-panel-heading').textContent =
+        `CAPA ${capaIdx+1} — ${(c.nombre||'sin nombre').toUpperCase()}`;
+      document.getElementById('cp-nombre').value = c.nombre || '';
+      ['base','estructura','superficie','brillo','intervencion','estado','densidad'].forEach(d =>
+        renderCapaDimOpts(d, c[d])
+      );
+      actualizarDensidadVis(c.intervencion);
+      const panel = document.getElementById('capa-panel');
+      panel.classList.add('visible');
+      try {
+        const rect = evt.currentTarget.getBoundingClientRect();
+        const pw = 340;
+        let left = rect.left + window.scrollX;
+        if(left + pw > window.innerWidth - 16) left = window.innerWidth - pw - 16;
+        panel.style.left = left + 'px';
+        panel.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
+      } catch(e) {
+        // fallback: centro de la pantalla
+        panel.style.left = Math.max(8, (window.innerWidth - 340) / 2) + 'px';
+        panel.style.top  = (window.scrollY + 120) + 'px';
+      }
+    }
+
+    function cerrarCapaPanel() {
+      document.getElementById('capa-panel').classList.remove('visible');
+      _capaCtx = null;
+      renderPersonajes();
+    }
+
+    function renderCapaDimOpts(dim, valorActual) {
+      const el = document.getElementById('cp-' + dim);
+      if(!el) return;
+      el.innerHTML = CAPAS_DIMS[dim].opts.map(op => {
+        const esc = op.replace(/'/g,"\\'");
+        return `<span class="capa-opt ${valorActual===op?'sel':''}"
+          onclick="capaSetDim('${dim}','${esc}')">${op}</span>`;
+      }).join('');
+    }
+
+    function actualizarDensidadVis(intervencion) {
+      const w = document.getElementById('cp-densidad-wrap');
+      if(w) w.style.display = INTERVENCION_CON_DENSIDAD.includes(intervencion) ? 'block' : 'none';
+    }
+
+    function capaSetField(campo, valor) {
+      if(!_capaCtx) return;
+      const { pi, stateKey, fi, capaIdx } = _capaCtx;
+      state.personajes[pi][stateKey][fi].capas[capaIdx][campo] = valor;
+      if(campo === 'nombre')
+        document.getElementById('capa-panel-heading').textContent =
+          `CAPA ${capaIdx+1} — ${(valor||'sin nombre').toUpperCase()}`;
+    }
+
+    function capaSetDim(dim, valor) {
+      if(!_capaCtx) return;
+      const { pi, stateKey, fi, capaIdx } = _capaCtx;
+      const c = state.personajes[pi][stateKey][fi].capas[capaIdx];
+      c[dim] = (c[dim] === valor) ? '' : valor;
+      renderCapaDimOpts(dim, c[dim]);
+      if(dim === 'intervencion') actualizarDensidadVis(c[dim]);
+    }
+
+    function addCapa(pi, stateKey, fi) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.capas) f.capas = [];
+      const idx = f.capas.length;
+      f.capas.push({ nombre:'', base:'', estructura:'', superficie:'',
+                     brillo:'', intervencion:'', estado:'', densidad:'',
+                     colores:['#cccccc'], color:'#cccccc' });
+      renderPersonajes();
+      // Abrir panel para la nueva capa después del re-render
+      requestAnimationFrame(() => {
+        const chips = document.querySelectorAll(
+          `[data-capa-pi="${pi}"][data-capa-key="${stateKey}"][data-capa-fi="${fi}"]`
+        );
+        if(chips[idx]) {
+          // Simular click con evento sintético para pasar el currentTarget
+          const fakeEvt = { stopPropagation: ()=>{}, currentTarget: chips[idx] };
+          abrirCapaPanel(pi, stateKey, fi, idx, fakeEvt);
+        }
+      });
+    }
+
+    function removeCapa(pi, stateKey, fi, capaIdx) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(f.capas) f.capas.splice(capaIdx, 1);
+      renderPersonajes();
+    }
+
+    function capaToPromptStr(c) {
+      const p = [];
+      if(c.base)        p.push(c.base);
+      if(c.estructura)  p.push(c.estructura);
+      if(c.superficie)  p.push(c.superficie + ' finish');
+      if(c.brillo && c.brillo !== c.superficie) p.push(c.brillo);
+      if(c.intervencion && c.intervencion !== 'clean') {
+        let inter = c.intervencion;
+        if(c.densidad && INTERVENCION_CON_DENSIDAD.includes(c.intervencion))
+          inter += ` (${c.densidad})`;
+        p.push(inter);
+      }
+      if(c.estado && c.estado !== 'pristine') p.push(c.estado);
+      return p.join(', ');
+    }
+
+    // describeFichas: genera descripción completa de prenda (atributos + capas de material)
+    function capasToPrompt(fichas, catalogo) {
+      if(!fichas || fichas.length === 0) return '';
+      return fichas.map(f => {
+        if(!f.tipo) return null;
+        const cat = catalogo[f.tipo];
+        const label = cat ? cat.label : f.tipo;
+
+        // Atributos estructurales (forma, corte, estilo) — igual que antes
+        const attrs = [];
+        Object.values(f.atributos||{}).forEach(v => {
+          if(!v) return;
+          if(Array.isArray(v)) { if(v.length) attrs.push(v.join(' + ')); }
+          else attrs.push(v);
+        });
+        // Colores
+        const colores = f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []);
+        if(colores.length > 1) attrs.push(colores.join(' + '));
+        else if(colores.length === 1) attrs.push(colores[0]);
+
+        // Capas de material (nuevo sistema)
+        const capas = (f.capas || []).filter(c => c.base || c.nombre);
+        let materialStr = '';
+        if(capas.length > 0) {
+          const capasStr = capas.map(c => {
+            const nom = c.nombre ? `${c.nombre}: ` : '';
+            return nom + capaToPromptStr(c);
+          }).filter(Boolean).join(' | ');
+          materialStr = `${capasStr}, material behavior clearly visible`;
+        } else if(f.material) {
+          materialStr = f.material;
+        }
+        if(materialStr) attrs.push(materialStr);
+
+        return attrs.length > 0 ? `${label} (${attrs.join(', ')})` : label;
+      }).filter(Boolean).join('; ');
+    }
+
+    // Cierra panel si se hace clic fuera
+    document.addEventListener('click', e => {
+      const panel = document.getElementById('capa-panel');
+      if(panel && panel.classList.contains('visible') && !panel.contains(e.target)) {
+        cerrarCapaPanel();
+      }
+    });
+
     function renderColorStrip(f, fi, pi, stateKey) {
       const colores = f.colores || [f.color || '#cccccc'];
+      const capas   = f.capas   || [];
+
+      const colorPickerHTML = `
+        <div style="display:flex;gap:0;border:1.5px solid #000;overflow:hidden;height:24px;flex-shrink:0;min-width:24px;">
+          ${colores.map((c, ci) => `
+            <div style="flex:1;min-width:24px;background:${c};position:relative;" title="${c.toUpperCase()}">
+              <input type="color" value="${c}"
+                onchange="updateFichaColor(${pi},'${stateKey}',${fi},${ci},this.value);this.parentElement.style.background=this.value;"
+                style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
+              ${colores.length > 1 ? `<button onclick="removeFichaColor(${pi},'${stateKey}',${fi},${ci})"
+                style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.5);color:#fff;
+                border:none;width:10px;height:10px;font-size:7px;cursor:pointer;
+                border-radius:50%;line-height:10px;text-align:center;padding:0;">×</button>` : ''}
+            </div>`).join('')}
+        </div>
+        <button onclick="addFichaColor(${pi},'${stateKey}',${fi})"
+          style="background:none;border:1px dashed #ccc;color:#aaa;font-size:0.55rem;
+          font-weight:800;padding:2px 7px;cursor:pointer;flex-shrink:0;">+ COLOR</button>`;
+
+      const chipsHTML = capas.map((c, capaIdx) => `
+        <span class="capa-chip"
+          data-capa-pi="${pi}" data-capa-key="${stateKey}" data-capa-fi="${fi}"
+          onclick="abrirCapaPanel(${pi},'${stateKey}',${fi},${capaIdx},event)">
+          <span class="capa-chip-swatch" style="background:${capaColorPrincipal(c)};"></span>
+          <span class="capa-chip-label">${capaTextoResumen(c)}</span>
+          <button class="capa-chip-del"
+            onclick="event.stopPropagation();removeCapa(${pi},'${stateKey}',${fi},${capaIdx})">×</button>
+        </span>`).join('');
+
       return `
-        <div style="display:flex;gap:0.6rem;align-items:center;margin-top:0.7rem;
-          padding-top:0.6rem;border-top:1px dashed #eee;">
-          <div style="display:flex;gap:0;border:1.5px solid #000;overflow:hidden;height:24px;flex-shrink:0;min-width:24px;">
-            ${colores.map((c, ci) => `
-              <div style="flex:1;min-width:24px;background:${c};position:relative;" title="${c.toUpperCase()}">
-                <input type="color" value="${c}"
-                  onchange="updateFichaColor(${pi},'${stateKey}',${fi},${ci},this.value);this.parentElement.style.background=this.value;"
-                  style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
-                ${colores.length > 1 ? `<button onclick="removeFichaColor(${pi},'${stateKey}',${fi},${ci})"
-                  style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.5);color:#fff;
-                  border:none;width:10px;height:10px;font-size:7px;cursor:pointer;
-                  border-radius:50%;line-height:10px;text-align:center;padding:0;">×</button>` : ''}
-              </div>
-            `).join('')}
-          </div>
-          <div style="font-size:0.48rem;color:#aaa;font-family:monospace;">
-            ${colores.map(c => c.toUpperCase()).join(' + ')}
-          </div>
-          <button onclick="addFichaColor(${pi},'${stateKey}',${fi})"
-            style="background:none;border:1px dashed #ccc;color:#aaa;font-size:0.55rem;
-            font-weight:800;padding:2px 7px;cursor:pointer;flex-shrink:0;">+ COLOR</button>
-          <input type="text" placeholder="Material…"
-            value="${f.material||''}"
-            onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'material',this.value)"
-            style="flex:1;border:1px solid #ddd;background:#fafafa;
-            font-family:'DM Sans',sans-serif;font-size:0.72rem;padding:3px 7px;">
+        <div class="capas-strip">
+          ${colorPickerHTML}
+          ${chipsHTML}
+          <button class="add-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi})">+ CAPA MATERIAL</button>
         </div>`;
     }
 
@@ -1444,7 +1791,7 @@
       cont.innerHTML = state.personajes.map((p, i) => `
         <div class="deco-card">
           <div class="card-title">
-            <input type="text" value="${p.nombre}" onchange="updatePer(${i}, 'nombre', this.value)" style="border:none; background:transparent; font-weight:900; width: 60%; font-family: 'Playfair Display'; font-size: 1.2rem;">
+            <input type="text" value="${p.nombre}" onchange="updatePer(${i}, 'nombre', this.value)" style="border:none; background:transparent; font-weight:600; width: 60%; font-family: 'Cormorant SC', serif; font-size: 1.15rem; letter-spacing:0.06em;">
             <div>
               <button class="btn btn-outline btn-small" onclick="generatePDF(${i})">PDF</button>
               <button class="btn btn-outline btn-small btn-danger" onclick="deletePer(${i})">ELIMINAR</button>
@@ -2214,33 +2561,10 @@
       const pose = getSelectedCard('pose');
       const animo = getSelectedCard('animo');
 
-      // Build garment descriptions from structured fichas
-      function describeFichas(fichas, catalogo) {
-        if(!fichas || fichas.length === 0) return '';
-        return fichas.map(f => {
-          if(!f.tipo) return null;
-          const cat = catalogo[f.tipo];
-          const label = cat ? cat.label : f.tipo;
-          const attrs = [];
-          // shape/style attributes — handle both string and array (multi-select)
-          Object.values(f.atributos||{}).forEach(v => {
-            if(!v) return;
-            if(Array.isArray(v)) { if(v.length) attrs.push(v.join(' + ')); }
-            else attrs.push(v);
-          });
-          // colors
-          const colores = f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []);
-          if(colores.length > 1) attrs.push(colores.join(' + '));
-          else if(colores.length === 1) attrs.push(colores[0]);
-          // material
-          if(f.material) attrs.push(f.material);
-          return attrs.length > 0 ? `${label} (${attrs.join(', ')})` : label;
-        }).filter(Boolean).join('; ');
-      }
-
-      const prendasDesc  = describeFichas(p.fichasPrenda,   PRENDAS_CATALOGO)  || 'unspecified';
-      const calzadoDesc  = describeFichas(p.fichasCalzado,  CALZADO_CATALOGO)  || 'unspecified';
-      const accesorioDesc = describeFichas(p.fichasAccesorio, ACCESORIOS_CATALOGO) || 'none';
+      // Descripción de prendas usando el sistema de capas de material
+      const prendasDesc   = capasToPrompt(p.fichasPrenda,    PRENDAS_CATALOGO)    || 'unspecified';
+      const calzadoDesc   = capasToPrompt(p.fichasCalzado,   CALZADO_CATALOGO)    || 'unspecified';
+      const accesorioDesc = capasToPrompt(p.fichasAccesorio, ACCESORIOS_CATALOGO) || 'none';
 
       const prompt = `${vistaValue} for a character named "${p.nombre}". \
 Physical appearance: ${physicalDesc || 'unspecified'}. \
@@ -2258,6 +2582,94 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
       document.getElementById('ia-prompt').value = prompt;
       updateSelectionSummary();
       paintWatercolorBg();
+    }
+
+    // --- MOTOR SELECTOR ---
+    let currentMotor = 'pollinations';
+
+    function selectMotor(motor) {
+      currentMotor = motor;
+      ['openai','gemini','pollinations'].forEach(m => {
+        const el = document.getElementById(`motor-${m}`);
+        if(!el) return;
+        const active = m === motor;
+        el.style.borderColor = active ? 'var(--black)' : (m === 'pollinations' ? 'var(--accent)' : 'var(--border)');
+        el.style.background = active ? 'var(--black)' : (m === 'pollinations' ? 'var(--accent-light)' : 'var(--surface)');
+        el.querySelectorAll('div').forEach(d => {
+          d.style.color = active ? '#fff' : '';
+        });
+      });
+    }
+
+    function generateImageAuto() {
+      if(currentMotor === 'openai') callOpenAIIA();
+      else if(currentMotor === 'gemini') callGeminiIA();
+      else callPollinationsIA();
+    }
+
+    // --- OPENAI DALL·E ---
+    async function callOpenAIIA() {
+      const key = document.getElementById('g-openai-key')?.value || state.openaiKey || '';
+      const el = document.getElementById('ia-prompt');
+      const promptText = el.value || el.innerText;
+      if(!key) return notificar("FALTA API KEY DE OPENAI");
+      if(!promptText || promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
+      const loading = document.getElementById('ia-loading');
+      const imgRes = document.getElementById('ia-img-result');
+      const placeholder = document.getElementById('ia-placeholder');
+      loading.style.display = 'flex';
+      placeholder.style.color = '#ccc'; placeholder.style.fontSize = '0.6rem'; placeholder.style.padding = '0';
+      placeholder.textContent = 'Sin vista previa';
+      try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+          body: JSON.stringify({ model: 'gpt-image-1', prompt: promptText.slice(0,4000), n: 1, size: '1024x1536' })
+        });
+        const data = await response.json();
+        if(!response.ok) throw new Error(data?.error?.message || `HTTP ${response.status}`);
+        const b64 = data?.data?.[0]?.b64_json;
+        if(!b64) throw new Error('Sin imagen en respuesta');
+        imgRes.src = `data:image/webp;base64,${b64}`;
+        imgRes.style.display = 'block'; placeholder.style.display = 'none';
+        notificar("BOCETO GENERADO · DALL·E");
+      } catch(err) {
+        placeholder.style.display = 'block'; placeholder.style.color = '#cc0000';
+        placeholder.style.fontSize = '0.6rem'; placeholder.style.padding = '1rem'; placeholder.style.lineHeight = '1.5';
+        placeholder.textContent = `Error: ${err.message}`;
+        notificar("ERROR — VER ÁREA DE BOCETO");
+      } finally { loading.style.display = 'none'; }
+    }
+
+    // --- POLLINATIONS (gratuito, sin key) ---
+    async function callPollinationsIA() {
+      const el = document.getElementById('ia-prompt');
+      const promptText = el.value || el.innerText;
+      if(!promptText || promptText.includes("Construye el prompt")) return notificar("GENERA EL PROMPT PRIMERO");
+      const loading = document.getElementById('ia-loading');
+      const imgRes = document.getElementById('ia-img-result');
+      const placeholder = document.getElementById('ia-placeholder');
+      loading.style.display = 'flex';
+      placeholder.style.color = '#ccc'; placeholder.style.fontSize = '0.6rem'; placeholder.style.padding = '0';
+      placeholder.textContent = 'Sin vista previa';
+      try {
+        const encoded = encodeURIComponent(promptText);
+        const seed = Math.floor(Math.random() * 999999);
+        const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&seed=${seed}&nologo=true&enhance=true`;
+        await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => { imgRes.src = img.src; imgRes.style.display = 'block'; placeholder.style.display = 'none'; resolve(); };
+          img.onerror = () => reject(new Error('No se pudo cargar desde Pollinations'));
+          img.src = url;
+        });
+        notificar("BOCETO GENERADO · POLLINATIONS");
+      } catch(err) {
+        placeholder.style.display = 'block'; placeholder.style.color = '#cc0000';
+        placeholder.style.fontSize = '0.6rem'; placeholder.style.padding = '1rem'; placeholder.style.lineHeight = '1.5';
+        placeholder.textContent = `Error: ${err.message}`;
+        notificar("ERROR AL GENERAR");
+      } finally { loading.style.display = 'none'; }
     }
 
     async function callGeminiIA() {
@@ -2430,6 +2842,7 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
       state.obra.titulo = document.getElementById('g-obra').value;
       state.obra.autor = document.getElementById('g-autor').value;
       state.apiKey = document.getElementById('g-api-key').value;
+      state.openaiKey = document.getElementById('g-openai-key')?.value || '';
       state.concept.epoca = document.getElementById('m-epoca').value;
       state.concept.ideas = document.getElementById('m-ideas').value;
       state.firmaEstilo = document.getElementById('g-firma').value || FIRMA_DEFAULT;
@@ -2473,6 +2886,8 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
       document.getElementById('g-obra').value = state.obra.titulo || '';
       document.getElementById('g-autor').value = state.obra.autor || '';
       document.getElementById('g-api-key').value = state.apiKey || '';
+      const oaEl = document.getElementById('g-openai-key');
+      if(oaEl) oaEl.value = state.openaiKey || '';
       document.getElementById('m-epoca').value = state.concept.epoca || '';
       document.getElementById('m-ideas').value = state.concept.ideas || '';
       document.getElementById('g-firma').value = state.firmaEstilo || FIRMA_DEFAULT;
@@ -2502,12 +2917,18 @@ MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
 
     function renderMood() {
       const g = document.getElementById('mood-grid');
+      const empty = document.getElementById('mood-empty');
       g.innerHTML = state.mood.map((m, i) => `
-        <div style="position:relative; border:1px solid var(--border); border-radius: var(--radius-md); background:#fff; padding:5px; overflow:hidden; box-shadow: var(--shadow-sm);">
-          <img src="${m}" style="width:100%; height:auto; display:block; border-radius: 8px;">
-          <button onclick="state.mood.splice(${i},1); renderMood();" style="position:absolute; top:6px; right:6px; background:rgba(200,0,0,0.85); color:#fff; border:none; width:22px; height:22px; cursor:pointer; font-size:10px; border-radius:50%; display:flex; align-items:center; justify-content:center;">×</button>
+        <div style="position:relative; border-radius:var(--radius-md); overflow:hidden;
+          border:1px solid var(--border); background:#fff; aspect-ratio:1;">
+          <img src="${m}" style="width:100%; height:100%; object-fit:cover; display:block;">
+          <button onclick="state.mood.splice(${i},1); renderMood();"
+            style="position:absolute; top:6px; right:6px; background:rgba(0,0,0,0.55);
+            color:#fff; border:none; width:22px; height:22px; cursor:pointer;
+            font-size:11px; border-radius:50%; line-height:22px; text-align:center;">×</button>
         </div>
       `).join('');
+      if(empty) empty.style.display = state.mood.length === 0 ? 'flex' : 'none';
     }
 
     // ═══════════════════════════════════
