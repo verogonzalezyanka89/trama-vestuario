@@ -1608,25 +1608,73 @@
       if(dim === 'intervencion') actualizarDensidadVis(c[dim]);
     }
 
-    function addCapa(pi, stateKey, fi) {
+    function addCapa(pi, stateKey, fi, btnEl) {
       const f = state.personajes[pi][stateKey][fi];
       if(!f.capas) f.capas = [];
       const idx = f.capas.length;
       f.capas.push({ nombre:'', base:'', estructura:'', superficie:'',
                      brillo:'', intervencion:'', estado:'', densidad:'',
                      colores:['#cccccc'], color:'#cccccc' });
-      renderPersonajes();
-      // Abrir panel para la nueva capa después del re-render
-      requestAnimationFrame(() => {
-        const chips = document.querySelectorAll(
-          `[data-capa-pi="${pi}"][data-capa-key="${stateKey}"][data-capa-fi="${fi}"]`
-        );
-        if(chips[idx]) {
-          // Simular click con evento sintético para pasar el currentTarget
-          const fakeEvt = { stopPropagation: ()=>{}, currentTarget: chips[idx] };
-          abrirCapaPanel(pi, stateKey, fi, idx, fakeEvt);
+      // Actualizar los chips en el DOM sin re-renderizar toda la página
+      _actualizarChipsStrip(pi, stateKey, fi);
+      // Abrir el panel directamente usando el botón como referencia de posición
+      const fakeEvt = { stopPropagation: ()=>{}, currentTarget: btnEl };
+      abrirCapaPanel(pi, stateKey, fi, idx, fakeEvt);
+    }
+
+    function _actualizarChipsStrip(pi, stateKey, fi) {
+      // Re-renderiza solo la tira de chips de esta ficha específica
+      const f = state.personajes[pi][stateKey][fi];
+      // Buscar el contenedor correcto por data attributes en el strip
+      const strips = document.querySelectorAll('.capas-strip');
+      strips.forEach(strip => {
+        const firstChip = strip.querySelector('[data-capa-pi]');
+        if(firstChip &&
+           firstChip.dataset.capaPi == pi &&
+           firstChip.dataset.capaKey === stateKey &&
+           firstChip.dataset.capaFi == fi) {
+          strip.innerHTML = _buildChipsHTML(f, pi, stateKey, fi);
+        } else if(!firstChip) {
+          // Strip sin chips aún — verificar por el botón + CAPA MATERIAL
+          const btn = strip.querySelector('.add-capa-btn');
+          if(btn && btn.getAttribute('onclick') &&
+             btn.getAttribute('onclick').includes(`${pi},'${stateKey}',${fi}`)) {
+            strip.innerHTML = _buildChipsHTML(f, pi, stateKey, fi);
+          }
         }
       });
+    }
+
+    function _buildChipsHTML(f, pi, stateKey, fi) {
+      const colores = f.colores || [f.color || '#cccccc'];
+      const capas   = f.capas   || [];
+      const colorPickerHTML = `
+        <div style="display:flex;gap:0;border:1.5px solid #000;overflow:hidden;height:24px;flex-shrink:0;min-width:24px;">
+          ${colores.map((c, ci) => `
+            <div style="flex:1;min-width:24px;background:${c};position:relative;" title="${c.toUpperCase()}">
+              <input type="color" value="${c}"
+                onchange="updateFichaColor(${pi},'${stateKey}',${fi},${ci},this.value);this.parentElement.style.background=this.value;"
+                style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
+              ${colores.length > 1 ? `<button onclick="removeFichaColor(${pi},'${stateKey}',${fi},${ci})"
+                style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.5);color:#fff;
+                border:none;width:10px;height:10px;font-size:7px;cursor:pointer;
+                border-radius:50%;line-height:10px;text-align:center;padding:0;">×</button>` : ''}
+            </div>`).join('')}
+        </div>
+        <button onclick="addFichaColor(${pi},'${stateKey}',${fi})"
+          style="background:none;border:1px dashed #ccc;color:#aaa;font-size:0.55rem;
+          font-weight:800;padding:2px 7px;cursor:pointer;flex-shrink:0;">+ COLOR</button>`;
+      const chipsHTML = capas.map((c, capaIdx) => `
+        <span class="capa-chip"
+          data-capa-pi="${pi}" data-capa-key="${stateKey}" data-capa-fi="${fi}"
+          onclick="abrirCapaPanel(${pi},'${stateKey}',${fi},${capaIdx},event)">
+          <span class="capa-chip-swatch" style="background:${capaColorPrincipal(c)};"></span>
+          <span class="capa-chip-label">${capaTextoResumen(c)}</span>
+          <button class="capa-chip-del"
+            onclick="event.stopPropagation();removeCapa(${pi},'${stateKey}',${fi},${capaIdx})">×</button>
+        </span>`).join('');
+      return colorPickerHTML + chipsHTML +
+        `<button class="add-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi},this)">+ CAPA MATERIAL</button>`;
     }
 
     function removeCapa(pi, stateKey, fi, capaIdx) {
@@ -1732,7 +1780,7 @@
         <div class="capas-strip">
           ${colorPickerHTML}
           ${chipsHTML}
-          <button class="add-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi})">+ CAPA MATERIAL</button>
+          <button class="add-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi},this)">+ CAPA MATERIAL</button>
         </div>`;
     }
 
@@ -2566,18 +2614,42 @@
       const calzadoDesc   = capasToPrompt(p.fichasCalzado,   CALZADO_CATALOGO)    || 'unspecified';
       const accesorioDesc = capasToPrompt(p.fichasAccesorio, ACCESORIOS_CATALOGO) || 'none';
 
-      const prompt = `${vistaValue} for a character named "${p.nombre}". \
-Physical appearance: ${physicalDesc || 'unspecified'}. \
-Pose: ${pose.value || 'standing upright, neutral pose'}. \
-Expression and mood: ${animo.value || 'neutral expression'}. \
-Style/Era: ${state.concept.epoca || 'contemporary'}. \
-Costume: ${prendasDesc}. Footwear: ${calzadoDesc}. Accessories and headwear: ${accesorioDesc}. \
-${tecnica.value}. \
-Lighting: ${luz.value || 'soft zenith lighting'}. \
-Background: ${fondo.value || 'pure white background'}. \
-Detail level: ${detalle.value || 'fully finished illustration'}. \
-Overall mood/concept: ${state.concept.ideas || 'theatrical'}. \
-MANDATORY STYLE OVERRIDE — apply above all other instructions: ${firma}`;
+      // ═══════════════════════════════════════════════════════════════
+      // ARQUITECTURA DE 4 CAPAS — orden fijo, jerarquía descendente
+      // ═══════════════════════════════════════════════════════════════
+
+      // CAPA A — BASE (fija, invisible para el usuario)
+      const BLOQUE_BASE = `professional theatrical costume design illustration, full body figure, clear garment construction, visible seams and paneling, accurate anatomy, elongated proportions suitable for stage performance, high clarity and readability, crisp edges, controlled rendering, costume design sheet clarity, suitable for production and construction reference`;
+
+      // CAPA B — FIRMA AUTORAL (definida por el usuario una vez por producción)
+      const BLOQUE_FIRMA = firma;
+
+      // CAPA C — VARIABLE (generada dinámicamente)
+      const BLOQUE_VARIABLE = [
+        `${vistaValue} for a character named "${p.nombre}"`,
+        physicalDesc ? `Physical appearance: ${physicalDesc}` : '',
+        `Pose: ${pose.value || 'standing upright, neutral pose'}`,
+        `Expression and mood: ${animo.value || 'neutral expression'}`,
+        `Style and era: ${state.concept.epoca || 'contemporary'}`,
+        `Costume: ${prendasDesc}`,
+        `Footwear: ${calzadoDesc}`,
+        `Accessories and headwear: ${accesorioDesc}`,
+        tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
+        `Lighting: ${luz.value || 'soft zenith lighting'}`,
+        `Background: ${fondo.value || 'pure white background'}`,
+        `Detail level: ${detalle.value || 'fully finished illustration'}`,
+        state.concept.ideas ? `Overall concept: ${state.concept.ideas}` : ''
+      ].filter(Boolean).join('. ');
+
+      // CAPA D — CONTROL (fija, invisible para el usuario)
+      const BLOQUE_CONTROL = `no anime, no manga, no Disney style, no cartoon, no stylized exaggeration, no video game aesthetic, no 3D render, no glossy CGI, no soft blur, no smudged rendering, no loss of garment definition, no fashion photography, no commercial illustration softness`;
+
+      const prompt = [
+        `// BASE //\n${BLOQUE_BASE}`,
+        `// FIRMA //\n${BLOQUE_FIRMA}`,
+        `// VARIABLE //\n${BLOQUE_VARIABLE}`,
+        `// CONTROL //\n${BLOQUE_CONTROL}`
+      ].join('\n\n');
 
       document.getElementById('ia-prompt').value = prompt;
       updateSelectionSummary();
