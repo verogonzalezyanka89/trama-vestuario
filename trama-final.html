@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trama — Sistema de Vestuario Pro</title>
+<title>Trama — Vestuario Escénico Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -416,77 +416,63 @@
     margin-bottom: 1.5rem; letter-spacing: 0.12em; border-bottom: 1px solid var(--border); padding-bottom: 0.7rem;
   }
 
-  /* ─── SISTEMA DE CAPAS DE MATERIAL ─── */
-  .capas-strip {
-    display: flex; gap: 6px; flex-wrap: wrap;
-    align-items: center; margin-top: 0.7rem;
-    padding-top: 0.6rem; border-top: 1px dashed #eee;
+  /* ─── SISTEMA DE PESTAÑAS FORMA / MATERIAL ─── */
+  .ficha-tabs {
+    display: flex; gap: 0; margin-bottom: 0.6rem; border-bottom: 1.5px solid #ddd;
   }
-  .capa-chip {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: #f5f2eb; border: 1.5px solid #ccc;
-    padding: 3px 8px 3px 10px;
-    font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; cursor: pointer;
-    transition: all 0.15s; user-select: none;
-    max-width: 200px;
-  }
-  .capa-chip:hover { border-color: var(--accent); background: var(--accent-light); }
-  .capa-chip .capa-chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .capa-chip .capa-chip-swatch {
-    width: 10px; height: 10px; border: 1px solid rgba(0,0,0,0.15);
-    flex-shrink: 0; border-radius: 50%;
-  }
-  .capa-chip-del {
-    background: none; border: none; color: #bbb; cursor: pointer;
-    font-size: 0.7rem; line-height: 1; padding: 0 0 0 2px;
-    transition: color 0.15s; flex-shrink: 0;
-  }
-  .capa-chip-del:hover { color: #cc0000; }
-  .add-capa-btn {
-    background: none; border: 1px dashed #ccc; color: #aaa;
-    font-size: 0.55rem; font-weight: 800; letter-spacing: 0.08em;
-    text-transform: uppercase; padding: 3px 9px; cursor: pointer;
+  .ficha-tab {
+    font-size: 0.52rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 5px 14px; cursor: pointer; border: none; background: transparent;
+    color: #aaa; border-bottom: 2px solid transparent; margin-bottom: -1.5px;
     transition: all 0.15s;
   }
-  .add-capa-btn:hover { border-color: var(--black); color: var(--black); }
+  .ficha-tab.active { color: var(--black); border-bottom-color: var(--black); }
+  .ficha-tab-content { display: none; }
+  .ficha-tab-content.active { display: block; }
 
-  /* Panel flotante de edición de capa */
-  #capa-panel {
-    display: none; position: fixed; z-index: 3000;
-    background: var(--surface); border: 1.5px solid var(--black);
-    box-shadow: var(--shadow-lg);
-    padding: 1.2rem 1.4rem 1rem;
-    width: 340px;
-  }
-  #capa-panel.visible { display: block; }
-  .capa-panel-title {
-    font-family: 'Cormorant SC', serif; font-size: 0.85rem; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.9rem;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .capa-panel-close {
-    background: none; border: none; cursor: pointer; font-size: 1rem;
-    color: #aaa; line-height: 1; transition: color 0.15s;
-  }
-  .capa-panel-close:hover { color: var(--black); }
-  .capa-dim-label {
-    font-size: 0.48rem; font-weight: 800; letter-spacing: 0.12em;
-    text-transform: uppercase; color: #888; margin-bottom: 4px; margin-top: 0.6rem;
+  /* Selectores de material inline */
+  .mat-dim-label {
+    font-size: 0.45rem; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #999; margin: 0.55rem 0 3px;
     display: block;
   }
-  .capa-dim-label:first-child { margin-top: 0; }
-  .capa-opts {
-    display: flex; gap: 4px; flex-wrap: wrap;
+  .mat-dim-label:first-child { margin-top: 0.2rem; }
+  .mat-opts { display: flex; gap: 3px; flex-wrap: wrap; }
+  .mat-opt {
+    font-size: 0.52rem; font-weight: 600; padding: 3px 8px;
+    border: 1.5px solid #ddd; background: #fafafa; cursor: pointer;
+    transition: all 0.12s; user-select: none;
   }
-  .capa-opt {
-    font-size: 0.55rem; font-weight: 600; letter-spacing: 0.06em;
-    padding: 3px 8px; border: 1.5px solid #ddd; background: #fafafa;
-    cursor: pointer; transition: all 0.12s; user-select: none;
+  .mat-opt:hover { border-color: #999; }
+  .mat-opt.sel { background: var(--black); color: #fff; border-color: var(--black); }
+
+  /* Capa de material dentro de ficha */
+  .mat-capa-block {
+    border: 1px solid #eee; background: #fafafa;
+    padding: 0.6rem 0.7rem; margin-bottom: 0.5rem;
   }
-  .capa-opt:hover { border-color: #999; background: #f0f0f0; }
-  .capa-opt.sel { background: var(--black); color: #fff; border-color: var(--black); }
+  .mat-capa-header {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 0.4rem;
+  }
+  .mat-capa-nombre {
+    flex: 1; border: none; border-bottom: 1px solid #ddd; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; color: #555;
+    padding: 2px 0; outline: none;
+  }
+  .mat-capa-nombre::placeholder { color: #ccc; font-weight: 400; text-transform: none; }
+  .mat-capa-del {
+    background: none; border: none; color: #ccc; cursor: pointer;
+    font-size: 0.75rem; transition: color 0.12s; padding: 0;
+  }
+  .mat-capa-del:hover { color: #cc0000; }
+  .add-mat-capa-btn {
+    background: none; border: 1px dashed #ccc; color: #aaa;
+    font-size: 0.5rem; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 9px; cursor: pointer;
+    transition: all 0.15s; margin-top: 0.4rem;
+  }
+  .add-mat-capa-btn:hover { border-color: var(--black); color: var(--black); }
 
   /* ─── PRESETS DE PRODUCCIÓN ─── */
   .presets-section {
@@ -1194,55 +1180,7 @@
 
   <div id="toast"></div>
 
-  <!-- PANEL FLOTANTE: EDITAR CAPA DE MATERIAL -->
-  <div id="capa-panel">
-    <div class="capa-panel-title">
-      <span id="capa-panel-heading">CAPA DE MATERIAL</span>
-      <button class="capa-panel-close" onclick="cerrarCapaPanel()">×</button>
-    </div>
-
-    <!-- Nombre -->
-    <span class="capa-dim-label">NOMBRE DE LA CAPA</span>
-    <input type="text" id="cp-nombre" placeholder="ej: exterior, forro, vuelo…"
-      style="width:100%; border:1.5px solid #ddd; padding:5px 8px;
-      font-family:'DM Sans',sans-serif; font-size:0.78rem; background:#fafafa; margin-bottom:0.2rem;"
-      oninput="capaSetField('nombre',this.value)">
-
-    <!-- 1. Material base -->
-    <span class="capa-dim-label">1 · MATERIAL BASE</span>
-    <div class="capa-opts" id="cp-base"></div>
-
-    <!-- 2. Estructura -->
-    <span class="capa-dim-label">2 · ESTRUCTURA</span>
-    <div class="capa-opts" id="cp-estructura"></div>
-
-    <!-- 3. Superficie -->
-    <span class="capa-dim-label">3 · SUPERFICIE</span>
-    <div class="capa-opts" id="cp-superficie"></div>
-
-    <!-- 4. Brillo (independiente) -->
-    <span class="capa-dim-label">4 · BRILLO</span>
-    <div class="capa-opts" id="cp-brillo"></div>
-
-    <!-- 5. Intervención -->
-    <span class="capa-dim-label">5 · INTERVENCIÓN</span>
-    <div class="capa-opts" id="cp-intervencion"></div>
-
-    <!-- 6. Estado -->
-    <span class="capa-dim-label">6 · ESTADO</span>
-    <div class="capa-opts" id="cp-estado"></div>
-
-    <!-- Densidad (solo visible si intervención es embroidered/beaded/appliqué/ruched) -->
-    <div id="cp-densidad-wrap" style="display:none;">
-      <span class="capa-dim-label">DENSIDAD DEL DETALLE</span>
-      <div class="capa-opts" id="cp-densidad"></div>
-    </div>
-
-    <div style="margin-top:1rem; padding-top:0.8rem; border-top:1px solid #eee;
-      display:flex; justify-content:flex-end; gap:6px;">
-      <button class="btn btn-small btn-outline" onclick="cerrarCapaPanel()">LISTO</button>
-    </div>
-  </div>
+  <!-- panel flotante eliminado —sistema de pestañas inline -->
 
   <script>
     const FIRMA_DEFAULT = `Estética de vestuario escénico con materiales expresivos, trazo visible y carácter teatral, inspirada en la pictórica de Renoir y Degas, pero reinterpretada con un acabado contemporáneo, refinado y personal. Evitar recursos genéricos, 3D, animé, Disney y soluciones visuales de videojuego.`;
@@ -1521,160 +1459,64 @@
     // ═══════════════════════════════════════════════════════
     // SISTEMA DE CAPAS DE MATERIAL
     // ═══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    // SISTEMA DE MATERIAL INLINE (pestañas por ficha)
+    // ═══════════════════════════════════════════════════════
     const CAPAS_DIMS = {
-      base:        { opts: ['lycra / stretch','silk / satin','tulle','organza','velvet','cotton / linen','wool','synthetic / plastic','metallic / foil'] },
-      estructura:  { opts: ['structured','semi-structured','fluid','layered','draped','rigid','modular'] },
-      superficie:  { opts: ['matte','satin','glossy','iridescent','textured','sheer','opaque'] },
-      brillo:      { opts: ['matte','soft sheen','satin glow','high gloss'] },
-      intervencion:{ opts: ['clean','embroidered','beaded','appliqué','distressed','painted','pleated','ruched'] },
-      estado:      { opts: ['pristine','worn','aged','fragile','reinforced','decaying'] },
-      densidad:    { opts: ['minimal density','moderate density','rich density'] }
+      base:         { label: 'Material base',  opts: ['lycra / stretch','silk / satin','tulle','organza','velvet','cotton / linen','wool','synthetic / plastic','metallic / foil'] },
+      estructura:   { label: 'Estructura',     opts: ['structured','semi-structured','fluid','layered','draped','rigid','modular'] },
+      superficie:   { label: 'Superficie',     opts: ['matte','satin','glossy','iridescent','textured','sheer','opaque'] },
+      intervencion: { label: 'Intervención',   opts: ['clean','embroidered','beaded','appliqué','distressed','painted','pleated','ruched'] },
+      estado:       { label: 'Estado',         opts: ['pristine','worn','aged','fragile','reinforced','decaying'] },
+      densidad:     { label: 'Densidad',       opts: ['minimal density','moderate density','rich density'] }
     };
     const INTERVENCION_CON_DENSIDAD = ['embroidered','beaded','appliqué','ruched'];
-    let _capaCtx = null;
 
-    function capaTextoResumen(c) {
-      return [c.nombre||'', c.base, c.estructura].filter(Boolean).join(' · ') || 'capa';
-    }
-    function capaColorPrincipal(c) {
-      return (c.colores && c.colores.length) ? c.colores[0] : (c.color || '#cccccc');
+    function fichaTab(fichaEl, tabName) {
+      fichaEl.querySelectorAll('.ficha-tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.tab === tabName));
+      fichaEl.querySelectorAll('.ficha-tab-content').forEach(c =>
+        c.classList.toggle('active', c.dataset.tab === tabName));
     }
 
-    function abrirCapaPanel(pi, stateKey, fi, capaIdx, evt) {
-      evt.stopPropagation();
-      _capaCtx = { pi, stateKey, fi, capaIdx };
+    function renderMatOpts(pi, stateKey, fi, capaIdx, dim) {
       const f = state.personajes[pi][stateKey][fi];
-      if(!f.capas) f.capas = [];
-      const c = f.capas[capaIdx];
-      document.getElementById('capa-panel-heading').textContent =
-        `CAPA ${capaIdx+1} — ${(c.nombre||'sin nombre').toUpperCase()}`;
-      document.getElementById('cp-nombre').value = c.nombre || '';
-      ['base','estructura','superficie','brillo','intervencion','estado','densidad'].forEach(d =>
-        renderCapaDimOpts(d, c[d])
-      );
-      actualizarDensidadVis(c.intervencion);
-      const panel = document.getElementById('capa-panel');
-      panel.classList.add('visible');
-      try {
-        const rect = evt.currentTarget.getBoundingClientRect();
-        const pw = 340;
-        let left = rect.left + window.scrollX;
-        if(left + pw > window.innerWidth - 16) left = window.innerWidth - pw - 16;
-        panel.style.left = left + 'px';
-        panel.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
-      } catch(e) {
-        // fallback: centro de la pantalla
-        panel.style.left = Math.max(8, (window.innerWidth - 340) / 2) + 'px';
-        panel.style.top  = (window.scrollY + 120) + 'px';
-      }
-    }
-
-    function cerrarCapaPanel() {
-      document.getElementById('capa-panel').classList.remove('visible');
-      _capaCtx = null;
-      renderPersonajes();
-    }
-
-    function renderCapaDimOpts(dim, valorActual) {
-      const el = document.getElementById('cp-' + dim);
-      if(!el) return;
-      el.innerHTML = CAPAS_DIMS[dim].opts.map(op => {
-        const esc = op.replace(/'/g,"\\'");
-        return `<span class="capa-opt ${valorActual===op?'sel':''}"
-          onclick="capaSetDim('${dim}','${esc}')">${op}</span>`;
+      const c = (f.capas || [])[capaIdx] || {};
+      const valorActual = c[dim] || '';
+      return CAPAS_DIMS[dim].opts.map(op => {
+        const esc = op.replace(/'/g,"\'");
+        return `<span class="mat-opt ${valorActual===op?'sel':''}"
+          onclick="matSetDim(${pi},'${stateKey}',${fi},${capaIdx},'${dim}','${esc}',this)">${op}</span>`;
       }).join('');
     }
 
-    function actualizarDensidadVis(intervencion) {
-      const w = document.getElementById('cp-densidad-wrap');
-      if(w) w.style.display = INTERVENCION_CON_DENSIDAD.includes(intervencion) ? 'block' : 'none';
-    }
-
-    function capaSetField(campo, valor) {
-      if(!_capaCtx) return;
-      const { pi, stateKey, fi, capaIdx } = _capaCtx;
-      state.personajes[pi][stateKey][fi].capas[capaIdx][campo] = valor;
-      if(campo === 'nombre')
-        document.getElementById('capa-panel-heading').textContent =
-          `CAPA ${capaIdx+1} — ${(valor||'sin nombre').toUpperCase()}`;
-    }
-
-    function capaSetDim(dim, valor) {
-      if(!_capaCtx) return;
-      const { pi, stateKey, fi, capaIdx } = _capaCtx;
-      const c = state.personajes[pi][stateKey][fi].capas[capaIdx];
-      c[dim] = (c[dim] === valor) ? '' : valor;
-      renderCapaDimOpts(dim, c[dim]);
-      if(dim === 'intervencion') actualizarDensidadVis(c[dim]);
-    }
-
-    function addCapa(pi, stateKey, fi, btnEl) {
+    function matSetDim(pi, stateKey, fi, capaIdx, dim, valor, el) {
       const f = state.personajes[pi][stateKey][fi];
       if(!f.capas) f.capas = [];
-      const idx = f.capas.length;
-      f.capas.push({ nombre:'', base:'', estructura:'', superficie:'',
-                     brillo:'', intervencion:'', estado:'', densidad:'',
-                     colores:['#cccccc'], color:'#cccccc' });
-      // Actualizar los chips en el DOM sin re-renderizar toda la página
-      _actualizarChipsStrip(pi, stateKey, fi);
-      // Abrir el panel directamente usando el botón como referencia de posición
-      const fakeEvt = { stopPropagation: ()=>{}, currentTarget: btnEl };
-      abrirCapaPanel(pi, stateKey, fi, idx, fakeEvt);
+      const c = f.capas[capaIdx];
+      if(!c) return;
+      c[dim] = (c[dim] === valor) ? '' : valor;
+      const grupo = el.closest('.mat-opts');
+      if(grupo) grupo.querySelectorAll('.mat-opt').forEach(btn =>
+        btn.classList.toggle('sel', btn.textContent === c[dim]));
+      if(dim === 'intervencion') {
+        const densWrap = el.closest('.mat-capa-block')?.querySelector('.mat-densidad-wrap');
+        if(densWrap) densWrap.style.display =
+          INTERVENCION_CON_DENSIDAD.includes(c[dim]) ? 'block' : 'none';
+      }
     }
 
-    function _actualizarChipsStrip(pi, stateKey, fi) {
-      // Re-renderiza solo la tira de chips de esta ficha específica
+    function matSetNombre(pi, stateKey, fi, capaIdx, valor) {
       const f = state.personajes[pi][stateKey][fi];
-      // Buscar el contenedor correcto por data attributes en el strip
-      const strips = document.querySelectorAll('.capas-strip');
-      strips.forEach(strip => {
-        const firstChip = strip.querySelector('[data-capa-pi]');
-        if(firstChip &&
-           firstChip.dataset.capaPi == pi &&
-           firstChip.dataset.capaKey === stateKey &&
-           firstChip.dataset.capaFi == fi) {
-          strip.innerHTML = _buildChipsHTML(f, pi, stateKey, fi);
-        } else if(!firstChip) {
-          // Strip sin chips aún — verificar por el botón + CAPA MATERIAL
-          const btn = strip.querySelector('.add-capa-btn');
-          if(btn && btn.getAttribute('onclick') &&
-             btn.getAttribute('onclick').includes(`${pi},'${stateKey}',${fi}`)) {
-            strip.innerHTML = _buildChipsHTML(f, pi, stateKey, fi);
-          }
-        }
-      });
+      if(f.capas && f.capas[capaIdx]) f.capas[capaIdx].nombre = valor;
     }
 
-    function _buildChipsHTML(f, pi, stateKey, fi) {
-      const colores = f.colores || [f.color || '#cccccc'];
-      const capas   = f.capas   || [];
-      const colorPickerHTML = `
-        <div style="display:flex;gap:0;border:1.5px solid #000;overflow:hidden;height:24px;flex-shrink:0;min-width:24px;">
-          ${colores.map((c, ci) => `
-            <div style="flex:1;min-width:24px;background:${c};position:relative;" title="${c.toUpperCase()}">
-              <input type="color" value="${c}"
-                onchange="updateFichaColor(${pi},'${stateKey}',${fi},${ci},this.value);this.parentElement.style.background=this.value;"
-                style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
-              ${colores.length > 1 ? `<button onclick="removeFichaColor(${pi},'${stateKey}',${fi},${ci})"
-                style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.5);color:#fff;
-                border:none;width:10px;height:10px;font-size:7px;cursor:pointer;
-                border-radius:50%;line-height:10px;text-align:center;padding:0;">×</button>` : ''}
-            </div>`).join('')}
-        </div>
-        <button onclick="addFichaColor(${pi},'${stateKey}',${fi})"
-          style="background:none;border:1px dashed #ccc;color:#aaa;font-size:0.55rem;
-          font-weight:800;padding:2px 7px;cursor:pointer;flex-shrink:0;">+ COLOR</button>`;
-      const chipsHTML = capas.map((c, capaIdx) => `
-        <span class="capa-chip"
-          data-capa-pi="${pi}" data-capa-key="${stateKey}" data-capa-fi="${fi}"
-          onclick="abrirCapaPanel(${pi},'${stateKey}',${fi},${capaIdx},event)">
-          <span class="capa-chip-swatch" style="background:${capaColorPrincipal(c)};"></span>
-          <span class="capa-chip-label">${capaTextoResumen(c)}</span>
-          <button class="capa-chip-del"
-            onclick="event.stopPropagation();removeCapa(${pi},'${stateKey}',${fi},${capaIdx})">×</button>
-        </span>`).join('');
-      return colorPickerHTML + chipsHTML +
-        `<button class="add-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi},this)">+ CAPA MATERIAL</button>`;
+    function addCapa(pi, stateKey, fi) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.capas) f.capas = [];
+      f.capas.push({ nombre:'', base:'', estructura:'', superficie:'',
+                     brillo:'', intervencion:'', estado:'', densidad:'' });
+      renderPersonajes();
     }
 
     function removeCapa(pi, stateKey, fi, capaIdx) {
@@ -1683,12 +1525,43 @@
       renderPersonajes();
     }
 
+    function renderCapaBlock(pi, stateKey, fi, capaIdx) {
+      const f = state.personajes[pi][stateKey][fi];
+      const c = (f.capas || [])[capaIdx] || {};
+      const hasDensidad = INTERVENCION_CON_DENSIDAD.includes(c.intervencion||'');
+      const canDelete = (f.capas||[]).length > 1;
+      return `
+        <div class="mat-capa-block">
+          <div class="mat-capa-header">
+            <input class="mat-capa-nombre" type="text"
+              placeholder="nombre de capa (ej: exterior, forro, vuelo)"
+              value="${(c.nombre||'').replace(/"/g,'&quot;')}"
+              oninput="matSetNombre(${pi},'${stateKey}',${fi},${capaIdx},this.value)">
+            ${canDelete ? `<button class="mat-capa-del"
+              onclick="removeCapa(${pi},'${stateKey}',${fi},${capaIdx})">×</button>` : ''}
+          </div>
+          <span class="mat-dim-label">MATERIAL BASE</span>
+          <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'base')}</div>
+          <span class="mat-dim-label">ESTRUCTURA</span>
+          <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'estructura')}</div>
+          <span class="mat-dim-label">SUPERFICIE</span>
+          <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'superficie')}</div>
+          <span class="mat-dim-label">INTERVENCIÓN</span>
+          <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'intervencion')}</div>
+          <div class="mat-densidad-wrap" style="display:${hasDensidad?'block':'none'};">
+            <span class="mat-dim-label">DENSIDAD</span>
+            <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'densidad')}</div>
+          </div>
+          <span class="mat-dim-label">ESTADO</span>
+          <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'estado')}</div>
+        </div>`;
+    }
+
     function capaToPromptStr(c) {
       const p = [];
       if(c.base)        p.push(c.base);
       if(c.estructura)  p.push(c.estructura);
       if(c.superficie)  p.push(c.superficie + ' finish');
-      if(c.brillo && c.brillo !== c.superficie) p.push(c.brillo);
       if(c.intervencion && c.intervencion !== 'clean') {
         let inter = c.intervencion;
         if(c.densidad && INTERVENCION_CON_DENSIDAD.includes(c.intervencion))
@@ -1699,88 +1572,57 @@
       return p.join(', ');
     }
 
-    // describeFichas: genera descripción completa de prenda (atributos + capas de material)
     function capasToPrompt(fichas, catalogo) {
       if(!fichas || fichas.length === 0) return '';
       return fichas.map(f => {
         if(!f.tipo) return null;
         const cat = catalogo[f.tipo];
         const label = cat ? cat.label : f.tipo;
-
-        // Atributos estructurales (forma, corte, estilo) — igual que antes
         const attrs = [];
         Object.values(f.atributos||{}).forEach(v => {
           if(!v) return;
           if(Array.isArray(v)) { if(v.length) attrs.push(v.join(' + ')); }
           else attrs.push(v);
         });
-        // Colores
         const colores = f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []);
         if(colores.length > 1) attrs.push(colores.join(' + '));
         else if(colores.length === 1) attrs.push(colores[0]);
-
-        // Capas de material (nuevo sistema)
         const capas = (f.capas || []).filter(c => c.base || c.nombre);
-        let materialStr = '';
         if(capas.length > 0) {
           const capasStr = capas.map(c => {
             const nom = c.nombre ? `${c.nombre}: ` : '';
             return nom + capaToPromptStr(c);
           }).filter(Boolean).join(' | ');
-          materialStr = `${capasStr}, material behavior clearly visible`;
+          attrs.push(`${capasStr}, material behavior clearly visible`);
         } else if(f.material) {
-          materialStr = f.material;
+          attrs.push(f.material);
         }
-        if(materialStr) attrs.push(materialStr);
-
         return attrs.length > 0 ? `${label} (${attrs.join(', ')})` : label;
       }).filter(Boolean).join('; ');
     }
 
-    // Cierra panel si se hace clic fuera
-    document.addEventListener('click', e => {
-      const panel = document.getElementById('capa-panel');
-      if(panel && panel.classList.contains('visible') && !panel.contains(e.target)) {
-        cerrarCapaPanel();
-      }
-    });
-
     function renderColorStrip(f, fi, pi, stateKey) {
       const colores = f.colores || [f.color || '#cccccc'];
-      const capas   = f.capas   || [];
-
-      const colorPickerHTML = `
-        <div style="display:flex;gap:0;border:1.5px solid #000;overflow:hidden;height:24px;flex-shrink:0;min-width:24px;">
-          ${colores.map((c, ci) => `
-            <div style="flex:1;min-width:24px;background:${c};position:relative;" title="${c.toUpperCase()}">
-              <input type="color" value="${c}"
-                onchange="updateFichaColor(${pi},'${stateKey}',${fi},${ci},this.value);this.parentElement.style.background=this.value;"
-                style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
-              ${colores.length > 1 ? `<button onclick="removeFichaColor(${pi},'${stateKey}',${fi},${ci})"
-                style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.5);color:#fff;
-                border:none;width:10px;height:10px;font-size:7px;cursor:pointer;
-                border-radius:50%;line-height:10px;text-align:center;padding:0;">×</button>` : ''}
-            </div>`).join('')}
-        </div>
-        <button onclick="addFichaColor(${pi},'${stateKey}',${fi})"
-          style="background:none;border:1px dashed #ccc;color:#aaa;font-size:0.55rem;
-          font-weight:800;padding:2px 7px;cursor:pointer;flex-shrink:0;">+ COLOR</button>`;
-
-      const chipsHTML = capas.map((c, capaIdx) => `
-        <span class="capa-chip"
-          data-capa-pi="${pi}" data-capa-key="${stateKey}" data-capa-fi="${fi}"
-          onclick="abrirCapaPanel(${pi},'${stateKey}',${fi},${capaIdx},event)">
-          <span class="capa-chip-swatch" style="background:${capaColorPrincipal(c)};"></span>
-          <span class="capa-chip-label">${capaTextoResumen(c)}</span>
-          <button class="capa-chip-del"
-            onclick="event.stopPropagation();removeCapa(${pi},'${stateKey}',${fi},${capaIdx})">×</button>
-        </span>`).join('');
-
       return `
-        <div class="capas-strip">
-          ${colorPickerHTML}
-          ${chipsHTML}
-          <button class="add-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi},this)">+ CAPA MATERIAL</button>
+        <div style="display:flex;gap:0.6rem;align-items:center;padding:0.5rem 0 0.2rem;">
+          <div style="display:flex;gap:0;border:1.5px solid #000;overflow:hidden;height:24px;flex-shrink:0;min-width:24px;">
+            ${colores.map((c, ci) => `
+              <div style="flex:1;min-width:24px;background:${c};position:relative;" title="${c.toUpperCase()}">
+                <input type="color" value="${c}"
+                  onchange="updateFichaColor(${pi},'${stateKey}',${fi},${ci},this.value);this.parentElement.style.background=this.value;"
+                  style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
+                ${colores.length > 1 ? `<button onclick="removeFichaColor(${pi},'${stateKey}',${fi},${ci})"
+                  style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,0.5);color:#fff;
+                  border:none;width:10px;height:10px;font-size:7px;cursor:pointer;
+                  border-radius:50%;line-height:10px;text-align:center;padding:0;">×</button>` : ''}
+              </div>`).join('')}
+          </div>
+          <div style="font-size:0.48rem;color:#aaa;font-family:monospace;">
+            ${colores.map(c => c.toUpperCase()).join(' + ')}
+          </div>
+          <button onclick="addFichaColor(${pi},'${stateKey}',${fi})"
+            style="background:none;border:1px dashed #ccc;color:#aaa;font-size:0.55rem;
+            font-weight:800;padding:2px 7px;cursor:pointer;flex-shrink:0;">+ COLOR</button>
         </div>`;
     }
 
@@ -1790,6 +1632,14 @@
         const cat = catalogo[f.tipo];
         const atribHTML = renderAtributos(f, fi, pi, stateKey, cat);
         const colorStripHTML = renderColorStrip(f, fi, pi, stateKey);
+
+        // Asegurar al menos una capa por defecto
+        if(!f.capas || f.capas.length === 0) {
+          f.capas = [{ nombre:'', base:'', estructura:'', superficie:'',
+                       brillo:'', intervencion:'', estado:'', densidad:'' }];
+        }
+        const materialHTML = f.capas.map((_, ci) => renderCapaBlock(pi, stateKey, fi, ci)).join('') +
+          `<button class="add-mat-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi})">+ AGREGAR CAPA</button>`;
 
         let optionsHTML = `<option value="">— Seleccionar —</option>`;
         if(grupos) {
@@ -1816,7 +1666,8 @@
 
         return `
           <div style="border:1.5px solid #ddd;background:#fff;padding:0.8rem 0.9rem;
-            margin-bottom:0.6rem;position:relative;">
+            margin-bottom:0.6rem;position:relative;"
+            data-ficha-pi="${pi}" data-ficha-key="${stateKey}" data-ficha-fi="${fi}">
             <div style="display:flex;gap:0.5rem;align-items:center;">
               <select onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'tipo',this.value)"
                 style="flex:1;border:1.5px solid #000;background:#f5f2eb;
@@ -1828,8 +1679,22 @@
                 font-size:0.55rem;font-weight:800;padding:3px 7px;cursor:pointer;">✕</button>
             </div>
             ${freeFormHTML}
-            ${atribHTML}
-            ${colorStripHTML}
+
+            <!-- PESTAÑAS FORMA / MATERIAL / COLOR -->
+            <div class="ficha-tabs" onclick="fichaTab(this.closest('[data-ficha-pi]'), event.target.dataset.tab)">
+              <button class="ficha-tab active" data-tab="forma">FORMA</button>
+              <button class="ficha-tab" data-tab="material">MATERIAL</button>
+              <button class="ficha-tab" data-tab="color">COLOR</button>
+            </div>
+            <div class="ficha-tab-content active" data-tab="forma">
+              ${atribHTML}
+            </div>
+            <div class="ficha-tab-content" data-tab="material">
+              ${materialHTML}
+            </div>
+            <div class="ficha-tab-content" data-tab="color">
+              ${colorStripHTML}
+            </div>
           </div>`;
       }).join('');
     }
@@ -1867,8 +1732,22 @@
             </div>
             <div class="input-group">
               <label>COLOR DE CABELLO</label>
-              <input type="text" placeholder="Ej: negro, rubio ceniza…"
-                value="${p.datos.cabello || ''}" onchange="updatePerData(${i}, 'cabello', this.value)">
+              <div style="display:flex;gap:0.5rem;align-items:center;">
+                <div style="position:relative;width:28px;height:28px;flex-shrink:0;">
+                  <div style="width:28px;height:28px;border:1.5px solid #000;border-radius:50%;
+                    background:${p.datos.cabelloHex||'#4a2c0a'};cursor:pointer;overflow:hidden;">
+                    <input type="color" value="${p.datos.cabelloHex||'#4a2c0a'}"
+                      oninput="updatePerData(${i},'cabelloHex',this.value);this.parentElement.style.background=this.value;
+                        this.closest('.input-group').querySelector('.cabello-text').value=this.value;"
+                      style="position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;">
+                  </div>
+                </div>
+                <input type="text" class="cabello-text"
+                  placeholder="Ej: negro, rubio ceniza, o #hex"
+                  value="${p.datos.cabello||p.datos.cabelloHex||''}"
+                  onchange="updatePerData(${i},'cabello',this.value)"
+                  style="flex:1;">
+              </div>
             </div>
             <div class="input-group">
               <label>PEINADO</label>
@@ -2619,7 +2498,7 @@
       // ═══════════════════════════════════════════════════════════════
 
       // CAPA A — BASE (fija, invisible para el usuario)
-      const BLOQUE_BASE = `professional theatrical costume design illustration, full body figure, clear garment construction, visible seams and paneling, accurate anatomy, elongated proportions suitable for stage performance, high clarity and readability, crisp edges, controlled rendering, costume design sheet clarity, suitable for production and construction reference`;
+      const BLOQUE_BASE = `professional theatrical costume design illustration, full body figure, clear and precise garment construction, visible seams and paneling, sharp silhouette with defined edges, accurate anatomy, elongated proportions suitable for stage performance, high clarity and readability, crisp hard edges on all costume elements, bold outlines defining each garment piece, controlled rendering with no loss of structural form, costume design sheet clarity, suitable for production and construction reference`;
 
       // CAPA B — FIRMA AUTORAL (definida por el usuario una vez por producción)
       const BLOQUE_FIRMA = firma;
