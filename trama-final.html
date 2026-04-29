@@ -721,6 +721,11 @@
           PRESET DE PRODUCCIÓN — aplica firma + técnica visual recomendada
         </label>
         <div class="presets-grid" id="presets-grid">
+          <div class="preset-card" id="preset-none" onclick="clearPreset(this)" style="opacity:0.65;">
+            <span class="preset-glyph" style="font-size:1.1rem;">∅</span>
+            <span class="preset-name">Sin preset</span>
+            <span class="preset-desc">Solo firma base · tú controlas todo</span>
+          </div>
           <div class="preset-card" data-preset="opera" onclick="applyPreset(this)">
             <span class="preset-glyph">Ō</span>
             <span class="preset-name">Ópera</span>
@@ -2505,6 +2510,26 @@
       notificar(`PRESET "${name.toUpperCase()}" APLICADO`);
     }
 
+    function clearPreset(el) {
+      // Remove active state from all preset cards
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+
+      // Restore firma to FIRMA_DEFAULT
+      const firmaEl = document.getElementById('g-firma');
+      if(firmaEl) {
+        firmaEl.value = FIRMA_DEFAULT;
+        state.firmaEstilo = FIRMA_DEFAULT;
+        firmaEl.style.transition = 'border-color 0.3s';
+        firmaEl.style.borderColor = 'var(--accent)';
+        setTimeout(() => firmaEl.style.borderColor = '', 1200);
+      }
+
+      // DO NOT touch técnica, fondo, luz, detalle cards —
+      // the user keeps whatever they had selected manually.
+      notificar('SIN PRESET — FIRMA BASE RESTAURADA');
+    }
+
     function selectCard(el) {
       const group = el.dataset.group;
       document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
@@ -2581,7 +2606,7 @@
             estetica      ? `Aesthetic context: ${estetica}`        : ''
           ].filter(Boolean).join('. ');
 
-          BLOQUE_CONTROL_ZOOM = `Show only the hair and hairstyle — no face portrait, no full figure, no body. Never cropped or cut off. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum texture and construction clarity. Crisp rendering showing each strand group, structural element and ornament.`;
+          BLOQUE_CONTROL_ZOOM = `primary priority: garment readability and silhouette clarity over painterly effects. Show only the hair and hairstyle — no face portrait, no full figure, no body. Never cropped or cut off. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum texture and construction clarity. Crisp rendering showing each strand group, structural element and ornament.`;
 
         // ── MAQUILLAJE ───────────────────────────────────────────────────────
         } else if(zoomType === 'maquillaje') {
@@ -2598,7 +2623,7 @@
             estetica      ? `Aesthetic and period context: ${estetica}` : ''
           ].filter(Boolean).join('. ');
 
-          BLOQUE_CONTROL_ZOOM = `Show only the face and makeup — no costume, no full figure, no body below the chin. Never cropped or cut off. The full face must be visible. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum precision on every makeup element — pigment, line weight, color transitions.`;
+          BLOQUE_CONTROL_ZOOM = `primary priority: garment readability and silhouette clarity over painterly effects. Show only the face and makeup — no costume, no full figure, no body below the chin. Never cropped or cut off. The full face must be visible. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum precision on every makeup element — pigment, line weight, color transitions.`;
 
         // ── CALZADO ──────────────────────────────────────────────────────────
         } else if(zoomType === 'calzado') {
@@ -2625,7 +2650,7 @@
             estetica      ? `Aesthetic context: ${estetica}`        : ''
           ].filter(Boolean).join('. ');
 
-          BLOQUE_CONTROL_ZOOM = `Show the footwear as isolated object — no figure, no leg, no body. Complete and uncut — never cropped or bleeding off edges. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum material and construction clarity.`;
+          BLOQUE_CONTROL_ZOOM = `primary priority: garment readability and silhouette clarity over painterly effects. Show the footwear as isolated object — no figure, no leg, no body. Complete and uncut — never cropped or bleeding off edges. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum material and construction clarity.`;
 
         // ── ACCESORIO GENÉRICO (joyería, tocados, escénicos) ─────────────────
         } else {
@@ -2655,7 +2680,7 @@
             estetica      ? `Aesthetic context: ${estetica}`        : ''
           ].filter(Boolean).join('. ');
 
-          BLOQUE_CONTROL_ZOOM = `The object must be shown complete and uncut — never cropped, never bleeding off the edges. No figure, no body, no garment context. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI, no soft blur. Maximum structural and material clarity. Crisp outlines defining every element of the object.`;
+          BLOQUE_CONTROL_ZOOM = `primary priority: garment readability and silhouette clarity over painterly effects. The object must be shown complete and uncut — never cropped, never bleeding off the edges. No figure, no body, no garment context. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI, no soft blur. Maximum structural and material clarity. Crisp outlines defining every element of the object.`;
         }
 
         const promptZoom = [
@@ -2732,7 +2757,7 @@
       ].filter(Boolean).join('. ');
 
       // CAPA D — CONTROL (fija, invisible para el usuario)
-      const BLOQUE_CONTROL = `no anime, no manga, no Disney style, no cartoon, no stylized exaggeration, no video game aesthetic, no 3D render, no glossy CGI, no soft blur, no smudged rendering, no loss of garment definition, no fashion photography, no commercial illustration softness`;
+      const BLOQUE_CONTROL = `primary priority: garment readability and silhouette clarity over painterly effects. no anime, no manga, no Disney style, no cartoon, no stylized exaggeration, no video game aesthetic, no 3D render, no glossy CGI, no soft blur, no smudged rendering, no loss of garment definition, no fashion photography, no commercial illustration softness`;
 
       const prompt = [
         `// BASE //\n${BLOQUE_BASE}`,
