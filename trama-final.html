@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trama — Vestuario Escénico Pro</title>
+<title>Trama — Sistema de Vestuario Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -802,7 +802,42 @@
             </div>
           </div>
 
-          <!-- Zoom de accesorio: dinámico por personaje -->
+          <!-- Zoom fijo: peinado, maquillaje, calzado — siempre visible si hay personaje -->
+          <div class="input-group" id="ia-zoom-fixed" style="display:none;">
+            <label>ZOOM DE DETALLE</label>
+            <div class="option-cards" id="ia-zoom-fixed-cards">
+
+              <!-- PEINADO -->
+              <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="peinado" data-zoom-item="__peinado__"
+                data-value="__peinado__"
+                onclick="selectCard(this); clearVistaCards();">
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3c-1.5 0-3 .5-4 2-1 1.5-1 3.5 0 5 .5 1 1.5 2 2 3 .5 1 .5 2 0 3M12 3c1.5 0 3 .5 4 2 1 1.5 1 3.5 0 5-.5 1-1.5 2-2 3-.5 1-.5 2 0 3M9 21h6"/></svg></span>
+                <span class="oc-label" style="font-size:0.52rem;">Peinado</span>
+                <span class="oc-desc">Estilo y color</span>
+              </div>
+
+              <!-- MAQUILLAJE -->
+              <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="maquillaje" data-zoom-item="__maquillaje__"
+                data-value="__maquillaje__"
+                onclick="selectCard(this); clearVistaCards();">
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><circle cx="12" cy="8" r="5"/><path d="M9 13.5c0 2 1.3 4 3 5.5M15 13.5c0 2-1.3 4-3 5.5"/><path d="M10 8c.5-1 1-1.5 2-1.5s1.5.5 2 1.5"/></svg></span>
+                <span class="oc-label" style="font-size:0.52rem;">Maquillaje</span>
+                <span class="oc-desc">Diseño facial</span>
+              </div>
+
+              <!-- CALZADO -->
+              <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="calzado" data-zoom-item="__calzado__"
+                data-value="__calzado__"
+                onclick="selectCard(this); clearVistaCards();">
+                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 18h18M3 18c0-3 2-5 5-6l2-1 3-1c2-.5 4-1 5-2M3 18v-2l2-1"/><path d="M18 9c0 1-.5 2-1 3"/></svg></span>
+                <span class="oc-label" style="font-size:0.52rem;">Calzado</span>
+                <span class="oc-desc">Tipo y detalle</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Zoom dinámico: joyería, tocados y accesorios escénicos del personaje -->
           <div class="input-group" id="ia-zoom-group" style="display:none;">
             <label>ZOOM DE ACCESORIO</label>
             <div class="option-cards" id="ia-zoom-cards"></div>
@@ -2277,31 +2312,83 @@
     function updateZoomCards() {
       const pid = document.getElementById('ia-per-select').value;
       const p = state.personajes.find(x => x.id === pid);
+      const zoomFixed = document.getElementById('ia-zoom-fixed');
       const zoomGroup = document.getElementById('ia-zoom-group');
       const zoomCards = document.getElementById('ia-zoom-cards');
-      if(!p) { zoomGroup.style.display = 'none'; return; }
+
+      if(!p) {
+        if(zoomFixed) zoomFixed.style.display = 'none';
+        zoomGroup.style.display = 'none';
+        return;
+      }
       paintWatercolorBg();
 
-      // Parse accessories: split by comma, newline, semicolon or slash
-      const allItems = [
-        ...(p.prendas.accesorios || '').split(/[,;\n\/]+/),
-        ...(p.prendas.calzado || '').split(/[,;\n\/]+/)
-      ].map(s => s.trim()).filter(s => s.length > 2);
+      // ── BLOQUE FIJO: peinado, maquillaje, calzado ──────────────────────────
+      if(zoomFixed) {
+        zoomFixed.style.display = 'block';
 
-      if(allItems.length === 0) { zoomGroup.style.display = 'none'; return; }
+        // Calzado description from structured fichas
+        const calzadoFichas = p.fichasCalzado || [];
+        const calzadoDesc = calzadoFichas.length > 0
+          ? calzadoFichas.map(f => {
+              const cat = CALZADO_CATALOGO[f.tipo];
+              const label = cat ? cat.label : (f.tipo || 'calzado');
+              const attrs = Object.values(f.atributos||{}).flat().filter(Boolean).join(', ');
+              return attrs ? label + ' (' + attrs + ')' : label;
+            }).join('; ')
+          : 'theatrical footwear';
 
-      zoomGroup.style.display = 'block';
-      zoomCards.innerHTML = allItems.map(item => {
-        const label = item.length > 18 ? item.substring(0, 17) + '…' : item;
-        const value = `Close-up detail illustration of "${item}", isolated on white background, showing material texture, construction and design detail`;
-        return `<div class="option-card" data-group="vista"
-          data-value="${value.replace(/"/g, '&quot;')}"
-          onclick="selectCard(this); clearVistaCards();">
-          <span class="oc-icon">🔍</span>
-          <span class="oc-label" style="font-size:0.52rem;">${label}</span>
-          <span class="oc-desc">Zoom accesorio</span>
-        </div>`;
-      }).join('');
+        const peinadoDesc = [p.datos.cabello, p.datos.peinado].filter(Boolean).join(', ') || 'theatrical hairstyle';
+        const cabelloHex  = p.datos.cabelloHex || '';
+        const pielDesc    = p.datos.pielTono || '';
+
+        // Inject live data into fixed cards so generatePrompt() can read them
+        const peinadoCard = zoomFixed.querySelector('[data-zoom-type="peinado"]');
+        if(peinadoCard) {
+          peinadoCard.dataset.zoomItem = peinadoDesc;
+          peinadoCard.dataset.zoomExtra = JSON.stringify({ cabelloHex, pielDesc });
+        }
+
+        const maquillajeCard = zoomFixed.querySelector('[data-zoom-type="maquillaje"]');
+        if(maquillajeCard) {
+          maquillajeCard.dataset.zoomItem = 'theatrical stage makeup design for ' + p.nombre;
+          maquillajeCard.dataset.zoomExtra = JSON.stringify({ pielDesc, nombre: p.nombre });
+        }
+
+        const calzadoCard = zoomFixed.querySelector('[data-zoom-type="calzado"]');
+        if(calzadoCard) {
+          calzadoCard.dataset.zoomItem = calzadoDesc;
+        }
+      }
+
+      // ── BLOQUE DINÁMICO: joyería, tocados y accesorios escénicos ──────────
+      const fichasAcc = p.fichasAccesorio || [];
+      const dynamicItems = fichasAcc
+        .filter(f => f.tipo)
+        .map(f => {
+          const cat = ACCESORIOS_CATALOGO[f.tipo];
+          const label = cat ? cat.label : f.tipo;
+          const attrTypes = Object.values(f.atributos||{}).flat().filter(Boolean);
+          const displayName = attrTypes.length > 0 ? label + ' (' + attrTypes.join(', ') + ')' : label;
+          return { displayName, ficha: f };
+        });
+
+      if(dynamicItems.length === 0) {
+        zoomGroup.style.display = 'none';
+      } else {
+        zoomGroup.style.display = 'block';
+        zoomCards.innerHTML = dynamicItems.map(({ displayName }) => {
+          const label = displayName.length > 20 ? displayName.substring(0, 19) + '\u2026' : displayName;
+          const safeItem = displayName.replace(/"/g, '&quot;');
+          return '<div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-item="' + safeItem + '"' +
+            ' data-value="zoom:' + safeItem + '"' +
+            ' onclick="selectCard(this); clearVistaCards();">' +
+            '<span class="oc-icon">\ud83d\udd0d</span>' +
+            '<span class="oc-label" style="font-size:0.52rem;">' + label + '</span>' +
+            '<span class="oc-desc">Zoom accesorio</span>' +
+            '</div>';
+        }).join('');
+      }
     }
 
     function clearVistaCards() {
@@ -2460,6 +2547,130 @@
       if(!p) return;
       const vista = getSelectedCard('vista');
       if(!vista.value) return notificar("SELECCIONA UN TIPO DE VISTA");
+
+      // ── DETECCIÓN DE ZOOM ──────────────────────────────────────────────────────
+      const vistaEl = document.querySelector('.option-card[data-group="vista"].selected');
+      if(vistaEl && vistaEl.dataset.isZoom === 'true') {
+        const zoomType  = vistaEl.dataset.zoomType || 'accesorio'; // 'peinado' | 'maquillaje' | 'calzado' | 'accesorio'
+        const itemName  = vistaEl.dataset.zoomItem || vista.label;
+        const extraRaw  = vistaEl.dataset.zoomExtra;
+        const extra     = extraRaw ? JSON.parse(extraRaw) : {};
+        const firma     = state.firmaEstilo || FIRMA_DEFAULT;
+        const tecnica   = getSelectedCard('tecnica');
+        const estetica  = [state.concept.epoca, state.concept.ideas].filter(Boolean).join(' — ');
+
+        let BLOQUE_BASE_ZOOM = '';
+        let partsZoom        = '';
+        let BLOQUE_CONTROL_ZOOM = '';
+
+        // ── PEINADO ──────────────────────────────────────────────────────────
+        if(zoomType === 'peinado') {
+          const cabelloColor = extra.cabelloHex
+            ? `hair color: ${extra.cabelloHex}`
+            : '';
+          const pielCtx = extra.pielDesc
+            ? `Character skin tone context: ${extra.pielDesc}.`
+            : '';
+
+          BLOQUE_BASE_ZOOM = `Theatrical hair and hairstyle design reference sheet. Full illustration of the complete hairstyle: "${itemName}". The entire head of hair must be visible — from roots to tips, including any ornaments or structural elements — with generous negative space around it. Isolated on clean background. Professional stage hairstyle design reference, showing volume, texture, construction and styling direction clearly.`;
+
+          partsZoom = [
+            cabelloColor,
+            pielCtx,
+            tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
+            estetica      ? `Aesthetic context: ${estetica}`        : ''
+          ].filter(Boolean).join('. ');
+
+          BLOQUE_CONTROL_ZOOM = `Show only the hair and hairstyle — no face portrait, no full figure, no body. Never cropped or cut off. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum texture and construction clarity. Crisp rendering showing each strand group, structural element and ornament.`;
+
+        // ── MAQUILLAJE ───────────────────────────────────────────────────────
+        } else if(zoomType === 'maquillaje') {
+          const pielCtx = extra.pielDesc
+            ? `Base skin tone: ${extra.pielDesc}.`
+            : '';
+          const nombreCtx = extra.nombre || p.nombre;
+
+          BLOQUE_BASE_ZOOM = `Theatrical stage makeup design reference for character "${nombreCtx}". Full face illustration showing the complete makeup design: eye design, lip color, facial contouring, any prosthetics or painted elements. The complete face must be visible with generous surrounding space. Isolated on clean background. Professional theatrical makeup reference quality — equivalent to a makeup designer's technical sheet.`;
+
+          partsZoom = [
+            pielCtx,
+            tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
+            estetica      ? `Aesthetic and period context: ${estetica}` : ''
+          ].filter(Boolean).join('. ');
+
+          BLOQUE_CONTROL_ZOOM = `Show only the face and makeup — no costume, no full figure, no body below the chin. Never cropped or cut off. The full face must be visible. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum precision on every makeup element — pigment, line weight, color transitions.`;
+
+        // ── CALZADO ──────────────────────────────────────────────────────────
+        } else if(zoomType === 'calzado') {
+          // Extract material and color from calzado fichas
+          let matStr = '';
+          let colorStr = '';
+          const calzadoFichas = p.fichasCalzado || [];
+          if(calzadoFichas.length > 0) {
+            const f = calzadoFichas[0];
+            const capas = (f.capas||[]).filter(c => c.base || c.nombre);
+            if(capas.length > 0) {
+              matStr = capas.map(c => (c.nombre ? c.nombre + ': ' : '') + capaToPromptStr(c)).filter(Boolean).join(' | ');
+            } else if(f.material) { matStr = f.material; }
+            const colores = f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []);
+            if(colores.length > 0) colorStr = colores.join(' + ');
+          }
+
+          BLOQUE_BASE_ZOOM = `Theatrical footwear design reference sheet. Full illustration of the complete footwear: "${itemName}". Both shoes visible (pair), or single shoe if appropriate. The complete object must be visible in its entirety with generous negative space. Isolated on clean background. Professional costume footwear design reference showing sole construction, heel detail, closures, surface treatment and silhouette.`;
+
+          partsZoom = [
+            matStr   ? `Material and construction: ${matStr}` : '',
+            colorStr ? `Color palette: ${colorStr}`           : '',
+            tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
+            estetica      ? `Aesthetic context: ${estetica}`        : ''
+          ].filter(Boolean).join('. ');
+
+          BLOQUE_CONTROL_ZOOM = `Show the footwear as isolated object — no figure, no leg, no body. Complete and uncut — never cropped or bleeding off edges. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum material and construction clarity.`;
+
+        // ── ACCESORIO GENÉRICO (joyería, tocados, escénicos) ─────────────────
+        } else {
+          const todasFichas = [...(p.fichasPrenda||[]), ...(p.fichasCalzado||[]), ...(p.fichasAccesorio||[])];
+          const fichaMatch = todasFichas.find(f => {
+            const cat = PRENDAS_CATALOGO[f.tipo] || CALZADO_CATALOGO[f.tipo] || ACCESORIOS_CATALOGO[f.tipo];
+            const label = cat ? cat.label : f.tipo;
+            return label && itemName.toLowerCase().includes(label.toLowerCase().substring(0,6));
+          });
+          let matStr = '';
+          let colorStr = '';
+          if(fichaMatch) {
+            const capas = (fichaMatch.capas||[]).filter(c => c.base || c.nombre);
+            if(capas.length > 0) {
+              matStr = capas.map(c => (c.nombre ? c.nombre + ': ' : '') + capaToPromptStr(c)).filter(Boolean).join(' | ');
+            } else if(fichaMatch.material) { matStr = fichaMatch.material; }
+            const colores = fichaMatch.colores || (fichaMatch.color && fichaMatch.color !== '#cccccc' ? [fichaMatch.color] : []);
+            if(colores.length > 0) colorStr = colores.join(' + ');
+          }
+
+          BLOQUE_BASE_ZOOM = `Theatrical costume design detail sheet: full illustration of "${itemName}" as a standalone costume accessory or piece. The complete object must be visible in its entirety, with generous negative space around it. Isolated on a clean background. Centered composition showing the whole object from edge to edge, never cropped or cut off. Scale chosen to reveal the full silhouette, construction logic, structural details and surface texture simultaneously. Professional costume design reference quality — equivalent to a jeweler's or atelier's technical illustration.`;
+
+          partsZoom = [
+            matStr   ? `Material and construction: ${matStr}` : '',
+            colorStr ? `Color palette: ${colorStr}`           : '',
+            tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
+            estetica      ? `Aesthetic context: ${estetica}`        : ''
+          ].filter(Boolean).join('. ');
+
+          BLOQUE_CONTROL_ZOOM = `The object must be shown complete and uncut — never cropped, never bleeding off the edges. No figure, no body, no garment context. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI, no soft blur. Maximum structural and material clarity. Crisp outlines defining every element of the object.`;
+        }
+
+        const promptZoom = [
+          `// BASE //\n${BLOQUE_BASE_ZOOM}`,
+          `// FIRMA //\n${firma}`,
+          `// DETALLE //\n${partsZoom}`,
+          `// CONTROL //\n${BLOQUE_CONTROL_ZOOM}`
+        ].join('\n\n');
+
+        document.getElementById('ia-prompt').value = promptZoom;
+        updateSelectionSummary();
+        paintWatercolorBg();
+        return;
+      }
+      // ── FIN DETECCIÓN DE ZOOM ──────────────────────────────────────────────────
 
       // For "Con detalles" view, inject actual materials into the vista description
       let vistaValue = vista.value;
