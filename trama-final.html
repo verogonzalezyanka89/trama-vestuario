@@ -417,8 +417,8 @@
 
      PANTALLA SELECTOR DE PRODUCCIÓN
   ═══════════════════════════════════ */
-  #screen-selector { display: none !important; visibility: hidden !important; pointer-events: none !important; }
-  #screen-selector.visible { display: none !important; }
+  #screen-selector { display: none; visibility: visible; pointer-events: auto; }
+  #screen-selector.visible { display: flex; }
 
   .selector-header {
     background: #111; padding: 1.6rem 3rem;
@@ -844,6 +844,7 @@
     </div>
 
     <div style="display:flex; gap:6px; align-items:center;">
+      <button class="btn btn-outline btn-small" onclick="volverSelector()" title="Cambiar de proyecto" style="opacity:0.72; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.72">OBRAS</button>
       <button class="btn btn-outline btn-small" onclick="exportData()" title="Exportar JSON" style="opacity:0.65; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.65">↓ JSON</button>
       <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()" title="Importar JSON" style="opacity:0.65; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.65">↑ JSON</button>
       <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
@@ -3963,10 +3964,14 @@
       document.getElementById('app-header').style.display = 'none';
       document.getElementById('app-nav').style.display = 'none';
       document.getElementById('app-main').style.display = 'none';
+      document.getElementById('screen-cover')?.classList.add('hidden');
+      const cover = document.getElementById('screen-cover');
+      if(cover) cover.style.display = 'none';
       currentProjectId = null;
       // Show selector refreshed
       document.getElementById('screen-selector')?.classList.add('visible');
       renderProductionGrid();
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     window.onload = () => {
