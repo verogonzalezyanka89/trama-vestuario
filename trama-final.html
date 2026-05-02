@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trama — Sistema de Vestuario Pro</title>
+<!-- Versión afinada: capas de material + comportamiento escénico + lectura desde platea -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -59,7 +60,7 @@
   nav.tabs {
     display: flex; justify-content: center; background: var(--black);
     position: sticky; top: 0; z-index: 100;
-    gap: 4px; padding: 8px 1rem;
+    gap: 4px; padding: 5px 1rem;
   }
   .tab-btn {
     background: none; border: none; color: rgba(255,255,255,0.45); padding: 0.6rem 1.6rem;
@@ -77,12 +78,12 @@
   .tab-btn.active { color: #fff; background: rgba(255,255,255,0.06); }
   .tab-btn.active::after { width: 60%; background: var(--accent); }
 
-  main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+  main { max-width: 1200px; margin: 0 auto; padding: 0.45rem 1.5rem 2rem; }
   .view-section { display: none; }
   .view-section.active { display: block; }
 
-  .section-header { margin-bottom: 2rem; padding-left: 1.2rem; border-left: 2px solid var(--accent); }
-  .section-header h2 { font-family: 'Cormorant SC', serif; font-size: 1.9rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-header { margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent); }
+  .section-header h2 { font-family: 'Cormorant SC', serif; font-size: 1.55rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
 
   .deco-card {
     background: var(--surface);
@@ -233,6 +234,14 @@
   .option-card.selected .oc-icon,
   .option-card.selected .oc-label { color: #8a6a00; }
   .option-card.selected .oc-desc { color: #b8962a; }
+  .option-card.compat-hidden { display: none !important; }
+  .compat-note {
+    font-size: 0.48rem;
+    color: #9a7b22;
+    letter-spacing: 0.06em;
+    margin-top: 0.35rem;
+    line-height: 1.35;
+  }
   .oc-icon { font-size: 0; line-height: 1; margin-bottom: 2px; display: block; color: inherit; }
   .oc-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: block; }
   .oc-desc { font-size: 0.5rem; color: #999; margin-top: 2px; display: block; line-height: 1.3; transition: color var(--transition); }
@@ -246,71 +255,170 @@
   }
 
   /* ═══════════════════════════════════
-     PANTALLA DE PORTADA
+     PANTALLA DE PORTADA — MARCA TRAMA
+     Inspiración: logo gráfico B/N, composición editorial, ornamento mínimo.
   ═══════════════════════════════════ */
   #screen-cover {
     position: fixed; inset: 0; z-index: 900;
-    background: #0a0a0a;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
+    background:
+      radial-gradient(circle at 50% 38%, rgba(255,255,255,0.08), transparent 34%),
+      linear-gradient(135deg, #f8f7f3 0%, #f1f0ec 48%, #f8f7f3 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: opacity 0.6s ease;
+    overflow: hidden;
   }
   #screen-cover.hidden { opacity: 0; pointer-events: none; }
-
-  .cover-ornament {
-    width: 1px; background: linear-gradient(to bottom, transparent, var(--accent), transparent);
-    animation: ornament-grow 1.2s ease forwards;
-    margin-bottom: 3rem;
+  #screen-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg, rgba(0,0,0,0.018) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(0,0,0,0.014) 1px, transparent 1px);
+    background-size: 38px 38px;
+    opacity: 0.55;
+    pointer-events: none;
   }
-  @keyframes ornament-grow { from { height: 0; } to { height: 80px; } }
-
-  .cover-logo-ring {
-    width: 90px; height: 90px;
-    border: 1px solid #444;
+  #screen-cover::after {
+    content: '';
+    position: absolute;
+    inset: clamp(18px, 3vw, 42px);
+    border: 1px solid rgba(26,26,26,0.10);
+    pointer-events: none;
+  }
+  .cover-panel {
+    position: relative;
+    width: min(760px, 88vw);
+    min-height: min(620px, 78vh);
+    padding: clamp(3rem, 7vw, 6rem) clamp(2rem, 6vw, 5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--black);
+    animation: cover-panel-in 0.9s cubic-bezier(0.4,0,0.2,1) both;
+  }
+  .cover-mark {
+    position: relative;
+    width: clamp(118px, 17vw, 176px);
+    aspect-ratio: 1;
+    margin-bottom: clamp(2rem, 4vw, 3.4rem);
+    border: 8px solid var(--black);
+    box-shadow: inset 0 0 0 7px #f8f7f3, inset 0 0 0 9px var(--black);
+  }
+  .cover-mark::before {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    border: 5px solid var(--black);
     border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1.5rem;
-    animation: fade-in 1s ease 0.4s both;
+    background: #f8f7f3;
+    box-shadow: 0 0 0 7px #f8f7f3;
   }
-  .cover-logo-ring span {
-    font-family: 'Cormorant SC', serif; font-size: 2.2rem; font-weight: 300; color: #ccc; letter-spacing: 0.1em;
+  .cover-mark::after {
+    content: 'T';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant SC', serif;
+    font-size: clamp(3.2rem, 7vw, 5.2rem);
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1;
+    z-index: 2;
+  }
+  .cover-mark-lines {
+    position: absolute;
+    inset: 8px;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent 0 44%, var(--black) 44% 47%, transparent 47% 53%, var(--black) 53% 56%, transparent 56% 100%),
+      linear-gradient(0deg, transparent 0 44%, var(--black) 44% 47%, transparent 47% 53%, var(--black) 53% 56%, transparent 56% 100%);
+    opacity: 0.92;
   }
   .cover-title {
     font-family: 'Cormorant SC', serif;
-    font-size: 4rem; font-weight: 300; color: #fff;
-    letter-spacing: 0.45em; text-transform: uppercase;
-    animation: fade-in 1s ease 0.6s both;
-    margin-bottom: 0.4rem;
+    font-size: clamp(4.6rem, 11vw, 9.4rem);
+    font-weight: 600;
+    color: var(--black);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    line-height: 0.9;
+    margin-left: 0.28em;
+    animation: fade-in 0.9s ease 0.2s both;
   }
   .cover-sub {
-    font-family: 'DM Sans', sans-serif; font-size: 0.58rem; font-weight: 400; letter-spacing: 0.35em;
-    text-transform: uppercase; color: #555;
-    animation: fade-in 1s ease 0.8s both;
-    margin-bottom: 3.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(0.78rem, 1.25vw, 1.05rem);
+    font-weight: 400;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: rgba(26,26,26,0.75);
+    margin-top: clamp(1.2rem, 2.8vw, 2rem);
+    margin-bottom: clamp(2.6rem, 5vw, 4.2rem);
+    animation: fade-in 0.9s ease 0.34s both;
   }
+  .cover-separator {
+    width: min(620px, 72vw);
+    height: 1px;
+    margin: clamp(1.8rem, 3vw, 2.7rem) 0 0;
+    background: linear-gradient(90deg, transparent, rgba(26,26,26,0.9), transparent);
+    position: relative;
+  }
+  .cover-separator::before,
+  .cover-separator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: var(--black);
+    border-radius: 50%;
+  }
+  .cover-separator::before { left: 18%; }
+  .cover-separator::after { right: 18%; }
   .cover-btn {
-    background: rgba(201,162,39,0.18); border: 1px solid rgba(201,162,39,0.5);
-    color: #c9a227; padding: 0.9rem 3rem;
-    font-family: 'DM Sans', sans-serif; font-weight: 600;
-    font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
-    cursor: pointer; transition: all 0.3s ease;
-    border-radius: 100px;
-    animation: fade-in 1s ease 1s both;
+    background: var(--black);
+    color: #fff;
+    border: 1.5px solid var(--black);
+    padding: 0.92rem 3.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.28s ease;
+    border-radius: 0;
+    animation: fade-in 0.9s ease 0.5s both;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
   }
-  .cover-btn:hover { background: rgba(201,162,39,0.32); border-color: var(--accent); color: #a07800; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,162,39,0.2); }
+  .cover-btn:hover {
+    background: transparent;
+    color: var(--black);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 38px rgba(0,0,0,0.16);
+  }
+  @keyframes cover-panel-in { from { opacity: 0; transform: scale(0.99) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 640px) {
+    .cover-panel { min-height: 680px; }
+    .cover-mark { border-width: 6px; }
+    .cover-title { letter-spacing: 0.18em; margin-left: 0.18em; }
+    .cover-sub { letter-spacing: 0.24em; line-height: 1.8; }
+    .cover-btn { width: 100%; max-width: 280px; padding-inline: 1rem; }
+  }
 
-  @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* ═══════════════════════════════════
      PANTALLA SELECTOR DE PRODUCCIÓN
   ═══════════════════════════════════ */
-  #screen-selector {
-    position: fixed; inset: 0; z-index: 800;
-    background: var(--bg);
-    display: none; flex-direction: column;
-    overflow-y: auto;
-  }
-  #screen-selector.visible { display: flex; }
+  #screen-selector { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+  #screen-selector.visible { display: none !important; }
 
   .selector-header {
     background: #111; padding: 1.6rem 3rem;
@@ -349,6 +457,16 @@
     transition: all var(--transition); box-shadow: var(--shadow-sm);
   }
   .prod-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent); }
+  .prod-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 1.2rem; right: 1.2rem;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(201,162,39,0.55), transparent);
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+  .prod-card:hover::before { opacity: 1; }
   .prod-card-num {
     font-size: 0.5rem; font-weight: 800; letter-spacing: 0.15em;
     color: #ccc; text-transform: uppercase; margin-bottom: 0.6rem;
@@ -445,6 +563,48 @@
   }
   .mat-opt:hover { border-color: #999; }
   .mat-opt.sel { background: var(--black); color: #fff; border-color: var(--black); }
+  .mat-guidance { font-size: 0.5rem; line-height: 1.45; color: #999; background: #fff; border-left: 2px solid var(--accent); padding: 0.45rem 0.55rem; margin: 0.25rem 0 0.55rem; }
+  .lectura-field { width: 100%; min-height: 54px; border: 1.5px solid #ddd; background: #fafafa; font-family: 'DM Sans', sans-serif; font-size: 0.68rem; line-height: 1.45; padding: 0.5rem 0.6rem; resize: vertical; }
+
+  /* Sugerencias editables de motivos */
+  .concept-card {
+    border: 1px solid var(--border);
+    background: #fbfaf7;
+    border-radius: var(--radius-md);
+    padding: 0.9rem 1rem;
+    margin: 0.9rem 0 1.2rem;
+  }
+  .suggestions-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 0.45rem;
+  }
+  .suggestion-chip {
+    border: 1px solid rgba(201,162,39,0.45);
+    background: rgba(201,162,39,0.10);
+    color: #7a5f00;
+    border-radius: 999px;
+    padding: 4px 9px;
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .suggestion-chip:hover {
+    background: rgba(201,162,39,0.22);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .suggestion-empty {
+    font-size: 0.55rem;
+    color: #aaa;
+    letter-spacing: 0.06em;
+    line-height: 1.45;
+    margin-top: 0.4rem;
+  }
 
   /* Capa de material dentro de ficha */
   .mat-capa-block {
@@ -544,32 +704,117 @@
     letter-spacing: 0.04em;
     display: block;
   }
+
+  /* ── ACORDEONES DEL PANEL IA ─────────────────────────────────────── */
+  .acc-section {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.55rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .acc-section:focus-within {
+    box-shadow: 0 0 0 2px rgba(201,162,39,0.18);
+  }
+  .acc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.62rem 0.9rem;
+    cursor: pointer;
+    background: var(--surface);
+    user-select: none;
+    gap: 0.6rem;
+    transition: background 0.15s;
+  }
+  .acc-header:hover { background: var(--accent-light); }
+  .acc-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .acc-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    color: var(--accent);
+  }
+  .acc-title {
+    font-size: 0.54rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #333;
+  }
+  .acc-summary {
+    font-size: 0.48rem;
+    color: #aaa;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  .acc-chevron {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.25s;
+    color: #bbb;
+  }
+  .acc-section.open .acc-chevron { transform: rotate(180deg); }
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1);
+    background: var(--bg);
+  }
+  .acc-section.open .acc-body { max-height: 1200px; }
+  .acc-body-inner {
+    padding: 0.8rem 0.9rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  /* Badge chip showing selected value */
+  .acc-badge {
+    display: inline-block;
+    font-size: 0.42rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+  @media (max-width: 768px) {
+    .acc-summary { max-width: 90px; }
+    .acc-badge   { max-width: 80px; }
+  }
 </style>
 </head>
 <body>
 
   <!-- ═══════════════ PORTADA ═══════════════ -->
   <div id="screen-cover">
-    <div class="cover-ornament"></div>
-    <div class="cover-logo-ring"><span>T</span></div>
-    <h1 class="cover-title">TRAMA</h1>
-    <p class="cover-sub">Sistema de Vestuario Escénico</p>
-    <button class="cover-btn" onclick="showSelector()">ENTRAR</button>
+    <div class="cover-panel">
+      <h1 class="cover-title">TRAMA</h1>
+      <div class="cover-separator"></div>
+      <p class="cover-sub">Vestuario Escénico</p>
+      <button class="cover-btn" onclick="entrarDirecto()">ENTRAR</button>
+    </div>
   </div>
 
-  <!-- ═══════════════ SELECTOR DE PRODUCCIÓN ═══════════════ -->
-  <div id="screen-selector">
-    <div class="selector-header">
-      <div>
-        <div class="selector-header-brand">TRAMA</div>
-        <div class="selector-header-sub">Sistema de Vestuario Escénico</div>
-      </div>
-    </div>
-    <div class="selector-body">
-      <div class="selector-eyebrow">Selecciona una producción para continuar</div>
-      <div class="prod-grid" id="prod-grid"></div>
-    </div>
-  </div>
+  <!-- Selector de producción eliminado: la app entra directo al área de trabajo. -->
 
   <!-- Modal: nueva producción -->
   <div id="modal-nueva">
@@ -584,35 +829,24 @@
     </div>
   </div>
 
-  <header id="app-header" style="display:none;">
-    <!-- Left: utility actions, small and quiet -->
-    <div style="display:flex; gap:6px; align-items:center;">
-      <button class="btn btn-outline btn-small" onclick="volverSelector()" title="Cambiar producción"
-        style="display:flex; align-items:center; gap:4px; opacity:0.7; transition:opacity 0.2s;"
-        onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.7">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        OBRAS
-      </button>
-      <button class="btn btn-outline btn-small" onclick="exportData()" title="Exportar JSON" style="opacity:0.6; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.6">↓ JSON</button>
-      <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()" title="Importar JSON" style="opacity:0.6; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.6">↑ JSON</button>
-      <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
-    </div>
-
-    <!-- Center: obra title as protagonist -->
-    <div style="text-align:center; flex:1; padding:0 1.5rem;">
-      <div style="font-family:'Cormorant SC', serif; font-size:0.45rem; font-weight:400;
-        letter-spacing:0.3em; text-transform:uppercase; color:#bbb; margin-bottom:2px;">
-        PRODUCCIÓN ACTIVA
-      </div>
-      <h1 id="app-obra-title" style="font-family:'Cormorant SC', serif; font-size:1.5rem;
-        font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--black);
-        white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.1;">
+  <header id="app-header" style="display:none; padding:0.45rem 1.5rem;">
+    <!-- Header compacto: sin navegación de proyectos fija -->
+    <div style="display:flex; align-items:center; gap:0.9rem; min-width:0;">
+      <div style="font-family:'Cormorant SC', serif; font-size:1.25rem; font-weight:500;
+        letter-spacing:0.22em; text-transform:uppercase; color:var(--black); white-space:nowrap;">
         TRAMA
-      </h1>
+      </div>
+      <div id="app-obra-title" style="font-size:0.58rem; font-weight:700; letter-spacing:0.14em;
+        text-transform:uppercase; color:#999; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        max-width:280px;">
+        Vestuario Escénico
+      </div>
     </div>
 
-    <!-- Right: primary actions -->
     <div style="display:flex; gap:6px; align-items:center;">
+      <button class="btn btn-outline btn-small" onclick="exportData()" title="Exportar JSON" style="opacity:0.65; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.65">↓ JSON</button>
+      <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()" title="Importar JSON" style="opacity:0.65; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.65">↑ JSON</button>
+      <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
       <button class="btn btn-gold btn-small" onclick="exportFullPDF()" title="Exportar dossier PDF">PDF ↓</button>
       <button class="btn btn-small" onclick="saveAll()">GUARDAR</button>
     </div>
@@ -773,371 +1007,391 @@
         <div class="deco-card">
           <div class="card-title">CONFIGURACIÓN DEL PROMPT</div>
 
-          <!-- Row 1: personaje -->
-          <div class="input-group" style="margin-bottom: 1rem;">
+          <!-- PERSONAJE — always visible -->
+          <div class="input-group" style="margin-bottom: 0.9rem;">
             <label>PERSONAJE</label>
-            <select id="ia-per-select" onchange="updateZoomCards()"></select>
+            <select id="ia-per-select" onchange="updateZoomCards(); updateAccSummaries();"></select>
           </div>
 
-          <!-- Tipo de vista: vistas de cuerpo -->
-          <div class="input-group">
-            <label>TIPO DE VISTA</label>
-            <div class="option-cards" id="ia-vista-cards">
-              <div class="option-card selected" data-group="vista"
-                data-value="Full body front view costume illustration, character facing forward, maximum detail on every garment layer, fabric texture, construction and silhouette clearly visible, single figure centered on white background"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v18M8 7l4-2 4 2M9 21l3-7 3 7"/></svg></span>
-                <span class="oc-label">Frente</span>
-                <span class="oc-desc">Cuerpo completo, máximo detalle</span>
+          <!-- ── ACORDEÓN 1: VISTA ─────────────────────────────────────── -->
+          <div class="acc-section open" id="acc-vista">
+            <div class="acc-header" onclick="toggleAcc('acc-vista')">
+              <div class="acc-header-left">
+                <div class="acc-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <span class="acc-title">Vista</span>
+                <span class="acc-badge" id="badge-vista">Frente</span>
               </div>
-              <div class="option-card" data-group="vista"
-                data-value="Full body front view costume illustration with technical callout annotations: handwritten labels pointing to specific fabrics, textures and materials used in each part of the costume, fashion design technical sheet style, detailed linework, annotations integrated into the composition"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/><path d="M9 12h6M9 16h4"/></svg></span>
-                <span class="oc-label">Con detalles</span>
-                <span class="oc-desc">Figura + etiquetas de materiales</span>
-              </div>
-              <div class="option-card" data-group="vista"
-                data-value="Two-figure costume design composition on a single white background: left figure showing full front view, right figure showing full back view of the same costume, both figures at the same scale, clear and complete design reference showing all construction details from both sides"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4"/></svg></span>
-                <span class="oc-label">Frente y espalda</span>
-                <span class="oc-desc">Vista doble, diseño completo</span>
+              <svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+
+                <!-- Tipo de vista -->
+                <div>
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">ENCUADRE</label>
+                  <div class="option-cards" id="ia-vista-cards">
+                    <div class="option-card selected" data-group="vista"
+                      data-value="Full body front view costume illustration, character facing forward, maximum detail on every garment layer, fabric texture, construction and silhouette clearly visible, single figure centered on white background"
+                      data-label="Frente"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v18M8 7l4-2 4 2M9 21l3-7 3 7"/></svg></span>
+                      <span class="oc-label">Frente</span>
+                      <span class="oc-desc">Cuerpo completo, máximo detalle</span>
+                    </div>
+                    <div class="option-card" data-group="vista"
+                      data-value="Full body front view costume illustration with technical callout annotations: handwritten labels pointing to specific fabrics, textures and materials used in each part of the costume, fashion design technical sheet style, detailed linework, annotations integrated into the composition"
+                      data-label="Con detalles"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/><path d="M9 12h6M9 16h4"/></svg></span>
+                      <span class="oc-label">Con detalles</span>
+                      <span class="oc-desc">Figura + etiquetas de materiales</span>
+                    </div>
+                    <div class="option-card" data-group="vista"
+                      data-value="Costume design presentation board on a single clean background: one large full body front view costume illustration centered as the main figure, accompanied by smaller side illustrations showing the character's key accessories, footwear, and headwear as separate mini-reference images. Arrange the secondary images neatly along one side of the page. Each side image must show the complete object clearly and readably. This is a visual design board, not a text-heavy technical callout sheet."
+                      data-label="Lámina"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><rect x="3" y="4" width="10" height="16" rx="1.5"/><path d="M16 6h5M16 10h5M16 14h5M16 18h5"/></svg></span>
+                      <span class="oc-label">Lámina</span>
+                      <span class="oc-desc">Figura + accesorios al costado</span>
+                    </div>
+                    <div class="option-card" data-group="vista"
+                      data-value="Two-figure costume design composition on a single white background: left figure showing full front view, right figure showing full back view of the same costume, both figures at the same scale, clear and complete design reference showing all construction details from both sides"
+                      data-label="Frente y espalda"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4"/></svg></span>
+                      <span class="oc-label">Frente y espalda</span>
+                      <span class="oc-desc">Vista doble, diseño completo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Zoom fijo -->
+                <div id="ia-zoom-fixed" style="display:none;">
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">ZOOM DE DETALLE</label>
+                  <div class="option-cards" id="ia-zoom-fixed-cards">
+                    <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="peinado" data-zoom-item="__peinado__"
+                      data-value="__peinado__" data-label="Peinado"
+                      onclick="selectCard(this); clearVistaCards(); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3c-1.5 0-3 .5-4 2-1 1.5-1 3.5 0 5 .5 1 1.5 2 2 3 .5 1 .5 2 0 3M12 3c1.5 0 3 .5 4 2 1 1.5 1 3.5 0 5-.5 1-1.5 2-2 3-.5 1-.5 2 0 3M9 21h6"/></svg></span>
+                      <span class="oc-label" style="font-size:0.52rem;">Peinado</span>
+                      <span class="oc-desc">Estilo y color</span>
+                    </div>
+                    <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="maquillaje" data-zoom-item="__maquillaje__"
+                      data-value="__maquillaje__" data-label="Maquillaje"
+                      onclick="selectCard(this); clearVistaCards(); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><circle cx="12" cy="8" r="5"/><path d="M9 13.5c0 2 1.3 4 3 5.5M15 13.5c0 2-1.3 4-3 5.5"/><path d="M10 8c.5-1 1-1.5 2-1.5s1.5.5 2 1.5"/></svg></span>
+                      <span class="oc-label" style="font-size:0.52rem;">Maquillaje</span>
+                      <span class="oc-desc">Diseño facial</span>
+                    </div>
+                    <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="calzado" data-zoom-item="__calzado__"
+                      data-value="__calzado__" data-label="Calzado"
+                      onclick="selectCard(this); clearVistaCards(); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 18h18M3 18c0-3 2-5 5-6l2-1 3-1c2-.5 4-1 5-2M3 18v-2l2-1"/><path d="M18 9c0 1-.5 2-1 3"/></svg></span>
+                      <span class="oc-label" style="font-size:0.52rem;">Calzado</span>
+                      <span class="oc-desc">Tipo y detalle</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Zoom dinámico por personaje -->
+                <div id="ia-zoom-group" style="display:none;">
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">ZOOM DE ACCESORIO</label>
+                  <div class="option-cards" id="ia-zoom-cards"></div>
+                </div>
+
               </div>
             </div>
           </div>
 
-          <!-- Zoom fijo: peinado, maquillaje, calzado — siempre visible si hay personaje -->
-          <div class="input-group" id="ia-zoom-fixed" style="display:none;">
-            <label>ZOOM DE DETALLE</label>
-            <div class="option-cards" id="ia-zoom-fixed-cards">
-
-              <!-- PEINADO -->
-              <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="peinado" data-zoom-item="__peinado__"
-                data-value="__peinado__"
-                onclick="selectCard(this); clearVistaCards();">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3c-1.5 0-3 .5-4 2-1 1.5-1 3.5 0 5 .5 1 1.5 2 2 3 .5 1 .5 2 0 3M12 3c1.5 0 3 .5 4 2 1 1.5 1 3.5 0 5-.5 1-1.5 2-2 3-.5 1-.5 2 0 3M9 21h6"/></svg></span>
-                <span class="oc-label" style="font-size:0.52rem;">Peinado</span>
-                <span class="oc-desc">Estilo y color</span>
+          <!-- ── ACORDEÓN 2: FIGURA ─────────────────────────────────────── -->
+          <div class="acc-section open" id="acc-figura">
+            <div class="acc-header" onclick="toggleAcc('acc-figura')">
+              <div class="acc-header-left">
+                <div class="acc-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 8v2a6 6 0 0 0 12 0V8"/><line x1="12" y1="22" x2="12" y2="14"/></svg>
+                </div>
+                <span class="acc-title">Figura</span>
+                <span class="acc-badge" id="badge-figura">Neutral · Sereno</span>
               </div>
-
-              <!-- MAQUILLAJE -->
-              <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="maquillaje" data-zoom-item="__maquillaje__"
-                data-value="__maquillaje__"
-                onclick="selectCard(this); clearVistaCards();">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><circle cx="12" cy="8" r="5"/><path d="M9 13.5c0 2 1.3 4 3 5.5M15 13.5c0 2-1.3 4-3 5.5"/><path d="M10 8c.5-1 1-1.5 2-1.5s1.5.5 2 1.5"/></svg></span>
-                <span class="oc-label" style="font-size:0.52rem;">Maquillaje</span>
-                <span class="oc-desc">Diseño facial</span>
-              </div>
-
-              <!-- CALZADO -->
-              <div class="option-card" data-group="vista" data-is-zoom="true" data-zoom-type="calzado" data-zoom-item="__calzado__"
-                data-value="__calzado__"
-                onclick="selectCard(this); clearVistaCards();">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 18h18M3 18c0-3 2-5 5-6l2-1 3-1c2-.5 4-1 5-2M3 18v-2l2-1"/><path d="M18 9c0 1-.5 2-1 3"/></svg></span>
-                <span class="oc-label" style="font-size:0.52rem;">Calzado</span>
-                <span class="oc-desc">Tipo y detalle</span>
-              </div>
-
+              <svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
-          </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
 
-          <!-- Zoom dinámico: joyería, tocados y accesorios escénicos del personaje -->
-          <div class="input-group" id="ia-zoom-group" style="display:none;">
-            <label>ZOOM DE ACCESORIO</label>
-            <div class="option-cards" id="ia-zoom-cards"></div>
-          </div>
+                <!-- POSE -->
+                <div>
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">POSE</label>
+                  <div class="option-cards" id="ia-pose-cards">
+                    <div class="option-card selected" data-group="pose" data-label="Neutral"
+                      data-value="standing neutral pose, weight evenly distributed, relaxed arms alongside body, slight three-quarter turn"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><circle cx="12" cy="4" r="2"/><line x1="12" y1="6" x2="12" y2="16"/><path d="M8 9l4 2 4-2M10 20l2-4 2 4"/></svg></span>
+                      <span class="oc-label">Neutral</span>
+                      <span class="oc-desc">De pie, relajado</span>
+                    </div>
+                    <div class="option-card" data-group="pose" data-label="Dinámico"
+                      data-value="dynamic theatrical pose, slight contraposto, one arm extended, weight shifted to one hip, expressive stage presence"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+                      <span class="oc-label">Dinámico</span>
+                      <span class="oc-desc">Contraposto teatral</span>
+                    </div>
+                    <div class="option-card" data-group="pose" data-label="Agachado"
+                      data-value="crouching pose, knees bent, body contracted, tense and coiled energy"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M4 19h16M8 19v-4l-2-4M16 19v-4l2-4M12 5v6"/><circle cx="12" cy="4" r="1.5"/></svg></span>
+                      <span class="oc-label">Agachado</span>
+                      <span class="oc-desc">Contraído / tenso</span>
+                    </div>
+                    <div class="option-card" data-group="pose" data-label="Caminando"
+                      data-value="walking stride, mid-step, one foot forward, natural movement"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-2 3l-1 4 2 3-2 5m5-12 1 4-2 3 2 5"/></svg></span>
+                      <span class="oc-label">Caminando</span>
+                      <span class="oc-desc">Paso natural</span>
+                    </div>
+                  </div>
+                </div>
 
-          <!-- POSE -->
-          <div class="input-group">
-            <label>POSE DEL FIGURÍN</label>
-            <div class="option-cards" id="ia-pose-cards">
-              <div class="option-card selected" data-group="pose"
-                data-value="standing upright, weight evenly distributed, neutral pose"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v18M8 7l4-2 4 2M9 21l3-7 3 7"/></svg></span>
-                <span class="oc-label">Neutral</span>
-                <span class="oc-desc">De pie, centrado</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="contrapposto pose, weight on one hip, slight torso twist, one arm relaxed"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-1 5l-2 3m3-3 1.5 3M12 8v5m-3 4 1.5-3.5M14 17l-1.5-3.5"/></svg></span>
-                <span class="oc-label">Contrapposto</span>
-                <span class="oc-desc">Cadera desplazada</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="arms raised above head, open expansive gesture, triumphant"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3v5M8 4l2 4M16 4l-2 4M5 10l4 3M19 10l-4 3M12 13v8"/></svg></span>
-                <span class="oc-label">Brazos arriba</span>
-                <span class="oc-desc">Gesto abierto</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="arms extended outward to the sides, wide open stance"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M4 12h16M12 4v16"/></svg></span>
-                <span class="oc-label">Brazos abiertos</span>
-                <span class="oc-desc">Cruz / apertura</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="mid-leap, body airborne, legs extended, dynamic jumping pose"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2v8M8 6l4-3 4 3M7 14l5-4 5 4M9 21l3-7 3 7"/></svg></span>
-                <span class="oc-label">Salto</span>
-                <span class="oc-desc">En el aire</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="ballet first arabesque pose, one leg extended behind, arms graceful"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v7M8 7l4 3M16 5l-4 5M12 10l-3 7M12 10l2 5"/></svg></span>
-                <span class="oc-label">Arabesque</span>
-                <span class="oc-desc">Ballet · pierna extendida</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="ballet attitude pose, one knee bent and raised, arms in port de bras"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v7M8 7l4 3M16 5l-4 5M12 10l-3 7M12 10l2 5"/></svg></span>
-                <span class="oc-label">Attitude</span>
-                <span class="oc-desc">Ballet · rodilla alzada</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="crouching low, body contracted, tense and coiled"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 0v4M9 8h6M8 12l4-1 4 1M9 17l3-4 3 4"/></svg></span>
-                <span class="oc-label">Agachado</span>
-                <span class="oc-desc">Contraído / tenso</span>
-              </div>
-              <div class="option-card" data-group="pose"
-                data-value="walking stride, mid-step, one foot forward, natural movement"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-2 3l-1 4 2 3-2 5m5-12 1 4-2 3 2 5"/></svg></span>
-                <span class="oc-label">Caminando</span>
-                <span class="oc-desc">Paso natural</span>
-              </div>
-            </div>
-          </div>
+                <!-- ÁNIMO -->
+                <div>
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">ÁNIMO Y EXPRESIÓN</label>
+                  <div class="option-cards" id="ia-animo-cards">
+                    <div class="option-card selected" data-group="animo" data-label="Sereno"
+                      data-value="serene and composed expression, inner calm, subtle presence"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></span>
+                      <span class="oc-label">Sereno</span>
+                      <span class="oc-desc">Calma interior</span>
+                    </div>
+                    <div class="option-card" data-group="animo" data-label="Intenso"
+                      data-value="intense and dramatic expression, fierce gaze, powerful emotional presence"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2c0 4 3 6 3 10s-3 3-3 6zm3-6c0-4-3-6-3-10 4 0 7 4 7 8a4 4 0 0 1-4 4v-2z"/></svg></span>
+                      <span class="oc-label">Intenso</span>
+                      <span class="oc-desc">Mirada feroz</span>
+                    </div>
+                    <div class="option-card" data-group="animo" data-label="Melancólico"
+                      data-value="melancholic and introspective expression, downward gaze, quiet sorrow"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 19v2M8 13v2M12 21v2M12 15v2M16 19v2M16 13v2"/></svg></span>
+                      <span class="oc-label">Melancólico</span>
+                      <span class="oc-desc">Ensimismado</span>
+                    </div>
+                    <div class="option-card" data-group="animo" data-label="Alegre"
+                      data-value="joyful and radiant expression, open smile, light energy"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+                      <span class="oc-label">Alegre</span>
+                      <span class="oc-desc">Energía abierta</span>
+                    </div>
+                    <div class="option-card" data-group="animo" data-label="Misterioso"
+                      data-value="mysterious and enigmatic expression, slight knowing smile, concealed intent"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+                      <span class="oc-label">Misterioso</span>
+                      <span class="oc-desc">Enigmático</span>
+                    </div>
+                    <div class="option-card" data-group="animo" data-label="Desafiante"
+                      data-value="defiant and confrontational expression, raised chin, strong direct gaze"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+                      <span class="oc-label">Desafiante</span>
+                      <span class="oc-desc">Mirada directa</span>
+                    </div>
+                    <div class="option-card" data-group="animo" data-label="Vulnerable"
+                      data-value="fearful and vulnerable expression, tense body, wide eyes, fragile"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+                      <span class="oc-label">Vulnerable</span>
+                      <span class="oc-desc">Tenso / frágil</span>
+                    </div>
+                    <div class="option-card" data-group="animo" data-label="Extático"
+                      data-value="ecstatic and transcendent expression, eyes closed or upward, transported"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></span>
+                      <span class="oc-label">Extático</span>
+                      <span class="oc-desc">Arrobado / elevado</span>
+                    </div>
+                  </div>
+                </div>
 
-          <!-- ÁNIMO -->
-          <div class="input-group">
-            <label>ÁNIMO Y EXPRESIÓN</label>
-            <div class="option-cards" id="ia-animo-cards">
-              <div class="option-card selected" data-group="animo"
-                data-value="serene and composed expression, inner calm, subtle presence"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></span>
-                <span class="oc-label">Sereno</span>
-                <span class="oc-desc">Calma interior</span>
-              </div>
-              <div class="option-card" data-group="animo"
-                data-value="intense and dramatic expression, fierce gaze, powerful emotional presence"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2c0 4 3 6 3 10s-3 3-3 6zm3-6c0-4-3-6-3-10 4 0 7 4 7 8a4 4 0 0 1-4 4v-2z"/></svg></span>
-                <span class="oc-label">Intenso</span>
-                <span class="oc-desc">Mirada feroz</span>
-              </div>
-              <div class="option-card" data-group="animo"
-                data-value="melancholic and introspective expression, downward gaze, quiet sorrow"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><path d="M8 19v2M8 13v2M12 21v2M12 15v2M16 19v2M16 13v2"/></svg></span>
-                <span class="oc-label">Melancólico</span>
-                <span class="oc-desc">Ensimismado</span>
-              </div>
-              <div class="option-card" data-group="animo"
-                data-value="joyful and radiant expression, open smile, light energy"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
-                <span class="oc-label">Alegre</span>
-                <span class="oc-desc">Energía abierta</span>
-              </div>
-              <div class="option-card" data-group="animo"
-                data-value="mysterious and enigmatic expression, slight knowing smile, concealed intent"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
-                <span class="oc-label">Misterioso</span>
-                <span class="oc-desc">Enigmático</span>
-              </div>
-              <div class="option-card" data-group="animo"
-                data-value="defiant and confrontational expression, raised chin, strong direct gaze"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
-                <span class="oc-label">Desafiante</span>
-                <span class="oc-desc">Mirada directa</span>
-              </div>
-              <div class="option-card" data-group="animo"
-                data-value="fearful and vulnerable expression, tense body, wide eyes, fragile"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
-                <span class="oc-label">Vulnerable</span>
-                <span class="oc-desc">Tenso / frágil</span>
-              </div>
-              <div class="option-card" data-group="animo"
-                data-value="ecstatic and transcendent expression, eyes closed or upward, transported"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg></span>
-                <span class="oc-label">Extático</span>
-                <span class="oc-desc">Arrobado / elevado</span>
               </div>
             </div>
           </div>
 
-          <!-- TÉCNICA VISUAL (fusión estilo + técnica) -->
-          <div class="input-group">
-            <label>TÉCNICA VISUAL</label>
-            <div class="option-cards" style="flex-wrap: wrap;" id="ia-tecnica-cards">
-              <div class="option-card selected" data-group="tecnica"
-                data-value="illustrated in professional watercolor technique: transparent fluid washes layered wet-on-wet, soft blooms of pigment, fine india ink linework defining edges, zenith lighting casting subtle warm shadows, clean white paper ground showing through highlights"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
-                <span class="oc-label">Acuarela clásica</span>
-                <span class="oc-desc">Aguadas fluidas · luz cenital</span>
+          <!-- ── ACORDEÓN 3: TÉCNICA ─────────────────────────────────────── -->
+          <div class="acc-section open" id="acc-tecnica">
+            <div class="acc-header" onclick="toggleAcc('acc-tecnica')">
+              <div class="acc-header-left">
+                <div class="acc-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                </div>
+                <span class="acc-title">Técnica y ambiente</span>
+                <span class="acc-badge" id="badge-tecnica">Acuarela · Cenital · Blanco</span>
               </div>
-              <div class="option-card" data-group="tecnica"
-                data-value="illustrated in expressive watercolor technique: heavily saturated pigment, deep pools of dark color, bold wet ink bleeds into wet wash, dramatic chiaroscuro with strong shadow masses, high contrast between light and dark areas, visible paper texture"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2v14c-2.5 0-2.5 2-5 2-2.5 0-2.5-2-5-2C7 19 7 21 4.5 21c-1.3 0-1.9-.5-2.5-1"/></svg></span>
-                <span class="oc-label">Acuarela dramática</span>
-                <span class="oc-desc">Pigmento intenso · claroscuro</span>
-              </div>
-              <div class="option-card" data-group="tecnica"
-                data-value="illustrated in pen and ink technique: precise quill linework, dense cross-hatching and parallel hatching for shadow and volume, no color, sepia or black ink on cream textured paper, fine stippling for mid-tones, sharp expressive contour lines"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5zM16 8L2 22M17.5 15H9"/></svg></span>
-                <span class="oc-label">Tinta y línea</span>
-                <span class="oc-desc">Plumilla · tramado · sin color</span>
-              </div>
-              <div class="option-card" data-group="tecnica"
-                data-value="illustrated in dry pastel technique on textured paper: chalky soft pigment blended with finger, visible grain of the paper, warm lateral light raking across the figure, rich velvety shadows, muted color palette with dusty mid-tones, no sharp outlines"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 12h18M3 8h18M3 16h18"/></svg></span>
-                <span class="oc-label">Pastel teatral</span>
-                <span class="oc-desc">Pastel seco · luz lateral</span>
-              </div>
-              <div class="option-card" data-group="tecnica"
-                data-value="illustrated in gouache technique: fully opaque matte paint strokes, flat color areas with deliberate brushwork visible, rich saturated palette, strong graphic silhouette, no transparency, areas of solid color next to precise painted detail"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span>
-                <span class="oc-label">Gouache opaco</span>
-                <span class="oc-desc">Pinceladas cubiertas · gráfico</span>
-              </div>
-              <div class="option-card" data-group="tecnica"
-                data-value="illustrated in graphite and grey wash technique: expressive pencil linework with varying pressure, broad grey ink wash applied over pencil for volume and shadow, nebulous atmospheric quality, soft smudged transitions, restrained palette of blacks greys and white"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
-                <span class="oc-label">Grafito y mancha</span>
-                <span class="oc-desc">Lápiz · lavado gris · atmósfera</span>
-              </div>
+              <svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
-          </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
 
-          <!-- ILUMINACIÓN -->
-          <div class="input-group">
-            <label>ILUMINACIÓN</label>
-            <div class="option-cards" id="ia-luz-cards">
-              <div class="option-card selected" data-group="luz"
-                data-value="soft zenith lighting, light falling from above, gentle shadows below the chin and arms"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
-                <span class="oc-label">Cenital</span>
-                <span class="oc-desc">Luz desde arriba</span>
-              </div>
-              <div class="option-card" data-group="luz"
-                data-value="dramatic lateral lighting, strong raking sidelight casting long shadows across the costume, high contrast between lit and shadow sides"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 2v20"/></svg></span>
-                <span class="oc-label">Lateral</span>
-                <span class="oc-desc">Contraste de claroscuro</span>
-              </div>
-              <div class="option-card" data-group="luz"
-                data-value="warm theatrical stage lighting from below and front, footlight quality, dramatic upward shadows on the face, warm amber tones"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M8 9h.01M16 9h.01"/></svg></span>
-                <span class="oc-label">Escénica</span>
-                <span class="oc-desc">Luz de escena cálida</span>
-              </div>
-              <div class="option-card" data-group="luz"
-                data-value="backlight / contre-jour, strong light source behind the figure creating a luminous halo around the silhouette, figure slightly in shadow"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></span>
-                <span class="oc-label">Contraluz</span>
-                <span class="oc-desc">Halo y silueta</span>
-              </div>
-              <div class="option-card" data-group="luz"
-                data-value="flat even studio lighting, no strong shadows, all costume details equally visible, neutral white light"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/></svg></span>
-                <span class="oc-label">Plana</span>
-                <span class="oc-desc">Sin sombras, detalle técnico</span>
-              </div>
-            </div>
-          </div>
+                <!-- TÉCNICA VISUAL -->
+                <div>
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">TÉCNICA VISUAL</label>
+                  <div class="compat-note" id="preset-compat-note" style="display:none;">Opciones filtradas por preset para mantener coherencia visual.</div>
+                  <div class="option-cards" style="flex-wrap: wrap;" id="ia-tecnica-cards">
+                    <div class="option-card selected" data-group="tecnica" data-label="Acuarela clásica"
+                      data-value="illustrated in professional watercolor technique: transparent fluid washes layered wet-on-wet, soft blooms of pigment, fine india ink linework defining edges, zenith lighting casting subtle warm shadows, clean white paper ground showing through highlights"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
+                      <span class="oc-label">Acuarela clásica</span>
+                      <span class="oc-desc">Aguadas fluidas · luz cenital</span>
+                    </div>
+                    <div class="option-card" data-group="tecnica" data-label="Acuarela dramática"
+                      data-value="illustrated in expressive watercolor technique: heavily saturated pigment, deep pools of dark color, bold wet ink bleeds into wet wash, dramatic chiaroscuro with strong shadow masses, high contrast between light and dark areas, visible paper texture"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2v14c-2.5 0-2.5 2-5 2-2.5 0-2.5-2-5-2C7 19 7 21 4.5 21c-1.3 0-1.9-.5-2.5-1"/></svg></span>
+                      <span class="oc-label">Acuarela dramática</span>
+                      <span class="oc-desc">Pigmento intenso · claroscuro</span>
+                    </div>
+                    <div class="option-card" data-group="tecnica" data-label="Tinta y línea"
+                      data-value="illustrated in pen and ink technique: precise quill linework, dense cross-hatching and parallel hatching for shadow and volume, no color, sepia or black ink on cream textured paper, fine stippling for mid-tones, sharp expressive contour lines"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5zM16 8L2 22M17.5 15H9"/></svg></span>
+                      <span class="oc-label">Tinta y línea</span>
+                      <span class="oc-desc">Plumilla · tramado · sin color</span>
+                    </div>
+                    <div class="option-card" data-group="tecnica" data-label="Pastel teatral"
+                      data-value="illustrated in dry pastel technique on textured paper: chalky soft pigment blended with finger, visible grain of the paper, warm lateral light raking across the figure, rich velvety shadows, muted color palette with dusty mid-tones, no sharp outlines"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 12h18M3 8h18M3 16h18"/></svg></span>
+                      <span class="oc-label">Pastel teatral</span>
+                      <span class="oc-desc">Pastel seco · luz lateral</span>
+                    </div>
+                    <div class="option-card" data-group="tecnica" data-label="Gouache opaco"
+                      data-value="illustrated in gouache technique: fully opaque matte paint strokes, flat color areas with deliberate brushwork visible, rich saturated palette, strong graphic silhouette, no transparency, areas of solid color next to precise painted detail"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span>
+                      <span class="oc-label">Gouache opaco</span>
+                      <span class="oc-desc">Pinceladas cubiertas · gráfico</span>
+                    </div>
+                    <div class="option-card" data-group="tecnica" data-label="Grafito y mancha"
+                      data-value="illustrated in graphite and grey wash technique: expressive pencil linework with varying pressure, broad grey ink wash applied over pencil for volume and shadow, nebulous atmospheric quality, soft smudged transitions, restrained palette of blacks greys and white"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+                      <span class="oc-label">Grafito y mancha</span>
+                      <span class="oc-desc">Lápiz · lavado gris · atmósfera</span>
+                    </div>
+                  </div>
+                </div>
 
-          <!-- FONDO -->
-          <div class="input-group">
-            <label>FONDO</label>
-            <div class="option-cards" id="ia-fondo-cards">
-              <div class="option-card selected" data-group="fondo"
-                data-value="pure white background, clean and minimal"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/></svg></span>
-                <span class="oc-label">Blanco</span>
-                <span class="oc-desc">Limpio y técnico</span>
-              </div>
-              <div class="option-card" data-group="fondo"
-                data-value="deep black background, figure emerging from darkness"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:block;margin:0 auto 4px;"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span>
-                <span class="oc-label">Negro</span>
-                <span class="oc-desc">Figura desde la oscuridad</span>
-              </div>
-              <div class="option-card" data-group="fondo"
-                data-value="aged cream parchment paper texture background, warm ivory tone"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></span>
-                <span class="oc-label">Papel</span>
-                <span class="oc-desc">Pergamino cálido</span>
-              </div>
-              <div class="option-card" data-group="fondo"
-                data-value="subtle soft watercolor wash background in a muted tone complementary to the costume, loose and atmospheric, not distracting"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12c0 1.82.487 3.53 1.338 5"/><path d="M12 6v6l4 2"/></svg></span>
-                <span class="oc-label">Mancha</span>
-                <span class="oc-desc">Aguada difusa de color</span>
-              </div>
-              <div class="option-card" data-group="fondo"
-                data-value="soft drop shadow cast by the figure on a white ground, grounding the figure in space"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/><path d="M3 21l18-6"/></svg></span>
-                <span class="oc-label">Sombra</span>
-                <span class="oc-desc">Figura con sombra proyectada</span>
-              </div>
-            </div>
-          </div>
+                <!-- ILUMINACIÓN -->
+                <div>
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">ILUMINACIÓN</label>
+                  <div class="option-cards" id="ia-luz-cards">
+                    <div class="option-card selected" data-group="luz" data-label="Cenital"
+                      data-value="soft zenith lighting, light falling from above, gentle shadows below the chin and arms"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+                      <span class="oc-label">Cenital</span>
+                      <span class="oc-desc">Luz desde arriba</span>
+                    </div>
+                    <div class="option-card" data-group="luz" data-label="Lateral"
+                      data-value="dramatic lateral lighting, strong raking sidelight casting long shadows across the costume, high contrast between lit and shadow sides"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 2v20"/></svg></span>
+                      <span class="oc-label">Lateral</span>
+                      <span class="oc-desc">Contraste de claroscuro</span>
+                    </div>
+                    <div class="option-card" data-group="luz" data-label="Escénica"
+                      data-value="warm theatrical stage lighting from below and front, footlight quality, dramatic upward shadows on the face, warm amber tones"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M8 9h.01M16 9h.01"/></svg></span>
+                      <span class="oc-label">Escénica</span>
+                      <span class="oc-desc">Luz de escena cálida</span>
+                    </div>
+                    <div class="option-card" data-group="luz" data-label="Contraluz"
+                      data-value="backlight / contre-jour, strong light source behind the figure creating a luminous halo around the silhouette, figure slightly in shadow"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></span>
+                      <span class="oc-label">Contraluz</span>
+                      <span class="oc-desc">Halo y silueta</span>
+                    </div>
+                    <div class="option-card" data-group="luz" data-label="Plana"
+                      data-value="flat even studio lighting, no strong shadows, all costume details equally visible, neutral white light"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/></svg></span>
+                      <span class="oc-label">Plana</span>
+                      <span class="oc-desc">Sin sombras, detalle técnico</span>
+                    </div>
+                  </div>
+                </div>
 
-          <!-- NIVEL DE DETALLE -->
-          <div class="input-group">
-            <label>NIVEL DE DETALLE</label>
-            <div class="option-cards" id="ia-detalle-cards">
-              <div class="option-card selected" data-group="detalle"
-                data-value="fully finished illustration, maximum detail on textures, fabrics, accessories and facial features, polished and complete"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/><path d="M12 3L8 9l4 13 4-13-4-6"/></svg></span>
-                <span class="oc-label">Terminado</span>
-                <span class="oc-desc">Máximo detalle y acabado</span>
-              </div>
-              <div class="option-card" data-group="detalle"
-                data-value="semi-finished illustration, clear silhouette and main costume shapes defined, selective detail on key elements only, some areas suggested rather than rendered"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l10 10-10 10L2 12zM12 6l7 6-7 6-7-6z"/></svg></span>
-                <span class="oc-label">Semifinished</span>
-                <span class="oc-desc">Silueta clara, detalle selectivo</span>
-              </div>
-              <div class="option-card" data-group="detalle"
-                data-value="quick concept sketch, loose expressive linework, gestural and spontaneous, capturing the essence of the costume without precise rendering, raw and immediate"
-                onclick="selectCard(this)">
-                <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z M2 2l7.586 7.586"/></svg></span>
-                <span class="oc-label">Boceto rápido</span>
-                <span class="oc-desc">Gestual y espontáneo</span>
+                <!-- FONDO -->
+                <div>
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">FONDO</label>
+                  <div class="option-cards" id="ia-fondo-cards">
+                    <div class="option-card selected" data-group="fondo" data-label="Blanco"
+                      data-value="pure white background, clean and minimal"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M3 3h18v18H3z"/></svg></span>
+                      <span class="oc-label">Blanco</span>
+                      <span class="oc-desc">Limpio y técnico</span>
+                    </div>
+                    <div class="option-card" data-group="fondo" data-label="Negro"
+                      data-value="deep black background, figure emerging from darkness"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:block;margin:0 auto 4px;"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span>
+                      <span class="oc-label">Negro</span>
+                      <span class="oc-desc">Figura desde la oscuridad</span>
+                    </div>
+                    <div class="option-card" data-group="fondo" data-label="Gris neutro"
+                      data-value="neutral mid-grey background, soft gradient, studio quality"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18" opacity="0.3"/></svg></span>
+                      <span class="oc-label">Gris neutro</span>
+                      <span class="oc-desc">Fondo estudio suave</span>
+                    </div>
+                    <div class="option-card" data-group="fondo" data-label="Sombra"
+                      data-value="white background with a soft dropped shadow beneath the figure, grounding the character"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><ellipse cx="12" cy="19" rx="7" ry="2"/><path d="M12 3v14"/></svg></span>
+                      <span class="oc-label">Sombra</span>
+                      <span class="oc-desc">Figura con sombra proyectada</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- NIVEL DE DETALLE -->
+                <div>
+                  <label style="font-size:0.46rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:#888; display:block; margin-bottom:0.45rem;">NIVEL DE DETALLE</label>
+                  <div class="option-cards" id="ia-detalle-cards">
+                    <div class="option-card selected" data-group="detalle" data-label="Terminado"
+                      data-value="fully finished illustration, maximum detail on textures, fabrics, accessories and facial features, polished and complete"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/><path d="M12 3L8 9l4 13 4-13-4-6"/></svg></span>
+                      <span class="oc-label">Terminado</span>
+                      <span class="oc-desc">Máximo detalle y acabado</span>
+                    </div>
+                    <div class="option-card" data-group="detalle" data-label="Semifinished"
+                      data-value="semi-finished illustration, clear silhouette and main costume shapes defined, selective detail on key elements only, some areas suggested rather than rendered"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 2l10 10-10 10L2 12zM12 6l7 6-7 6-7-6z"/></svg></span>
+                      <span class="oc-label">Semifinished</span>
+                      <span class="oc-desc">Silueta clara, detalle selectivo</span>
+                    </div>
+                    <div class="option-card" data-group="detalle" data-label="Boceto rápido"
+                      data-value="quick concept sketch, loose expressive linework, gestural and spontaneous, capturing the essence of the costume without precise rendering, raw and immediate"
+                      onclick="selectCard(this); updateAccSummaries();">
+                      <span class="oc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 4px;"><path d="M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z M2 2l7.586 7.586"/></svg></span>
+                      <span class="oc-label">Boceto rápido</span>
+                      <span class="oc-desc">Gestual y espontáneo</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -1384,13 +1638,66 @@
       }
     };
 
+
+    // --- SUGERENCIAS EDITABLES DE MOTIVOS ---
+    const MOTIVOS_DICCIONARIO = [
+      { keys:['cleopatra','egipto','egipcio','egipcia','ptolemaico','faraonico','faraónica'], ideas:['geometría faraónica','alas de halcón estilizadas','escarabajos sagrados','rayos solares dorados','collar pectoral rígido','líneas jeroglíficas abstractas','lapislázuli y oro ceremonial'] },
+      { keys:['japon','japón','japonesa','japonés','madama butterfly','butterfly','cio-cio','cio cio','kimono'], ideas:['sakura / flores de cerezo','grullas bordadas','crisantemos','ondas seigaiha','ramas de cerezo','patrón de kimono ceremonial','abanicos estilizados','delicadeza de tinta japonesa'] },
+      { keys:['china','chino','china imperial'], ideas:['nubes auspiciosas','dragón imperial estilizado','ondas y escamas','brocado dorado','nudos ornamentales','peonías bordadas'] },
+      { keys:['griego','grecia','helenico','helénico','antigona','antígona','medea'], ideas:['meandro griego','pliegues escultóricos','borde de ánfora','laurel','drapeado ritual','línea de himation'] },
+      { keys:['barroco','rococo','rococó','versalles'], ideas:['volutas doradas','bordado recargado','encaje ornamental','motivos florales densos','perlas aplicadas','brocado palaciego'] },
+      { keys:['gótico','gotico','oscuro','vampiro','nocturno'], ideas:['tracería gótica','encaje negro','cruces estilizadas','brocado oscuro','espinas ornamentales','terciopelo devoré'] },
+      { keys:['mar','sirena','agua','ofelia','náutico'], ideas:['escamas sutiles','algas bordadas','perlas irregulares','olas estilizadas','transparencias acuáticas','brillos húmedos'] },
+      { keys:['bosque','hada','fauno','naturaleza','verano','primavera'], ideas:['nervaduras de hojas','flores bordadas','alas translúcidas','polen dorado','ramas finas','texturas orgánicas'] },
+      { keys:['futurista','cyber','distopico','distópico'], ideas:['líneas geométricas luminosas','placas modulares','patrones digitales','material reflectante','circuitos abstractos','estructura asimétrica'] },
+      { keys:['flamenco','carmen','español','española'], ideas:['claveles rojos','volantes dramáticos','encaje negro','lunares teatrales','bordado de mantón','flecos en movimiento'] }
+    ];
+
+    function escHTML(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function escJS(str) {
+      return String(str || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ');
+    }
+
+    function getMotifSuggestions(p) {
+      const texto = [p.nombre, p.conceptoVisual, state.concept?.epoca, state.concept?.ideas]
+        .filter(Boolean).join(' ').toLowerCase();
+      const out = [];
+      MOTIVOS_DICCIONARIO.forEach(grupo => {
+        if(grupo.keys.some(k => texto.includes(k))) out.push(...grupo.ideas);
+      });
+      return [...new Set(out)].slice(0, 14);
+    }
+
+    function renderSuggestionChips(pi, stateKey, fi) {
+      const p = state.personajes[pi];
+      const ideas = getMotifSuggestions(p);
+      if(!ideas.length) {
+        return `<div class="suggestion-empty">Escribe referencias en “Concepto visual del personaje” — por ejemplo Cleopatra, Japón, barroco, bosque, gótico — y aparecerán ideas editables aquí.</div>`;
+      }
+      return `<div class="suggestions-box">${ideas.map(txt => `<button type="button" class="suggestion-chip" onclick="addMotifToFicha(${pi},'${stateKey}',${fi},'${escJS(txt)}')">+ ${escHTML(txt)}</button>`).join('')}</div>`;
+    }
+
+    function addMotifToFicha(pi, stateKey, fi, txt) {
+      const f = state.personajes[pi][stateKey][fi];
+      if(!f.atributos) f.atributos = {};
+      const actual = (f.atributos.motivos || '').trim();
+      const partes = actual ? actual.split(',').map(x => x.trim()).filter(Boolean) : [];
+      if(!partes.map(x => x.toLowerCase()).includes(txt.toLowerCase())) partes.push(txt);
+      f.atributos.motivos = partes.join(', ');
+      renderPersonajes();
+    }
+
     // --- PERSONAJES ---
     function addPersonaje() {
       const p = {
         id: crypto.randomUUID(),
         nombre: 'NUEVO PERSONAJE',
-        datos: { edad: '', sexo: '', pielTono: '', cabello: '', peinado: '', contextura: '' },
+        datos: { edadEscenica: '', sexo: '', arquetipo: '', pielTono: '', cabello: '', peinado: '', contextura: '', lecturaSilueta: '' },
         paleta: ['#1a1a1a', '#e8dcc8', '#8b7355'],
+        conceptoVisual: '',
         fichasPrenda: [],
         fichasCalzado: [],
         fichasAccesorio: [],
@@ -1406,7 +1713,7 @@
       const key = tipo === 'prenda' ? 'fichasPrenda' : tipo === 'calzado' ? 'fichasCalzado' : 'fichasAccesorio';
       if(!state.personajes[pi][key]) state.personajes[pi][key] = [];
       const defaultTipo = tipo === 'calzado' ? 'calzado' : tipo === 'accesorio' ? '' : '';
-      state.personajes[pi][key].push({ tipo: defaultTipo, atributos: {}, color: '#cccccc', material: '' });
+      state.personajes[pi][key].push({ tipo: defaultTipo, atributos: { motivos: '' }, color: '#cccccc', material: '' });
       renderPersonajes();
     }
 
@@ -1503,9 +1810,11 @@
     // SISTEMA DE MATERIAL INLINE (pestañas por ficha)
     // ═══════════════════════════════════════════════════════
     const CAPAS_DIMS = {
-      base:         { label: 'Material base',  opts: ['lycra / stretch','silk / satin','tulle','organza','velvet','cotton / linen','wool','synthetic / plastic','metallic / foil'] },
-      estructura:   { label: 'Estructura',     opts: ['structured','semi-structured','fluid','layered','draped','rigid','modular'] },
-      superficie:   { label: 'Superficie',     opts: ['matte','satin','glossy','iridescent','textured','sheer','opaque'] },
+      base:         { label: 'Material base',  opts: ['lycra / stretch','silk / satin','tulle','organza','velvet','cotton / linen','wool','leather','synthetic / plastic','metallic / foil'] },
+      estructura:   { label: 'Construcción / forma', opts: ['structured','semi-structured','fluid','layered','draped','rigid','modular','architectural volume','bias-cut fall'] },
+      superficie:   { label: 'Superficie / acabado', opts: ['matte','satin','glossy','iridescent','textured','sheer','opaque','translucent','light-absorbing','light-reflective'] },
+      comportamiento:{ label: 'Comportamiento escénico', opts: ['heavy fall','floating movement','sculptural volume','expands with movement','clings to the body','holds sharp folds','soft collapsing folds','visible transparency in motion'] },
+      lectura:      { label: 'Lectura desde platea', opts: ['dominant visual mass','clean readable silhouette','ritual presence','ethereal presence','ornamental focal point','strong graphic outline','subtle secondary layer'] },
       intervencion: { label: 'Intervención',   opts: ['clean','embroidered','beaded','appliqué','distressed','painted','pleated','ruched'] },
       estado:       { label: 'Estado',         opts: ['pristine','worn','aged','fragile','reinforced','decaying'] },
       densidad:     { label: 'Densidad',       opts: ['minimal density','moderate density','rich density'] }
@@ -1555,7 +1864,7 @@
       const f = state.personajes[pi][stateKey][fi];
       if(!f.capas) f.capas = [];
       f.capas.push({ nombre:'', base:'', estructura:'', superficie:'',
-                     brillo:'', intervencion:'', estado:'', densidad:'' });
+                     comportamiento:'', lectura:'', brillo:'', intervencion:'', estado:'', densidad:'' });
       renderPersonajes();
     }
 
@@ -1580,13 +1889,18 @@
             ${canDelete ? `<button class="mat-capa-del"
               onclick="removeCapa(${pi},'${stateKey}',${fi},${capaIdx})">×</button>` : ''}
           </div>
-          <span class="mat-dim-label">MATERIAL BASE</span>
+          <div class="mat-guidance">Describe esta capa como un taller: material físico + construcción + cómo lee en escena. Esto ayuda a que la IA no confunda textura con forma.</div>
+          <span class="mat-dim-label">${CAPAS_DIMS.base.label}</span>
           <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'base')}</div>
-          <span class="mat-dim-label">ESTRUCTURA</span>
+          <span class="mat-dim-label">${CAPAS_DIMS.estructura.label}</span>
           <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'estructura')}</div>
-          <span class="mat-dim-label">SUPERFICIE</span>
+          <span class="mat-dim-label">${CAPAS_DIMS.superficie.label}</span>
           <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'superficie')}</div>
-          <span class="mat-dim-label">INTERVENCIÓN</span>
+          <span class="mat-dim-label">${CAPAS_DIMS.comportamiento.label}</span>
+          <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'comportamiento')}</div>
+          <span class="mat-dim-label">${CAPAS_DIMS.lectura.label}</span>
+          <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'lectura')}</div>
+          <span class="mat-dim-label">${CAPAS_DIMS.intervencion.label}</span>
           <div class="mat-opts">${renderMatOpts(pi,stateKey,fi,capaIdx,'intervencion')}</div>
           <div class="mat-densidad-wrap" style="display:${hasDensidad?'block':'none'};">
             <span class="mat-dim-label">DENSIDAD</span>
@@ -1599,16 +1913,18 @@
 
     function capaToPromptStr(c) {
       const p = [];
-      if(c.base)        p.push(c.base);
-      if(c.estructura)  p.push(c.estructura);
-      if(c.superficie)  p.push(c.superficie + ' finish');
+      if(c.base)        p.push(`base material: ${c.base}`);
+      if(c.estructura)  p.push(`construction/form: ${c.estructura}`);
+      if(c.superficie)  p.push(`surface/finish: ${c.superficie}`);
+      if(c.comportamiento) p.push(`stage material behavior: ${c.comportamiento}`);
+      if(c.lectura)     p.push(`audience readability: ${c.lectura}`);
       if(c.intervencion && c.intervencion !== 'clean') {
         let inter = c.intervencion;
         if(c.densidad && INTERVENCION_CON_DENSIDAD.includes(c.intervencion))
           inter += ` (${c.densidad})`;
-        p.push(inter);
+        p.push(`surface intervention: ${inter}`);
       }
-      if(c.estado && c.estado !== 'pristine') p.push(c.estado);
+      if(c.estado && c.estado !== 'pristine') p.push(`condition: ${c.estado}`);
       return p.join(', ');
     }
 
@@ -1619,15 +1935,31 @@
         const cat = catalogo[f.tipo];
         const label = cat ? cat.label : f.tipo;
         const attrs = [];
-        Object.values(f.atributos||{}).forEach(v => {
+        Object.entries(f.atributos||{}).forEach(([k, v]) => {
           if(!v) return;
           if(Array.isArray(v)) { if(v.length) attrs.push(v.join(' + ')); }
+          else if(k === 'identidadPrincipal') attrs.push(`Primary garment identity: ${v}`);
+          else if(k === 'influenciaSecundaria') attrs.push(`Secondary construction influence: ${v}`);
+          else if(k === 'motivos') attrs.push(`motifs and ornamentation: ${v}`);
+          else if(k === 'intencionEscenica') attrs.push(`stage intention: ${v}`);
+          else if(k === 'prioridadVisual') attrs.push(`visual priority: ${v}`);
+          else if(['colorDominante','colorSecundario','colorAcento','distribucionColor'].includes(k)) { /* handled below */ }
           else attrs.push(v);
         });
-        const colores = f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []);
-        if(colores.length > 1) attrs.push(colores.join(' + '));
-        else if(colores.length === 1) attrs.push(colores[0]);
-        const capas = (f.capas || []).filter(c => c.base || c.nombre);
+
+        const colorParts = [];
+        if(f.atributos?.colorDominante) colorParts.push(`dominant ${f.atributos.colorDominante}`);
+        if(f.atributos?.colorSecundario) colorParts.push(`secondary ${f.atributos.colorSecundario}`);
+        if(f.atributos?.colorAcento) colorParts.push(`accent ${f.atributos.colorAcento}`);
+        if(colorParts.length) attrs.push(`Color hierarchy: ${colorParts.join(', ')}`);
+        if(f.atributos?.distribucionColor) attrs.push(`Color distribution: ${f.atributos.distribucionColor}`);
+        if(!colorParts.length) {
+          const colores = f.colores || (f.color && f.color !== '#cccccc' ? [f.color] : []);
+          if(colores.length > 1) attrs.push(colores.join(' + '));
+          else if(colores.length === 1) attrs.push(colores[0]);
+        }
+
+        const capas = (f.capas || []).filter(c => c.nombre || c.base || c.estructura || c.superficie || c.comportamiento || c.lectura || c.intervencion || c.estado);
         if(capas.length > 0) {
           const capasStr = capas.map(c => {
             const nom = c.nombre ? `${c.nombre}: ` : '';
@@ -1676,7 +2008,7 @@
         // Asegurar al menos una capa por defecto
         if(!f.capas || f.capas.length === 0) {
           f.capas = [{ nombre:'', base:'', estructura:'', superficie:'',
-                       brillo:'', intervencion:'', estado:'', densidad:'' }];
+                       comportamiento:'', lectura:'', brillo:'', intervencion:'', estado:'', densidad:'' }];
         }
         const materialHTML = f.capas.map((_, ci) => renderCapaBlock(pi, stateKey, fi, ci)).join('') +
           `<button class="add-mat-capa-btn" onclick="addCapa(${pi},'${stateKey}',${fi})">+ AGREGAR CAPA</button>`;
@@ -1724,6 +2056,7 @@
             <div class="ficha-tabs" onclick="fichaTab(this.closest('[data-ficha-pi]'), event.target.dataset.tab)">
               <button class="ficha-tab active" data-tab="forma">FORMA</button>
               <button class="ficha-tab" data-tab="material">MATERIAL</button>
+              <button class="ficha-tab" data-tab="lectura">LECTURA</button>
               <button class="ficha-tab" data-tab="color">COLOR</button>
             </div>
             <div class="ficha-tab-content active" data-tab="forma">
@@ -1732,7 +2065,81 @@
             <div class="ficha-tab-content" data-tab="material">
               ${materialHTML}
             </div>
+            <div class="ficha-tab-content" data-tab="lectura">
+              <div class="mat-guidance">Capa autoral opcional: define qué debe comunicar esta pieza antes del detalle decorativo.</div>
+              ${stateKey === 'fichasPrenda' ? `
+                <span class="mat-dim-label">JERARQUÍA VISUAL</span>
+                <div class="grid-2" style="gap:0.6rem;margin-bottom:0.4rem;">
+                  <div>
+                    <span class="mat-dim-label" style="margin-top:0;">IDENTIDAD PRINCIPAL</span>
+                    <input type="text" class="lectura-field" style="min-height:auto;"
+                      placeholder="Ej: túnica ceremonial egipcia escénica"
+                      value="${escHTML(f.atributos['identidadPrincipal']||'')}"
+                      oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'identidadPrincipal',this.value)">
+                  </div>
+                  <div>
+                    <span class="mat-dim-label" style="margin-top:0;">INFLUENCIA SECUNDARIA</span>
+                    <input type="text" class="lectura-field" style="min-height:auto;"
+                      placeholder="Ej: volumen de manga tipo kimono"
+                      value="${escHTML(f.atributos['influenciaSecundaria']||'')}"
+                      oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'influenciaSecundaria',this.value)">
+                  </div>
+                </div>
+              ` : ''}
+              <span class="mat-dim-label">MOTIVOS / ORNAMENTACIÓN ESPECÍFICA</span>
+              <textarea class="lectura-field" placeholder="Ej: sakura, grullas, crisantemos; geometría egipcia, escarabajos, rayos solares…"
+                oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'motivos',this.value)">${escHTML(f.atributos['motivos']||'')}</textarea>
+              <span class="mat-dim-label">IDEAS SUGERIDAS — clic para agregar, luego puedes editar</span>
+              ${renderSuggestionChips(pi,stateKey,fi)}
+              <span class="mat-dim-label">INTENCIÓN ESCÉNICA</span>
+              <textarea class="lectura-field" placeholder="Ej: masa visual dominante, presencia ritual, fragilidad luminosa, autoridad desde platea…"
+                oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'intencionEscenica',this.value)">${escHTML(f.atributos['intencionEscenica']||'')}</textarea>
+              <span class="mat-dim-label">PRIORIDAD VISUAL</span>
+              <textarea class="lectura-field" placeholder="Ej: priorizar silueta limpia sobre ornamento; que el tocado sea el foco; que el textil se lea pesado…"
+                oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'prioridadVisual',this.value)">${escHTML(f.atributos['prioridadVisual']||'')}</textarea>
+            </div>
             <div class="ficha-tab-content" data-tab="color">
+              <div class="mat-guidance">Ordena la paleta para que la IA entienda qué color manda, cuál acompaña y cuál solo acentúa.</div>
+              <span class="mat-dim-label">JERARQUÍA CROMÁTICA</span>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.6rem;margin-bottom:0.55rem;">
+                <div>
+                  <span class="mat-dim-label" style="margin-top:0;">COLOR DOMINANTE</span>
+                  <div style="display:flex;gap:0.45rem;align-items:center;">
+                    <input type="color" value="${f.atributos['colorDominante'] || '#cccccc'}"
+                      onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'colorDominante',this.value)"
+                      style="width:44px;height:34px;padding:0;border:1.5px solid #000;background:#fff;cursor:pointer;">
+                    <input type="text" class="lectura-field" style="min-height:auto;margin:0;" placeholder="#RRGGBB"
+                      value="${escHTML(f.atributos['colorDominante']||'')}"
+                      oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'colorDominante',this.value)">
+                  </div>
+                </div>
+                <div>
+                  <span class="mat-dim-label" style="margin-top:0;">COLOR SECUNDARIO</span>
+                  <div style="display:flex;gap:0.45rem;align-items:center;">
+                    <input type="color" value="${f.atributos['colorSecundario'] || '#cccccc'}"
+                      onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'colorSecundario',this.value)"
+                      style="width:44px;height:34px;padding:0;border:1.5px solid #000;background:#fff;cursor:pointer;">
+                    <input type="text" class="lectura-field" style="min-height:auto;margin:0;" placeholder="#RRGGBB"
+                      value="${escHTML(f.atributos['colorSecundario']||'')}"
+                      oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'colorSecundario',this.value)">
+                  </div>
+                </div>
+                <div>
+                  <span class="mat-dim-label" style="margin-top:0;">COLOR DE ACENTO</span>
+                  <div style="display:flex;gap:0.45rem;align-items:center;">
+                    <input type="color" value="${f.atributos['colorAcento'] || '#cccccc'}"
+                      onchange="updateFichaCampo(${pi},'${stateKey}',${fi},'colorAcento',this.value)"
+                      style="width:44px;height:34px;padding:0;border:1.5px solid #000;background:#fff;cursor:pointer;">
+                    <input type="text" class="lectura-field" style="min-height:auto;margin:0;" placeholder="#RRGGBB"
+                      value="${escHTML(f.atributos['colorAcento']||'')}"
+                      oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'colorAcento',this.value)">
+                  </div>
+                </div>
+              </div>
+              <span class="mat-dim-label">DISTRIBUCIÓN CROMÁTICA</span>
+              <textarea class="lectura-field" placeholder="Ej: marfil como base de la túnica, negro en bordes y paneles, verde solo en aplicaciones geométricas, oro limitado a joyería y báculo."
+                oninput="updateFichaCampo(${pi},'${stateKey}',${fi},'distribucionColor',this.value)">${escHTML(f.atributos['distribucionColor']||'')}</textarea>
+              <span class="mat-dim-label">PALETA LIBRE ADICIONAL</span>
               ${colorStripHTML}
             </div>
           </div>`;
@@ -1752,9 +2159,42 @@
           </div>
 
           <!-- PERFIL -->
+          <div class="input-group" style="margin-bottom:0.2rem;"><label>SEXO</label><input type="text" value="${p.datos.sexo || ''}" onchange="updatePerData(${i}, 'sexo', this.value)"></div>
           <div class="grid-2" style="margin-bottom:0.2rem;">
-            <div class="input-group"><label>EDAD</label><input type="text" value="${p.datos.edad}" onchange="updatePerData(${i}, 'edad', this.value)"></div>
-            <div class="input-group"><label>SEXO</label><input type="text" value="${p.datos.sexo}" onchange="updatePerData(${i}, 'sexo', this.value)"></div>
+            <div class="input-group">
+              <label>ARQUETIPO DRAMÁTICO</label>
+              <select onchange="updatePerData(${i}, 'arquetipo', this.value)">
+                <option value="">— sin especificar —</option>
+                <option ${p.datos.arquetipo === 'queen / king, royal authority' ? 'selected':''} value="queen / king, royal authority">Reina / Rey</option>
+                <option ${p.datos.arquetipo === 'heroine / hero' ? 'selected':''} value="heroine / hero">Heroína / Héroe</option>
+                <option ${p.datos.arquetipo === 'villain / antagonist' ? 'selected':''} value="villain / antagonist">Villana / Villano</option>
+                <option ${p.datos.arquetipo === 'lover / romantic figure' ? 'selected':''} value="lover / romantic figure">Amante</option>
+                <option ${p.datos.arquetipo === 'mother / father figure' ? 'selected':''} value="mother / father figure">Madre / Padre</option>
+                <option ${p.datos.arquetipo === 'witch / sorceress / magician' ? 'selected':''} value="witch / sorceress / magician">Bruja / Hechicera</option>
+                <option ${p.datos.arquetipo === 'maid / servant' ? 'selected':''} value="maid / servant">Criada / Sirviente</option>
+                <option ${p.datos.arquetipo === 'soldier / warrior' ? 'selected':''} value="soldier / warrior">Soldado / Guerrero</option>
+                <option ${p.datos.arquetipo === 'jester / comic figure' ? 'selected':''} value="jester / comic figure">Bufón / Figura cómica</option>
+                <option ${p.datos.arquetipo === 'ghost / spectral figure' ? 'selected':''} value="ghost / spectral figure">Fantasma / Espectral</option>
+                <option ${p.datos.arquetipo === 'ritual figure / ceremonial presence' ? 'selected':''} value="ritual figure / ceremonial presence">Figura ritual</option>
+                <option ${p.datos.arquetipo === 'chorus / collective people' ? 'selected':''} value="chorus / collective people">Coro / Pueblo</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>EDAD ESCÉNICA</label>
+              <select onchange="updatePerData(${i}, 'edadEscenica', this.value)">
+                <option value="">— sin especificar —</option>
+                <option ${p.datos.edadEscenica === 'childlike stage age' ? 'selected':''} value="childlike stage age">Infantil</option>
+                <option ${p.datos.edadEscenica === 'teenage stage age' ? 'selected':''} value="teenage stage age">Adolescente</option>
+                <option ${p.datos.edadEscenica === 'youthful stage age' ? 'selected':''} value="youthful stage age">Juvenil</option>
+                <option ${p.datos.edadEscenica === 'young adult stage age' ? 'selected':''} value="young adult stage age">Adulta joven</option>
+                <option ${p.datos.edadEscenica === 'adult stage age' ? 'selected':''} value="adult stage age">Adulta</option>
+                <option ${p.datos.edadEscenica === 'mature stage age' ? 'selected':''} value="mature stage age">Madura</option>
+                <option ${p.datos.edadEscenica === 'elderly stage age' ? 'selected':''} value="elderly stage age">Anciana</option>
+                <option ${p.datos.edadEscenica === 'timeless / ageless stage presence' ? 'selected':''} value="timeless / ageless stage presence">Atemporal</option>
+                <option ${p.datos.edadEscenica === 'artificially aged appearance' ? 'selected':''} value="artificially aged appearance">Envejecida artificialmente</option>
+                <option ${p.datos.edadEscenica === 'deliberately infantilized appearance' ? 'selected':''} value="deliberately infantilized appearance">Infantilizada</option>
+              </select>
+            </div>
           </div>
           <div class="grid-4">
             <div class="input-group">
@@ -1793,19 +2233,131 @@
               <label>PEINADO</label>
               <select onchange="updatePerData(${i}, 'peinado', this.value)">
                 <option value="">— sin especificar —</option>
-                <option ${p.datos.peinado === 'hair loose and flowing' ? 'selected':''} value="hair loose and flowing">Suelto</option>
-                <option ${p.datos.peinado === 'hair in a high bun' ? 'selected':''} value="hair in a high bun">Moño alto</option>
-                <option ${p.datos.peinado === 'hair in a low bun' ? 'selected':''} value="hair in a low bun">Moño bajo</option>
-                <option ${p.datos.peinado === 'hair in a tight braid' ? 'selected':''} value="hair in a tight braid">Trenza</option>
-                <option ${p.datos.peinado === 'hair in multiple braids' ? 'selected':''} value="hair in multiple braids">Trenzas múltiples</option>
-                <option ${p.datos.peinado === 'hair pulled back in a ponytail' ? 'selected':''} value="hair pulled back in a ponytail">Cola de caballo</option>
-                <option ${p.datos.peinado === 'short cropped hair' ? 'selected':''} value="short cropped hair">Corto / rapado</option>
-                <option ${p.datos.peinado === 'voluminous curly hair' ? 'selected':''} value="hair voluminous and curly">Rizado voluminoso</option>
-                <option ${p.datos.peinado === 'hair with elaborate theatrical headpiece' ? 'selected':''} value="hair with elaborate theatrical headpiece">Tocado / ornamentado</option>
-                <option ${p.datos.peinado === 'shaved head' ? 'selected':''} value="shaved head">Cabeza rapada</option>
+
+                <optgroup label="Básicos / largo suelto">
+                  <option ${p.datos.peinado === 'long hair loose and flowing' ? 'selected':''} value="long hair loose and flowing">Suelto largo</option>
+                  <option ${p.datos.peinado === 'medium length loose hair' ? 'selected':''} value="medium length loose hair">Melena media</option>
+                  <option ${p.datos.peinado === 'shoulder length hair' ? 'selected':''} value="shoulder length hair">Melena a los hombros</option>
+                  <option ${p.datos.peinado === 'short bob haircut' ? 'selected':''} value="short bob haircut">Melena bob</option>
+                  <option ${p.datos.peinado === 'long bob haircut' ? 'selected':''} value="long bob haircut">Long bob</option>
+                  <option ${p.datos.peinado === 'straight hair with center part' ? 'selected':''} value="straight hair with center part">Liso con partidura al medio</option>
+                  <option ${p.datos.peinado === 'straight hair with side part' ? 'selected':''} value="straight hair with side part">Liso con partidura lateral</option>
+                  <option ${p.datos.peinado === 'wavy loose hair' ? 'selected':''} value="wavy loose hair">Ondulado suelto</option>
+                  <option ${p.datos.peinado === 'voluminous curly hair' ? 'selected':''} value="voluminous curly hair">Rizado voluminoso</option>
+                  <option ${p.datos.peinado === 'afro textured voluminous hair' ? 'selected':''} value="afro textured voluminous hair">Afro voluminoso</option>
+                </optgroup>
+
+                <optgroup label="Cortes cortos / contemporáneos">
+                  <option ${p.datos.peinado === 'short cropped hair' ? 'selected':''} value="short cropped hair">Corto</option>
+                  <option ${p.datos.peinado === 'pixie haircut' ? 'selected':''} value="pixie haircut">Pixie</option>
+                  <option ${p.datos.peinado === 'bowl cut haircut' ? 'selected':''} value="bowl cut haircut">Corte taza</option>
+                  <option ${p.datos.peinado === 'asymmetrical short haircut' ? 'selected':''} value="asymmetrical short haircut">Corte asimétrico</option>
+                  <option ${p.datos.peinado === 'undercut hairstyle' ? 'selected':''} value="undercut hairstyle">Undercut</option>
+                  <option ${p.datos.peinado === 'side shaved hairstyle' ? 'selected':''} value="side shaved hairstyle">Rapado a un costado</option>
+                  <option ${p.datos.peinado === 'shaved head' ? 'selected':''} value="shaved head">Cabeza rapada</option>
+                  <option ${p.datos.peinado === 'slicked back short hair' ? 'selected':''} value="slicked back short hair">Corto engominado hacia atrás</option>
+                </optgroup>
+
+                <optgroup label="Recogidos / formales">
+                  <option ${p.datos.peinado === 'hair pulled back in a ponytail' ? 'selected':''} value="hair pulled back in a ponytail">Cola de caballo</option>
+                  <option ${p.datos.peinado === 'high ponytail' ? 'selected':''} value="high ponytail">Cola alta</option>
+                  <option ${p.datos.peinado === 'low ponytail' ? 'selected':''} value="low ponytail">Cola baja</option>
+                  <option ${p.datos.peinado === 'hair in a high bun' ? 'selected':''} value="hair in a high bun">Moño alto</option>
+                  <option ${p.datos.peinado === 'hair in a low bun' ? 'selected':''} value="hair in a low bun">Moño bajo</option>
+                  <option ${p.datos.peinado === 'messy bun hairstyle' ? 'selected':''} value="messy bun hairstyle">Moño desordenado</option>
+                  <option ${p.datos.peinado === 'sleek tight bun' ? 'selected':''} value="sleek tight bun">Moño tirante / pulido</option>
+                  <option ${p.datos.peinado === 'chignon hairstyle' ? 'selected':''} value="chignon hairstyle">Chignon / rodete bajo</option>
+                  <option ${p.datos.peinado === 'half up half down hairstyle' ? 'selected':''} value="half up half down hairstyle">Semi recogido</option>
+                  <option ${p.datos.peinado === 'wet look slicked back hair' ? 'selected':''} value="wet look slicked back hair">Efecto mojado hacia atrás</option>
+                </optgroup>
+
+                <optgroup label="Trenzas / estructura">
+                  <option ${p.datos.peinado === 'hair in a tight braid' ? 'selected':''} value="hair in a tight braid">Trenza única</option>
+                  <option ${p.datos.peinado === 'hair in multiple braids' ? 'selected':''} value="hair in multiple braids">Trenzas múltiples</option>
+                  <option ${p.datos.peinado === 'two long braids' ? 'selected':''} value="two long braids">Dos trenzas</option>
+                  <option ${p.datos.peinado === 'crown braid hairstyle' ? 'selected':''} value="crown braid hairstyle">Trenza corona</option>
+                  <option ${p.datos.peinado === 'french braid hairstyle' ? 'selected':''} value="french braid hairstyle">Trenza francesa</option>
+                  <option ${p.datos.peinado === 'box braids hairstyle' ? 'selected':''} value="box braids hairstyle">Box braids</option>
+                  <option ${p.datos.peinado === 'cornrow braids hairstyle' ? 'selected':''} value="cornrow braids hairstyle">Trenzas pegadas / cornrows</option>
+                  <option ${p.datos.peinado === 'dreadlocks hairstyle' ? 'selected':''} value="dreadlocks hairstyle">Dreadlocks</option>
+                </optgroup>
+
+                <optgroup label="Época / teatral">
+                  <option ${p.datos.peinado === '1920s finger waves hairstyle' ? 'selected':''} value="1920s finger waves hairstyle">Ondas años 20</option>
+                  <option ${p.datos.peinado === '1940s victory rolls hairstyle' ? 'selected':''} value="1940s victory rolls hairstyle">Victory rolls años 40</option>
+                  <option ${p.datos.peinado === '1960s beehive hairstyle' ? 'selected':''} value="1960s beehive hairstyle">Beehive años 60</option>
+                  <option ${p.datos.peinado === 'romantic loose updo with tendrils' ? 'selected':''} value="romantic loose updo with tendrils">Recogido romántico con mechones</option>
+                  <option ${p.datos.peinado === 'victorian updo hairstyle' ? 'selected':''} value="victorian updo hairstyle">Recogido victoriano</option>
+                  <option ${p.datos.peinado === 'greek goddess braided updo' ? 'selected':''} value="greek goddess braided updo">Recogido griego trenzado</option>
+                  <option ${p.datos.peinado === 'japanese traditional updo' ? 'selected':''} value="japanese traditional updo">Recogido japonés tradicional</option>
+                  <option ${p.datos.peinado === 'geisha inspired structured updo' ? 'selected':''} value="geisha inspired structured updo">Recogido estructurado inspiración geisha</option>
+                  <option ${p.datos.peinado === 'egyptian straight bob with blunt bangs' ? 'selected':''} value="egyptian straight bob with blunt bangs">Bob egipcio con flequillo recto</option>
+                  <option ${p.datos.peinado === 'renaissance braided updo' ? 'selected':''} value="renaissance braided updo">Recogido renacentista trenzado</option>
+                </optgroup>
+
+                <optgroup label="Urbano / punk / fantasía">
+                  <option ${p.datos.peinado === 'punk mohawk hairstyle' ? 'selected':''} value="punk mohawk hairstyle">Punk / mohawk</option>
+                  <option ${p.datos.peinado === 'spiked punk hair' ? 'selected':''} value="spiked punk hair">Punk con puntas</option>
+                  <option ${p.datos.peinado === 'messy rock hairstyle' ? 'selected':''} value="messy rock hairstyle">Rock despeinado</option>
+                  <option ${p.datos.peinado === 'gothic long dark hair' ? 'selected':''} value="gothic long dark hair">Gótico largo oscuro</option>
+                  <option ${p.datos.peinado === 'fantasy ethereal long hair' ? 'selected':''} value="fantasy ethereal long hair">Fantasía etérea larga</option>
+                  <option ${p.datos.peinado === 'hair with elaborate theatrical headpiece' ? 'selected':''} value="hair with elaborate theatrical headpiece">Tocado / ornamentado</option>
+                  <option ${p.datos.peinado === 'hair integrated with crown or tiara' ? 'selected':''} value="hair integrated with crown or tiara">Integrado con corona o tiara</option>
+                </optgroup>
               </select>
             </div>
-            <div class="input-group"><label>CONTEXTURA / ALTURA</label><input type="text" value="${p.datos.contextura}" onchange="updatePerData(${i}, 'contextura', this.value)"></div>
+          </div>
+
+          <div class="grid-2" style="margin-bottom:0.2rem;">
+            <div class="input-group">
+              <label>CONTEXTURA / ALTURA</label>
+              <select onchange="updatePerData(${i}, 'contextura', this.value)">
+                <option value="">— sin especificar —</option>
+                <option ${p.datos.contextura === 'petite / small frame' ? 'selected':''} value="petite / small frame">Petite / pequeña</option>
+                <option ${p.datos.contextura === 'slim / slender frame' ? 'selected':''} value="slim / slender frame">Delgada</option>
+                <option ${p.datos.contextura === 'medium / average frame' ? 'selected':''} value="medium / average frame">Media</option>
+                <option ${p.datos.contextura === 'athletic frame' ? 'selected':''} value="athletic frame">Atlética</option>
+                <option ${p.datos.contextura === 'tall and slender frame' ? 'selected':''} value="tall and slender frame">Alta y delgada</option>
+                <option ${p.datos.contextura === 'tall and imposing frame' ? 'selected':''} value="tall and imposing frame">Alta e imponente</option>
+                <option ${p.datos.contextura === 'robust / full frame' ? 'selected':''} value="robust / full frame">Robusta</option>
+                <option ${p.datos.contextura === 'broad / strong frame' ? 'selected':''} value="broad / strong frame">Ancha / fuerte</option>
+                <option ${p.datos.contextura === 'mature body presence' ? 'selected':''} value="mature body presence">Presencia corporal madura</option>
+                <option ${p.datos.contextura === 'fragile / delicate frame' ? 'selected':''} value="fragile / delicate frame">Frágil / delicada</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>LECTURA DE SILUETA</label>
+              <select onchange="updatePerData(${i}, 'lecturaSilueta', this.value)">
+                <option value="">— sin especificar —</option>
+                <option ${p.datos.lecturaSilueta === 'vertical and regal costume silhouette' ? 'selected':''} value="vertical and regal costume silhouette">Vertical / regia</option>
+                <option ${p.datos.lecturaSilueta === 'architectural costume silhouette' ? 'selected':''} value="architectural costume silhouette">Arquitectónica</option>
+                <option ${p.datos.lecturaSilueta === 'expansive costume silhouette' ? 'selected':''} value="expansive costume silhouette">Expansiva</option>
+                <option ${p.datos.lecturaSilueta === 'floating costume silhouette' ? 'selected':''} value="floating costume silhouette">Flotante</option>
+                <option ${p.datos.lecturaSilueta === 'organic costume silhouette' ? 'selected':''} value="organic costume silhouette">Orgánica</option>
+                <option ${p.datos.lecturaSilueta === 'triangular costume silhouette' ? 'selected':''} value="triangular costume silhouette">Triangular</option>
+                <option ${p.datos.lecturaSilueta === 'circular costume silhouette' ? 'selected':''} value="circular costume silhouette">Circular</option>
+                <option ${p.datos.lecturaSilueta === 'contracted costume silhouette' ? 'selected':''} value="contracted costume silhouette">Contraída</option>
+                <option ${p.datos.lecturaSilueta === 'fragmented costume silhouette' ? 'selected':''} value="fragmented costume silhouette">Fragmentada</option>
+                <option ${p.datos.lecturaSilueta === 'heavy grounded costume silhouette' ? 'selected':''} value="heavy grounded costume silhouette">Pesada / anclada</option>
+                <option ${p.datos.lecturaSilueta === 'light airy costume silhouette' ? 'selected':''} value="light airy costume silhouette">Ligera / aérea</option>
+                <option ${p.datos.lecturaSilueta === 'enveloping costume silhouette' ? 'selected':''} value="enveloping costume silhouette">Envolvente</option>
+                <option ${p.datos.lecturaSilueta === 'hourglass costume silhouette' ? 'selected':''} value="hourglass costume silhouette">Reloj de arena</option>
+              </select>
+              <div class="mat-guidance" style="margin-top:0.35rem;">Forma general que debe crear el vestuario sobre el cuerpo.</div>
+            </div>
+          </div>
+
+          <!-- CONCEPTO VISUAL DEL PERSONAJE -->
+          <div class="concept-card">
+            <div class="input-group" style="margin-bottom:0.65rem;">
+              <label>CONCEPTO VISUAL DEL PERSONAJE</label>
+              <textarea placeholder="Ej: Cleopatra como figura solar y política; Egipto ptolemaico; oro rígido, geometría faraónica, presencia ceremonial dominante..."
+                style="min-height:74px;"
+                oninput="updatePer(${i}, 'conceptoVisual', this.value)">${escHTML(p.conceptoVisual||'')}</textarea>
+            </div>
+            <div class="mat-guidance" style="margin-bottom:0;">
+              Este campo no reemplaza las fichas: orienta a la IA sobre mundo cultural, arquetipo, símbolos y energía dramática del personaje.
+            </div>
           </div>
 
           <!-- PRENDAS — fichas estructuradas -->
@@ -1922,9 +2474,11 @@
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       const profileParts = [
-        p.datos.edad ? `Edad: ${p.datos.edad}` : null,
+        p.datos.edadEscenica ? `Edad escénica: ${p.datos.edadEscenica}` : null,
         p.datos.sexo ? `Sexo: ${p.datos.sexo}` : null,
-        p.datos.contextura ? `Contextura: ${p.datos.contextura}` : null,
+        p.datos.arquetipo ? `Arquetipo: ${p.datos.arquetipo}` : null,
+        p.datos.contextura ? `Contextura / altura: ${p.datos.contextura}` : null,
+        p.datos.lecturaSilueta ? `Lectura de silueta: ${p.datos.lecturaSilueta}` : null,
         p.datos.pielTono ? `Piel: ${p.datos.pielTono}` : null,
         p.datos.cabello ? `Cabello: ${p.datos.cabello}` : null,
       ].filter(Boolean);
@@ -1973,7 +2527,21 @@
           if(!f.tipo) return null;
           const cat = catalogo[f.tipo];
           const label = cat ? cat.label : f.tipo;
-          const attrs = [...Object.values(f.atributos||{}).filter(Boolean)];
+          const attrs = [];
+          if(f.atributos?.identidadPrincipal) attrs.push(`Primary garment identity: ${f.atributos.identidadPrincipal}`);
+          if(f.atributos?.influenciaSecundaria) attrs.push(`Secondary construction influence: ${f.atributos.influenciaSecundaria}`);
+          if(f.atributos?.motivos) attrs.push(`Motifs: ${f.atributos.motivos}`);
+          const colorBits = [];
+          if(f.atributos?.colorDominante) colorBits.push(`dominant ${f.atributos.colorDominante}`);
+          if(f.atributos?.colorSecundario) colorBits.push(`secondary ${f.atributos.colorSecundario}`);
+          if(f.atributos?.colorAcento) colorBits.push(`accent ${f.atributos.colorAcento}`);
+          if(colorBits.length) attrs.push(`Color hierarchy: ${colorBits.join(', ')}`);
+          if(f.atributos?.distribucionColor) attrs.push(`Color distribution: ${f.atributos.distribucionColor}`);
+          Object.entries(f.atributos||{}).forEach(([k,v]) => {
+            if(!v) return;
+            if(['identidadPrincipal','influenciaSecundaria','motivos','colorDominante','colorSecundario','colorAcento','distribucionColor'].includes(k)) return;
+            attrs.push(v);
+          });
           if(f.material) attrs.push(f.material);
           return attrs.length > 0 ? `${label} (${attrs.join(', ')})` : label;
         }).filter(Boolean).join('\n') || 'No especificado';
@@ -2462,8 +3030,68 @@
       }
     };
 
+    const PRESET_COMPAT = {
+      opera: { tecnica:[1,4], fondo:[0,1,2,3], luz:[1,2], detalle:[0] },
+      ballet: { tecnica:[0,2], fondo:[0,2,3], luz:[0,4], detalle:[0,1] },
+      contemporaneo: { tecnica:[2,3,4,5], fondo:[0,1,2], luz:[1,3,4], detalle:[1,2] },
+      sigloxx: { tecnica:[0,2,3,5], fondo:[0,2,3], luz:[0,1,4], detalle:[0,1] },
+      musical: { tecnica:[0,2,4], fondo:[0,2,3], luz:[0,2,4], detalle:[0] },
+      callejero: { tecnica:[2,4,5], fondo:[0,2,3], luz:[2,4], detalle:[1,2] },
+      performance: { tecnica:[2,3,5], fondo:[0,1,2], luz:[1,3,4], detalle:[1,2] },
+      griego: { tecnica:[0,1,2], fondo:[0,2,3], luz:[0,1], detalle:[0,1] }
+    };
+
+
+    let activePresetKey = null;
+
+    const PRESET_DETAIL_LANGUAGE = {
+      opera: 'fully finished opulent theatrical costume illustration, rich textile rendering, polished and complete while preserving garment construction clarity',
+      ballet: 'refined movement-readable costume design, delicate but clearly constructed, clean line and lightness prioritized',
+      contemporaneo: 'resolved experimental costume concept sketch, gestural and expressive, not overly polished, while keeping garment construction clear',
+      sigloxx: 'sober realistic theatrical costume study, psychologically grounded, subtly finished, fabric wear and period detail clearly readable',
+      musical: 'fully resolved dynamic stage costume illustration, clear color, movement and construction readability, polished enough for presentation',
+      callejero: 'bold graphic costume design sheet, durable and readable from distance, expressive but practical, not overly precious',
+      performance: 'conceptual costume study, raw but intentional, body-object relationship clearly readable, construction logic visible',
+      griego: 'sculptural classical costume illustration, drape structure and silhouette clarity prioritized, refined but not overdecorated'
+    };
+
+    function getAdaptiveDetailLevel(fallbackDetail) {
+      const presetDetail = activePresetKey ? PRESET_DETAIL_LANGUAGE[activePresetKey] : null;
+      return presetDetail || fallbackDetail || 'fully finished illustration';
+    }
+
+    function applyPresetCompatibility(key) {
+      const compat = PRESET_COMPAT[key];
+      const note = document.getElementById('preset-compat-note');
+      if(note) note.style.display = compat ? 'block' : 'none';
+      ['tecnica','fondo','luz','detalle'].forEach(group => {
+        const cards = document.querySelectorAll(`#ia-${group}-cards .option-card`);
+        const allowed = compat ? (compat[group] || []) : null;
+        let selectedStillVisible = false;
+        cards.forEach((card, i) => {
+          const visible = !allowed || allowed.includes(i);
+          card.classList.toggle('compat-hidden', !visible);
+          if(visible && card.classList.contains('selected')) selectedStillVisible = true;
+        });
+        if(allowed && !selectedStillVisible && allowed.length) {
+          cards.forEach(c => c.classList.remove('selected'));
+          if(cards[allowed[0]]) cards[allowed[0]].classList.add('selected');
+        }
+      });
+      updateAccSummaries();
+    }
+
+    function clearPresetCompatibility() {
+      document.querySelectorAll('#ia-tecnica-cards .option-card, #ia-fondo-cards .option-card, #ia-luz-cards .option-card, #ia-detalle-cards .option-card')
+        .forEach(card => card.classList.remove('compat-hidden'));
+      const note = document.getElementById('preset-compat-note');
+      if(note) note.style.display = 'none';
+      updateAccSummaries();
+    }
+
     function applyPreset(el) {
       const key = el.dataset.preset;
+      activePresetKey = key;
       const preset = PRESETS[key];
       if (!preset) return;
 
@@ -2506,8 +3134,48 @@
         c.classList.toggle('selected', i === preset.detalle);
       });
 
+      // Nivel 1: filtra técnica, luz, fondo y detalle según el preset activo
+      applyPresetCompatibility(key);
+
       const name = el.querySelector('.preset-name').textContent;
       notificar(`PRESET "${name.toUpperCase()}" APLICADO`);
+    }
+
+    function toggleAcc(id) {
+      const sec = document.getElementById(id);
+      if(!sec) return;
+      sec.classList.toggle('open');
+    }
+
+    function updateAccSummaries() {
+      // Vista badge
+      const vistaEl = document.querySelector('.option-card[data-group="vista"].selected');
+      const badgeVista = document.getElementById('badge-vista');
+      if(badgeVista && vistaEl) {
+        badgeVista.textContent = vistaEl.dataset.label || vistaEl.querySelector('.oc-label')?.textContent || '—';
+      }
+
+      // Figura badge: pose · ánimo
+      const poseEl  = document.querySelector('.option-card[data-group="pose"].selected');
+      const animoEl = document.querySelector('.option-card[data-group="animo"].selected');
+      const badgeFigura = document.getElementById('badge-figura');
+      if(badgeFigura) {
+        const p = poseEl  ? (poseEl.dataset.label  || poseEl.querySelector('.oc-label')?.textContent)  : '—';
+        const a = animoEl ? (animoEl.dataset.label || animoEl.querySelector('.oc-label')?.textContent) : '—';
+        badgeFigura.textContent = p + ' · ' + a;
+      }
+
+      // Técnica badge: técnica · luz · fondo
+      const tecEl   = document.querySelector('.option-card[data-group="tecnica"].selected');
+      const luzEl   = document.querySelector('.option-card[data-group="luz"].selected');
+      const fondoEl = document.querySelector('.option-card[data-group="fondo"].selected');
+      const badgeTec = document.getElementById('badge-tecnica');
+      if(badgeTec) {
+        const t = tecEl   ? (tecEl.dataset.label   || tecEl.querySelector('.oc-label')?.textContent)   : '—';
+        const l = luzEl   ? (luzEl.dataset.label   || luzEl.querySelector('.oc-label')?.textContent)   : '—';
+        const f = fondoEl ? (fondoEl.dataset.label || fondoEl.querySelector('.oc-label')?.textContent) : '—';
+        badgeTec.textContent = t + ' · ' + l + ' · ' + f;
+      }
     }
 
     function clearPreset(el) {
@@ -2525,8 +3193,11 @@
         setTimeout(() => firmaEl.style.borderColor = '', 1200);
       }
 
-      // DO NOT touch técnica, fondo, luz, detalle cards —
-      // the user keeps whatever they had selected manually.
+      activePresetKey = null;
+
+      // Sin preset: vuelve a mostrar todas las opciones estilísticas.
+      clearPresetCompatibility();
+      // No toca las selecciones actuales: la usuaria mantiene lo que tenía elegido manualmente.
       notificar('SIN PRESET — FIRMA BASE RESTAURADA');
     }
 
@@ -2603,7 +3274,8 @@
             cabelloColor,
             pielCtx,
             tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
-            estetica      ? `Aesthetic context: ${estetica}`        : ''
+            estetica      ? `Aesthetic context: ${estetica}`        : '',
+            p.conceptoVisual ? `Character visual concept: ${p.conceptoVisual}` : ''
           ].filter(Boolean).join('. ');
 
           BLOQUE_CONTROL_ZOOM = `primary priority: garment readability and silhouette clarity over painterly effects. Show only the hair and hairstyle — no face portrait, no full figure, no body. Never cropped or cut off. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum texture and construction clarity. Crisp rendering showing each strand group, structural element and ornament.`;
@@ -2647,7 +3319,8 @@
             matStr   ? `Material and construction: ${matStr}` : '',
             colorStr ? `Color palette: ${colorStr}`           : '',
             tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
-            estetica      ? `Aesthetic context: ${estetica}`        : ''
+            estetica      ? `Aesthetic context: ${estetica}`        : '',
+            p.conceptoVisual ? `Character visual concept: ${p.conceptoVisual}` : ''
           ].filter(Boolean).join('. ');
 
           BLOQUE_CONTROL_ZOOM = `primary priority: garment readability and silhouette clarity over painterly effects. Show the footwear as isolated object — no figure, no leg, no body. Complete and uncut — never cropped or bleeding off edges. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI. Maximum material and construction clarity.`;
@@ -2677,7 +3350,8 @@
             matStr   ? `Material and construction: ${matStr}` : '',
             colorStr ? `Color palette: ${colorStr}`           : '',
             tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
-            estetica      ? `Aesthetic context: ${estetica}`        : ''
+            estetica      ? `Aesthetic context: ${estetica}`        : '',
+            p.conceptoVisual ? `Character visual concept: ${p.conceptoVisual}` : ''
           ].filter(Boolean).join('. ');
 
           BLOQUE_CONTROL_ZOOM = `primary priority: garment readability and silhouette clarity over painterly effects. The object must be shown complete and uncut — never cropped, never bleeding off the edges. No figure, no body, no garment context. No anime, no manga, no Disney, no cartoon, no 3D render, no CGI, no soft blur. Maximum structural and material clarity. Crisp outlines defining every element of the object.`;
@@ -2697,13 +3371,23 @@
       }
       // ── FIN DETECCIÓN DE ZOOM ──────────────────────────────────────────────────
 
-      // For "Con detalles" view, inject actual materials into the vista description
+      // Ajustes contextuales por tipo de vista
       let vistaValue = vista.value;
       if(vista.label === 'Con detalles' && p.materiales) {
         vistaValue = vistaValue.replace(
           'fabrics, textures and materials used in each part of the costume',
           `fabrics and materials: ${p.materiales}`
         );
+      }
+      if(vista.label === 'Lámina') {
+        const laminaCats = [];
+        if((p.fichasCalzado || []).length) laminaCats.push('footwear');
+        if((p.fichasAccesorio || []).some(f => f.tipo === 'tocado')) laminaCats.push('headwear');
+        if((p.fichasAccesorio || []).some(f => f.tipo !== 'tocado')) laminaCats.push('accessories');
+        const laminaItems = laminaCats.length
+          ? laminaCats.join(', ')
+          : 'key costume elements';
+        vistaValue += ` Include side studies only for the categories present in the design: ${laminaItems}. Prioritize clear visual mini-illustrations rather than material callout annotations. The central full-body figure must remain the protagonist of the page.`;
       }
       const tecnica = getSelectedCard('tecnica');
       const luz = getSelectedCard('luz');
@@ -2715,11 +3399,17 @@
       const hairDesc = [p.datos.cabello, p.datos.peinado].filter(Boolean).join(', ');
       const physicalDesc = [
         p.datos.sexo,
-        p.datos.edad ? `${p.datos.edad} years old` : '',
+        p.datos.edadEscenica ? `stage age: ${p.datos.edadEscenica}` : '',
         p.datos.contextura,
         skinDesc,
         hairDesc ? `hair: ${hairDesc}` : ''
       ].filter(Boolean).join(', ');
+      const dramaticProfile = [
+        p.datos.arquetipo ? `dramatic archetype: ${p.datos.arquetipo}` : ''
+      ].filter(Boolean).join(', ');
+      const silhouetteProfile = p.datos.lecturaSilueta
+        ? `Dominant costume silhouette: ${p.datos.lecturaSilueta}`
+        : '';
 
       const pose = getSelectedCard('pose');
       const animo = getSelectedCard('animo');
@@ -2742,7 +3432,11 @@
       // CAPA C — VARIABLE (generada dinámicamente)
       const BLOQUE_VARIABLE = [
         `${vistaValue} for a character named "${p.nombre}"`,
+        p.conceptoVisual ? `Character visual concept: ${p.conceptoVisual}` : '',
+        dramaticProfile ? `Character dramatic profile: ${dramaticProfile}` : '',
+        `Figure and face treatment: prioritize theatrical character, severity and authorial stylization over glamour, prettiness or fashion-doll appeal`,
         physicalDesc ? `Physical appearance: ${physicalDesc}` : '',
+        silhouetteProfile,
         `Pose: ${pose.value || 'standing upright, neutral pose'}`,
         `Expression and mood: ${animo.value || 'neutral expression'}`,
         `Style and era: ${state.concept.epoca || 'contemporary'}`,
@@ -2752,7 +3446,7 @@
         tecnica.value ? `Rendering technique: ${tecnica.value}` : '',
         `Lighting: ${luz.value || 'soft zenith lighting'}`,
         `Background: ${fondo.value || 'pure white background'}`,
-        `Detail level: ${detalle.value || 'fully finished illustration'}`,
+        `Detail level: ${getAdaptiveDetailLevel(detalle.value)}`,
         state.concept.ideas ? `Overall concept: ${state.concept.ideas}` : ''
       ].filter(Boolean).join('. ');
 
@@ -3045,7 +3739,7 @@
         saveProjectsIndex(index);
       }
       // Refresh header title
-      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'TRAMA';
+      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'Vestuario Escénico';
       notificar("PROYECTO GUARDADO");
     }
 
@@ -3133,7 +3827,35 @@
       localStorage.setItem(PROJECTS_INDEX_KEY, JSON.stringify(index));
     }
 
+    function entrarDirecto() {
+      const cover = document.getElementById('screen-cover');
+      cover.classList.add('hidden');
+      setTimeout(() => cover.style.display = 'none', 650);
+
+      // Flujo simple: una sola obra activa, sin selector fijo de proyectos.
+      currentProjectId = appId;
+      const saved = localStorage.getItem(appId) || localStorage.getItem('trama-pro-final');
+      if(saved) {
+        try {
+          state = JSON.parse(saved);
+          if(!state.firmaEstilo) state.firmaEstilo = FIRMA_DEFAULT;
+          if(!state.mood) state.mood = [];
+        } catch(e) {}
+      }
+
+      document.getElementById('screen-selector')?.classList.remove('visible');
+      document.getElementById('app-header').style.display = 'flex';
+      document.getElementById('app-nav').style.display = 'flex';
+      document.getElementById('app-main').style.display = 'block';
+      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'Vestuario Escénico';
+      syncUI();
+      switchTab('general', document.querySelector('.tab-btn'));
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
     function showSelector() {
+      entrarDirecto();
+      return;
       // Fade out cover
       const cover = document.getElementById('screen-cover');
       cover.classList.add('hidden');
@@ -3147,6 +3869,7 @@
     function renderProductionGrid() {
       const index = getProjectsIndex();
       const grid = document.getElementById('prod-grid');
+      if(!grid) return;
 
       const cards = index.map((proj, i) => `
         <div class="prod-card" onclick="abrirProduccion('${proj.id}')">
@@ -3223,12 +3946,12 @@
         if(!state.mood) state.mood = [];
       }
       // Hide selector, show app
-      document.getElementById('screen-selector').classList.remove('visible');
+      document.getElementById('screen-selector')?.classList.remove('visible');
       document.getElementById('app-header').style.display = 'flex';
       document.getElementById('app-nav').style.display = 'flex';
       document.getElementById('app-main').style.display = 'block';
       // Update header title
-      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'TRAMA';
+      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'Vestuario Escénico';
       syncUI();
       // Reset to general tab
       switchTab('general', document.querySelector('.tab-btn'));
@@ -3242,7 +3965,7 @@
       document.getElementById('app-main').style.display = 'none';
       currentProjectId = null;
       // Show selector refreshed
-      document.getElementById('screen-selector').classList.add('visible');
+      document.getElementById('screen-selector')?.classList.add('visible');
       renderProductionGrid();
     }
 
