@@ -407,6 +407,10 @@
   }
   @keyframes cover-panel-in { from { opacity: 0; transform: scale(0.99) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
   @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.75); }
+  }
   @media (max-width: 640px) {
     .cover-panel { min-height: 680px; }
     .cover-mark { border-width: 6px; }
@@ -814,7 +818,23 @@
     </div>
   </div>
 
-  <!-- Selector de producción eliminado: la app entra directo al área de trabajo. -->
+  <!-- ═══════════════ SELECTOR DE PRODUCCIÓN ═══════════════ -->
+  <div id="screen-selector" style="
+    display:none; flex-direction:column;
+    position:fixed; inset:0; z-index:800;
+    background:var(--bg); overflow-y:auto;
+  ">
+    <div class="selector-header">
+      <div>
+        <div class="selector-header-brand">TRAMA</div>
+        <div class="selector-header-sub">Sistema de Vestuario Escénico</div>
+      </div>
+    </div>
+    <div class="selector-body">
+      <div class="selector-eyebrow">Tus producciones</div>
+      <div class="prod-grid" id="prod-grid"></div>
+    </div>
+  </div>
 
   <!-- Modal: nueva producción -->
   <div id="modal-nueva">
@@ -841,6 +861,12 @@
         max-width:280px;">
         Vestuario Escénico
       </div>
+      <div id="unsaved-dot" title="Cambios sin guardar" style="
+        display:none; width:7px; height:7px; border-radius:50%;
+        background:var(--accent); flex-shrink:0;
+        box-shadow:0 0 0 2px rgba(201,162,39,0.25);
+        animation: pulse-dot 2s ease-in-out infinite;
+      "></div>
     </div>
 
     <div style="display:flex; gap:6px; align-items:center;">
@@ -1708,6 +1734,7 @@
       };
       state.personajes.push(p);
       renderPersonajes();
+      markUnsaved();
     }
 
     function addFicha(pi, tipo) {
@@ -1716,11 +1743,13 @@
       const defaultTipo = tipo === 'calzado' ? 'calzado' : tipo === 'accesorio' ? '' : '';
       state.personajes[pi][key].push({ tipo: defaultTipo, atributos: { motivos: '' }, color: '#cccccc', material: '' });
       renderPersonajes();
+      markUnsaved();
     }
 
     function removeFichaKey(pi, key, fi) {
       state.personajes[pi][key].splice(fi, 1);
       renderPersonajes();
+      markUnsaved();
     }
 
     function updateFichaCampo(pi, key, fi, campo, valor) {
@@ -2411,7 +2440,7 @@
     function updatePer(i, k, v) { state.personajes[i][k] = v; }
     function updatePerData(i, k, v) { state.personajes[i].datos[k] = v; }
     function updatePrenda(i, k, v) { state.personajes[i].prendas[k] = v; }
-    function deletePer(i) { state.personajes.splice(i, 1); renderPersonajes(); }
+    function deletePer(i) { state.personajes.splice(i, 1); renderPersonajes(); markUnsaved(); }
     function updateColor(pi, ci, v) { state.personajes[pi].paleta[ci] = v; renderPersonajes(); }
     function addColor(pi) { state.personajes[pi].paleta.push('#cccccc'); renderPersonajes(); }
     function removeColor(pi, ci) { if(state.personajes[pi].paleta.length > 1) { state.personajes[pi].paleta.splice(ci, 1); renderPersonajes(); } }
@@ -3719,7 +3748,7 @@
         loading.style.display = 'none';
       }
     }
-    function saveAll() {
+    function saveAll(silent) {
       if(!currentProjectId) return;
       state.obra.titulo = document.getElementById('g-obra').value;
       state.obra.autor = document.getElementById('g-autor').value;
@@ -3737,11 +3766,13 @@
         entry.autor = state.obra.autor;
         entry.personajes = state.personajes.length;
         entry.epoca = state.concept.epoca;
+        entry.lastModified = Date.now();
         saveProjectsIndex(index);
       }
       // Refresh header title
       document.getElementById('app-obra-title').textContent = state.obra.titulo || 'Vestuario Escénico';
-      notificar("PROYECTO GUARDADO");
+      markSaved();
+      if(!silent) notificar("PROYECTO GUARDADO");
     }
 
     function exportData() {
@@ -3758,10 +3789,25 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (e) => {
-        try { state = JSON.parse(e.target.result); syncUI(); notificar("IMPORTACIÓN EXITOSA"); }
+        try {
+          state = JSON.parse(e.target.result);
+          if(!state.firmaEstilo) state.firmaEstilo = FIRMA_DEFAULT;
+          if(!state.mood) state.mood = [];
+          syncUI();
+          markUnsaved();
+          // Persistir inmediatamente con el ID del proyecto actual
+          if(currentProjectId) {
+            saveAll(true);
+            notificar("IMPORTACIÓN EXITOSA · GUARDADO");
+          } else {
+            notificar("IMPORTACIÓN EXITOSA");
+          }
+        }
         catch (err) { notificar("ERROR AL LEER ARCHIVO"); }
       };
       reader.readAsText(file);
+      // Limpiar el input para permitir reimportar el mismo archivo
+      event.target.value = '';
     }
 
     function syncUI() {
@@ -3789,12 +3835,43 @@
       setTimeout(() => t.style.display = 'none', 3000);
     }
 
+    // ── CONTROL DE CAMBIOS SIN GUARDAR ──────────────────────────────
+    let _unsaved = false;
+    let _autosaveTimer = null;
+
+    function markUnsaved() {
+      if(!currentProjectId) return;
+      _unsaved = true;
+      const dot = document.getElementById('unsaved-dot');
+      if(dot) dot.style.display = 'block';
+      // Resetear el timer de autoguardado cada vez que hay un cambio
+      clearTimeout(_autosaveTimer);
+      _autosaveTimer = setTimeout(() => {
+        if(_unsaved && currentProjectId) {
+          saveAll(true); // true = silencioso (sin toast)
+        }
+      }, 45000); // autoguarda tras 45s de inactividad
+    }
+
+    function markSaved() {
+      _unsaved = false;
+      clearTimeout(_autosaveTimer);
+      const dot = document.getElementById('unsaved-dot');
+      if(dot) dot.style.display = 'none';
+    }
+
+    // Autoguardado periódico cada 60 segundos si hay cambios
+    setInterval(() => {
+      if(_unsaved && currentProjectId) saveAll(true);
+    }, 60000);
+
     function addMood() {
       const url = document.getElementById('m-url').value;
       if(!url) return;
       state.mood.push(url);
       document.getElementById('m-url').value = '';
       renderMood();
+      markUnsaved();
     }
 
     function renderMood() {
@@ -3829,42 +3906,22 @@
     }
 
     function entrarDirecto() {
+      // Desde la portada: ocultar cover y mostrar selector de proyectos
       const cover = document.getElementById('screen-cover');
       cover.classList.add('hidden');
-      setTimeout(() => cover.style.display = 'none', 650);
-
-      // Flujo simple: una sola obra activa, sin selector fijo de proyectos.
-      currentProjectId = appId;
-      const saved = localStorage.getItem(appId) || localStorage.getItem('trama-pro-final');
-      if(saved) {
-        try {
-          state = JSON.parse(saved);
-          if(!state.firmaEstilo) state.firmaEstilo = FIRMA_DEFAULT;
-          if(!state.mood) state.mood = [];
-        } catch(e) {}
-      }
-
-      document.getElementById('screen-selector')?.classList.remove('visible');
-      document.getElementById('app-header').style.display = 'flex';
-      document.getElementById('app-nav').style.display = 'flex';
-      document.getElementById('app-main').style.display = 'block';
-      document.getElementById('app-obra-title').textContent = state.obra.titulo || 'Vestuario Escénico';
-      syncUI();
-      switchTab('general', document.querySelector('.tab-btn'));
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      setTimeout(() => { cover.style.display = 'none'; showSelector(); }, 650);
     }
 
     function showSelector() {
-      entrarDirecto();
-      return;
-      // Fade out cover
-      const cover = document.getElementById('screen-cover');
-      cover.classList.add('hidden');
-      setTimeout(() => cover.style.display = 'none', 650);
-      // Show selector
+      // Ocultar app
+      document.getElementById('app-header').style.display = 'none';
+      document.getElementById('app-nav').style.display = 'none';
+      document.getElementById('app-main').style.display = 'none';
+      // Mostrar selector
       const sel = document.getElementById('screen-selector');
-      sel.classList.add('visible');
+      sel.style.display = 'flex';
       renderProductionGrid();
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     function renderProductionGrid() {
@@ -3872,7 +3929,11 @@
       const grid = document.getElementById('prod-grid');
       if(!grid) return;
 
-      const cards = index.map((proj, i) => `
+      const cards = index.map((proj, i) => {
+        const fechaMod = proj.lastModified
+          ? new Date(proj.lastModified).toLocaleDateString('es-CL', { day:'2-digit', month:'short', year:'numeric' })
+          : null;
+        return `
         <div class="prod-card" onclick="abrirProduccion('${proj.id}')">
           <button class="prod-card-delete" onclick="event.stopPropagation(); eliminarProduccion('${proj.id}')" title="Eliminar">×</button>
           <div class="prod-card-num">${String(i + 1).padStart(2, '0')}</div>
@@ -3882,8 +3943,9 @@
             <span class="prod-tag">${proj.personajes} personaje${proj.personajes !== 1 ? 's' : ''}</span>
             ${proj.epoca ? `<span class="prod-tag">${proj.epoca}</span>` : ''}
           </div>
+          ${fechaMod ? `<div style="margin-top:0.7rem; font-size:0.48rem; color:#bbb; letter-spacing:0.08em; text-transform:uppercase;">Modificado: ${fechaMod}</div>` : ''}
         </div>
-      `).join('');
+      `}).join('');
 
       const newCard = `
         <div class="prod-card prod-card-new" onclick="abrirModal()">
@@ -3947,7 +4009,8 @@
         if(!state.mood) state.mood = [];
       }
       // Hide selector, show app
-      document.getElementById('screen-selector')?.classList.remove('visible');
+      const sel = document.getElementById('screen-selector');
+      if(sel) sel.style.display = 'none';
       document.getElementById('app-header').style.display = 'flex';
       document.getElementById('app-nav').style.display = 'flex';
       document.getElementById('app-main').style.display = 'block';
@@ -3956,22 +4019,15 @@
       syncUI();
       // Reset to general tab
       switchTab('general', document.querySelector('.tab-btn'));
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      markSaved(); // estado recién cargado = limpio
     }
 
     function volverSelector() {
       saveAll();
-      // Hide app
-      document.getElementById('app-header').style.display = 'none';
-      document.getElementById('app-nav').style.display = 'none';
-      document.getElementById('app-main').style.display = 'none';
-      document.getElementById('screen-cover')?.classList.add('hidden');
-      const cover = document.getElementById('screen-cover');
-      if(cover) cover.style.display = 'none';
       currentProjectId = null;
-      // Show selector refreshed
-      document.getElementById('screen-selector')?.classList.add('visible');
-      renderProductionGrid();
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      _unsaved = false;
+      showSelector();
     }
 
     window.onload = () => {
@@ -3997,6 +4053,24 @@
           }
         } catch(e) {}
       }
+
+      // Detectar cambios en inputs/textareas/selects dentro de la app
+      ['app-main', 'app-header'].forEach(containerId => {
+        const container = document.getElementById(containerId);
+        if(container) {
+          container.addEventListener('input', () => markUnsaved());
+          container.addEventListener('change', () => markUnsaved());
+        }
+      });
+
+      // Advertir antes de cerrar si hay cambios sin guardar
+      window.addEventListener('beforeunload', (e) => {
+        if(_unsaved && currentProjectId) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
       // Always start at cover — no auto-open
     };
   </script>
