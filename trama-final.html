@@ -526,6 +526,14 @@
     align-items: center; justify-content: center;
   }
   #modal-nueva.active { display: flex; }
+
+  /* Modal configuración */
+  #modal-config {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    z-index: 1500; align-items: center; justify-content: center;
+  }
+  #modal-config.active { display: flex; }
   .modal-inner {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -829,10 +837,41 @@
         <div class="selector-header-brand">TRAMA</div>
         <div class="selector-header-sub">Sistema de Vestuario Escénico</div>
       </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn btn-outline btn-small" onclick="exportarTodo()" title="Exportar todas las producciones como backup JSON"
+          style="color:#888; border-color:#555; font-size:0.55rem; letter-spacing:0.12em;">
+          ↓ BACKUP GLOBAL
+        </button>
+        <button class="btn btn-outline btn-small" onclick="abrirConfigGlobal()" title="Configuración global"
+          style="color:#888; border-color:#555; padding:0 10px; font-size:0.9rem;">
+          ⚙
+        </button>
+      </div>
     </div>
     <div class="selector-body">
       <div class="selector-eyebrow">Tus producciones</div>
       <div class="prod-grid" id="prod-grid"></div>
+      <div id="selector-empty" style="display:none; text-align:center; padding:4rem 0; color:#bbb;">
+        <div style="font-size:2.5rem; margin-bottom:1rem; opacity:0.4;">🎭</div>
+        <div style="font-size:0.65rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:0.5rem;">Aún no hay producciones</div>
+        <div style="font-size:0.75rem; color:#ccc;">Crea la primera usando el botón de arriba.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: configuración global (API Keys) -->
+  <div id="modal-config">
+    <div class="modal-inner">
+      <div class="modal-title">Configuración</div>
+      <p style="font-size:0.72rem; color:#999; margin-bottom:1.5rem; line-height:1.6;">
+        Las claves se almacenan solo en tu navegador y se aplican a todas las producciones.
+      </p>
+      <div class="input-group"><label>GEMINI API KEY</label><input type="password" id="cfg-api-key" placeholder="Clave Gemini..."></div>
+      <div class="input-group"><label>OPENAI API KEY</label><input type="password" id="cfg-openai-key" placeholder="Clave OpenAI / DALL·E..."></div>
+      <div style="display:flex; gap:0.8rem; margin-top:1.5rem;">
+        <button class="btn" style="flex:1" onclick="guardarConfig()">GUARDAR</button>
+        <button class="btn btn-outline" style="flex:1" onclick="cerrarConfig()">CANCELAR</button>
+      </div>
     </div>
   </div>
 
@@ -870,12 +909,13 @@
     </div>
 
     <div style="display:flex; gap:6px; align-items:center;">
-      <button class="btn btn-outline btn-small" onclick="volverSelector()" title="Cambiar de proyecto" style="opacity:0.72; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.72">OBRAS</button>
+      <button class="btn btn-outline btn-small" onclick="volverSelector()" title="Volver a proyectos" style="opacity:0.72; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.72">← PROYECTOS</button>
       <button class="btn btn-outline btn-small" onclick="exportData()" title="Exportar JSON" style="opacity:0.65; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.65">↓ JSON</button>
       <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()" title="Importar JSON" style="opacity:0.65; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.65">↑ JSON</button>
       <input type="file" id="importFile" hidden accept=".json" onchange="importData(event)">
       <button class="btn btn-gold btn-small" onclick="exportFullPDF()" title="Exportar dossier PDF">PDF ↓</button>
       <button class="btn btn-small" onclick="saveAll()">GUARDAR</button>
+      <button class="btn btn-outline btn-small" onclick="abrirConfig()" title="Configuración" style="opacity:0.65; padding:0 9px; font-size:0.85rem; transition:opacity 0.2s;" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.65">⚙</button>
     </div>
   </header>
 
@@ -883,7 +923,7 @@
     <button class="tab-btn active" onclick="switchTab('general', this)">GENERAL</button>
     <button class="tab-btn" onclick="switchTab('moodboard', this)">MOODBOARD</button>
     <button class="tab-btn" onclick="switchTab('personajes', this)">PERSONAJES</button>
-    <button class="tab-btn" onclick="switchTab('ia', this)">BOCETO IA</button>
+    <button class="tab-btn" onclick="switchTab('ia', this)">BOCETOS</button>
   </nav>
 
   <main id="app-main" style="display:none;">
@@ -892,18 +932,13 @@
       <div class="section-header"><h2>PRODUCCIÓN</h2></div>
 
       <!-- Top row: 3 columns -->
-      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1.4rem; margin-bottom:1.5rem;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.4rem; margin-bottom:1.5rem;">
         <div class="deco-card" style="margin-bottom:0;">
           <div class="card-title">IDENTIFICACIÓN</div>
           <div class="input-group"><label>TÍTULO DE LA OBRA</label><input type="text" id="g-obra"></div>
           <div class="input-group" style="margin-bottom:0;"><label>AUTOR / DIRECTOR</label><input type="text" id="g-autor"></div>
         </div>
-        <div class="deco-card" style="margin-bottom:0;">
-          <div class="card-title">API KEYS</div>
-          <div class="input-group"><label>GEMINI</label><input type="password" id="g-api-key" placeholder="Clave Gemini..."></div>
-          <div class="input-group" style="margin-bottom:0;"><label>OPENAI</label><input type="password" id="g-openai-key" placeholder="Clave OpenAI / DALL·E..."></div>
-        </div>
-        <div class="deco-card export-highlight" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="deco-card export-highlight" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between; grid-column: span 2;">
           <div>
             <div class="card-title">DOSSIER PDF</div>
             <p style="font-size:0.72rem; color:#777; line-height:1.6; margin-bottom:1rem;">Exporta portada, concepto visual y fichas técnicas de todos los personajes.</p>
@@ -3752,11 +3787,13 @@
       if(!currentProjectId) return;
       state.obra.titulo = document.getElementById('g-obra').value;
       state.obra.autor = document.getElementById('g-autor').value;
-      state.apiKey = document.getElementById('g-api-key').value;
-      state.openaiKey = document.getElementById('g-openai-key')?.value || '';
       state.concept.epoca = document.getElementById('m-epoca').value;
       state.concept.ideas = document.getElementById('m-ideas').value;
       state.firmaEstilo = document.getElementById('g-firma').value || FIRMA_DEFAULT;
+      // Preserve API keys from global config in state for backward compat
+      const cfg = getGlobalConfig();
+      state.apiKey = cfg.apiKey || '';
+      state.openaiKey = cfg.openaiKey || '';
       localStorage.setItem(currentProjectId, JSON.stringify(state));
       // Update index metadata
       const index = getProjectsIndex();
@@ -3813,9 +3850,6 @@
     function syncUI() {
       document.getElementById('g-obra').value = state.obra.titulo || '';
       document.getElementById('g-autor').value = state.obra.autor || '';
-      document.getElementById('g-api-key').value = state.apiKey || '';
-      const oaEl = document.getElementById('g-openai-key');
-      if(oaEl) oaEl.value = state.openaiKey || '';
       document.getElementById('m-epoca').value = state.concept.epoca || '';
       document.getElementById('m-ideas').value = state.concept.ideas || '';
       document.getElementById('g-firma').value = state.firmaEstilo || FIRMA_DEFAULT;
@@ -3833,6 +3867,59 @@
       const t = document.getElementById('toast');
       t.innerText = m; t.style.display = 'block';
       setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    // ── CONFIGURACIÓN GLOBAL (API KEYS) ─────────────────────────────
+    const CONFIG_KEY = 'trama-global-config';
+
+    function getGlobalConfig() {
+      try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch(e) { return {}; }
+    }
+
+    function abrirConfig() {
+      const cfg = getGlobalConfig();
+      document.getElementById('cfg-api-key').value = cfg.apiKey || '';
+      document.getElementById('cfg-openai-key').value = cfg.openaiKey || '';
+      document.getElementById('modal-config').classList.add('active');
+    }
+
+    function abrirConfigGlobal() { abrirConfig(); }
+
+    function guardarConfig() {
+      const cfg = {
+        apiKey: document.getElementById('cfg-api-key').value.trim(),
+        openaiKey: document.getElementById('cfg-openai-key').value.trim()
+      };
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+      // Sync into current state so IA tab can use them immediately
+      state.apiKey = cfg.apiKey;
+      state.openaiKey = cfg.openaiKey;
+      cerrarConfig();
+      notificar("CONFIGURACIÓN GUARDADA");
+    }
+
+    function cerrarConfig() {
+      document.getElementById('modal-config').classList.remove('active');
+    }
+
+    // ── BACKUP GLOBAL ────────────────────────────────────────────────
+    function exportarTodo() {
+      const index = getProjectsIndex();
+      const backup = {
+        version: 2,
+        fecha: new Date().toISOString(),
+        proyectos: index.map(p => {
+          try { return { meta: p, data: JSON.parse(localStorage.getItem(p.id) || '{}') }; }
+          catch(e) { return { meta: p, data: {} }; }
+        })
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const fecha = new Date().toLocaleDateString('es-CL', { year:'numeric', month:'2-digit', day:'2-digit' }).replace(/\//g,'-');
+      a.download = `trama-backup-${fecha}.json`;
+      a.click();
+      notificar(`BACKUP: ${index.length} PRODUCCION${index.length !== 1 ? 'ES' : ''} EXPORTADAS`);
     }
 
     // ── CONTROL DE CAMBIOS SIN GUARDAR ──────────────────────────────
@@ -3927,7 +4014,10 @@
     function renderProductionGrid() {
       const index = getProjectsIndex();
       const grid = document.getElementById('prod-grid');
+      const emptyEl = document.getElementById('selector-empty');
       if(!grid) return;
+
+      if(emptyEl) emptyEl.style.display = index.length === 0 ? 'block' : 'none';
 
       const cards = index.map((proj, i) => {
         const fechaMod = proj.lastModified
@@ -4016,6 +4106,10 @@
       document.getElementById('app-main').style.display = 'block';
       // Update header title
       document.getElementById('app-obra-title').textContent = state.obra.titulo || 'Vestuario Escénico';
+      // Inject global API keys into state (kept separate from project data)
+      const cfg = getGlobalConfig();
+      if(cfg.apiKey) state.apiKey = cfg.apiKey;
+      if(cfg.openaiKey) state.openaiKey = cfg.openaiKey;
       syncUI();
       // Reset to general tab
       switchTab('general', document.querySelector('.tab-btn'));
